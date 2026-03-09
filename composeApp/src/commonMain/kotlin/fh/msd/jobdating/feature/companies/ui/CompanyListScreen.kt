@@ -1,3 +1,6 @@
+
+
+// --- feature/companies/ui/CompanyListScreen.kt (updated with onDone callback) ---
 package fh.msd.jobdating.feature.companies.ui
 
 import androidx.compose.foundation.layout.*
@@ -5,9 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,9 +19,18 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CompanyListScreen(
+    onDone: () -> Unit,
     viewModel: CompanyListViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.navigation.collect { nav ->
+            when (nav) {
+                is CompanyNavigation.ToAppointments -> onDone()
+            }
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -31,10 +41,7 @@ fun CompanyListScreen(
 
             state.error != null -> Text("Error: ${state.error}")
 
-            state.isDone -> Text(
-                text = "You have voted on all companies!",
-                style = MaterialTheme.typography.headlineSmall
-            )
+            state.isDone -> CircularProgressIndicator()
 
             else -> {
                 val company = state.companies[state.currentIndex]

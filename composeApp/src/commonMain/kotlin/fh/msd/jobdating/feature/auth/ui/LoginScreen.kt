@@ -1,10 +1,10 @@
+
+// --- feature/auth/ui/LoginScreen.kt (updated) ---
 package fh.msd.jobdating.feature.auth.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -17,6 +17,14 @@ fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.navigation.collect { nav ->
+            when (nav) {
+                is LoginNavigation.ToCompanies -> onLoginSuccess()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
