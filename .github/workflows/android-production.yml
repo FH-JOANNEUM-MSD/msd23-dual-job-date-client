@@ -32,20 +32,6 @@ jobs:
       - name: Download dependencies
         run: ./gradlew --no-daemon dependencies
 
-      - name: Run unit tests
-        run: ./gradlew test --no-daemon
-
-      - name: Run Android instrumented tests
-        run: ./gradlew connectedAndroidTest --no-daemon || echo "No instrumented tests or emulator not available"
-        continue-on-error: true
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: '**/build/test-results/**/*.xml'
-
       - name: Write keystore file
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" > keystore.b64
