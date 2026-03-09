@@ -1,4 +1,3 @@
-
 package fh.msd.jobdating.feature.companies.domain.model
 
 data class Company(

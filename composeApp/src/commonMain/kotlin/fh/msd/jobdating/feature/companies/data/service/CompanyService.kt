@@ -1,5 +1,3 @@
-
-// --- data/service/CompanyService.kt ---
 package fh.msd.jobdating.feature.companies.data.service
 
 import fh.msd.jobdating.feature.companies.domain.dto.CompanyDto
