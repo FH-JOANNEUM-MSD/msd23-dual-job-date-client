@@ -49,8 +49,8 @@ jobs:
       - name: Write keystore file
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" > keystore.b64
-          base64 -d keystore.b64 > keystore.jks
-          ls -la keystore.jks
+          base64 -d keystore.b64 > keystore-release.jks
+          ls -la keystore-release.jks
 
       - name: Update version code
         run: |
@@ -60,7 +60,7 @@ jobs:
         run: |
           echo "Building with VERSION_CODE: ${{ env.VERSION_CODE }}"
           ./gradlew --no-daemon bundleRelease \
-            -Pandroid.injected.signing.store.file=$PWD/keystore.jks \
+            -Pandroid.injected.signing.store.file=$PWD/keystore-release.jks \
             -Pandroid.injected.signing.store.password='${{ secrets.KEYSTORE_PASSWORD }}' \
             -Pandroid.injected.signing.key.alias='${{ secrets.KEY_ALIAS }}' \
             -Pandroid.injected.signing.key.password='${{ secrets.KEY_PASSWORD }}' \
@@ -77,4 +77,4 @@ jobs:
 
       - name: Clean up
         if: always()
-        run: rm -f keystore.jks keystore.b64
+        run: rm -f keystore-release.jks keystore.b64
