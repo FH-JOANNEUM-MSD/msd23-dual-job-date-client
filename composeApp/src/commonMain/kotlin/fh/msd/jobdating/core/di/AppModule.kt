@@ -15,6 +15,9 @@ import fh.msd.jobdating.feature.companies.data.repository.CompanyRepositoryTest
 import fh.msd.jobdating.feature.companies.data.service.CompanyService
 import fh.msd.jobdating.feature.companies.data.service.CompanyServiceTest
 import fh.msd.jobdating.feature.companies.ui.CompanyListViewModel
+import fh.msd.jobdating.feature.profile.data.repository.ProfileRepository
+import fh.msd.jobdating.feature.profile.data.repository.ProfileRepositoryTest
+import fh.msd.jobdating.feature.profile.ui.ProfileViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -34,4 +37,9 @@ val appModule = module {
     single<AppointmentService> { AppointmentServiceTest() }
     single<AppointmentRepository> { AppointmentRepositoryTest(get()) }
     viewModel { AppointmentViewModel(get()) }
+
+    // --- Profile ---
+    single<ProfileRepository> { ProfileRepositoryTest() }
+    viewModel { ProfileViewModel(get()) }
+
 }

@@ -1,4 +1,3 @@
-
 package fh.msd.jobdating.feature.auth.data.service
 
 import fh.msd.jobdating.feature.auth.domain.dto.LoginRequestDto

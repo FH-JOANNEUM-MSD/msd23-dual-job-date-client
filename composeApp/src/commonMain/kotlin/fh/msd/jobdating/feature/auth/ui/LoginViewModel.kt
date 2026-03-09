@@ -1,4 +1,3 @@
-
 package fh.msd.jobdating.feature.auth.ui
 
 import androidx.lifecycle.ViewModel

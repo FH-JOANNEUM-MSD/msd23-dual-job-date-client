@@ -1,5 +1,3 @@
-
-
 package fh.msd.jobdating.feature.auth.domain.dto
 
 import kotlinx.serialization.Serializable

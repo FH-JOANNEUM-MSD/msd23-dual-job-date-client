@@ -1,5 +1,3 @@
-
-// --- feature/auth/ui/LoginScreen.kt (updated) ---
 package fh.msd.jobdating.feature.auth.ui
 
 import androidx.compose.foundation.layout.*

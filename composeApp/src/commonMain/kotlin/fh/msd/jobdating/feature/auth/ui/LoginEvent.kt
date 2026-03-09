@@ -1,4 +1,3 @@
-
 package fh.msd.jobdating.feature.auth.ui
 
 sealed class LoginEvent {

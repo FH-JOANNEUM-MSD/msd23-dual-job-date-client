@@ -1,6 +1,3 @@
-
-
-// --- feature/companies/ui/CompanyListViewModel.kt (updated with navigation) ---
 package fh.msd.jobdating.feature.companies.ui
 
 import androidx.lifecycle.ViewModel
