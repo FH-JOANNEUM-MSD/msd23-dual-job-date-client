@@ -9,10 +9,10 @@ class AuthRepositoryTest(
 ) : AuthRepository {
 
     override suspend fun login(email: String, password: String): AuthToken {
-        val response = service.login(LoginRequestDto(email, password))
+        val token = service.login(LoginRequestDto(email, password))
         return AuthToken(
-            token = response.token,
-            studentId = response.studentId
+            token = token,
+            userId = "1"
         )
     }
 

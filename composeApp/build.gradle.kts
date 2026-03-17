@@ -1,4 +1,8 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -6,10 +10,12 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
     androidTarget {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -69,6 +75,22 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+    }
+}
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+buildkonfig {
+    packageName = "fh.msd.jobdating"
+
+    defaultConfigs {
+        buildConfigField(STRING, "BACKEND_BASE_URL", localProperties["BACKEND_BASE_URL"] as String)
+        buildConfigField(STRING, "SUPABASE_URL", localProperties["SUPABASE_URL"] as String)
+        buildConfigField(STRING, "SUPABASE_ANON_KEY", localProperties["SUPABASE_ANON_KEY"] as String)
     }
 }
 
