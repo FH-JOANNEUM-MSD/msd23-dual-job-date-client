@@ -10,6 +10,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
@@ -19,9 +20,13 @@ class CompanyServiceImpl(
 ) : CompanyService {
 
     override suspend fun getActiveCompanies(): List<CompanyDto> {
-        return httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/companies/active") {
+        val test = httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/companies/active") {
             accept(ContentType.Application.Json)
-        }.body()
+        }
+
+        val body = test.bodyAsText()
+        println(body)
+        return emptyList()
     }
 
     override suspend fun submitVote(companyId: String, vote: VoteType) {
