@@ -11,19 +11,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-sealed class CompanyNavigation {
-    data object ToAppointments : CompanyNavigation()
-}
-
 class CompanyListViewModel(
     private val repository: CompanyRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CompanyListState())
     val state = _state.asStateFlow()
-
-    private val _navigation = MutableSharedFlow<CompanyNavigation>()
-    val navigation = _navigation.asSharedFlow()
 
     init {
         loadCompanies()
@@ -57,9 +50,6 @@ class CompanyListViewModel(
                         currentIndex = nextIndex,
                         isDone = nextIndex >= current.companies.size
                     )
-                }
-                if (_state.value.isDone) {
-                    _navigation.emit(CompanyNavigation.ToAppointments)
                 }
             } catch (e: Exception) {
                 _state.update { it.copy(error = e.message) }
