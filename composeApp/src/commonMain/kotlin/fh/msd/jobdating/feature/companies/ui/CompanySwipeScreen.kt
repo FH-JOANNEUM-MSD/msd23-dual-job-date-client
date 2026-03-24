@@ -3,9 +3,11 @@ package fh.msd.jobdating.feature.companies.ui
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
@@ -18,7 +20,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -190,9 +194,11 @@ private fun SwipeableCompanyCard(
         CompanyCard(
             company = company,
             modifier = Modifier.fillMaxSize(),
-            swipeHint = swipeHint,
+            swipeHint = SwipeHint.NONE,
             dragProgress = dragProgress
         )
+
+        SwipeOverlay(swipeHint = swipeHint, dragProgress = dragProgress)
     }
 }
 
@@ -260,6 +266,44 @@ private fun SwipeActionButton(
                 contentDescription = contentDescription,
                 tint = iconColor,
                 modifier = Modifier.size(size * 0.6f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun SwipeOverlay(swipeHint: SwipeHint, dragProgress: Float) {
+    if (swipeHint == SwipeHint.NONE) return
+
+    val icon = when (swipeHint) {
+        SwipeHint.LIKE -> Icons.Outlined.CheckCircle
+        SwipeHint.DISLIKE -> Icons.Outlined.Cancel
+        SwipeHint.NEUTRAL -> Icons.Outlined.RemoveCircle
+        SwipeHint.NONE -> null
+    }
+    val color = when (swipeHint) {
+        SwipeHint.LIKE -> Color(0xFF639922)
+        SwipeHint.DISLIKE -> Color(0xFFE24B4A)
+        SwipeHint.NEUTRAL -> Color(0xFFF97316)
+        SwipeHint.NONE -> Color.Transparent
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .border(
+                width = (6f * dragProgress).dp,
+                color = color.copy(alpha = dragProgress),
+                shape = RoundedCornerShape(16.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        icon?.let {
+            Icon(
+                imageVector = it,
+                contentDescription = null,
+                tint = color.copy(alpha = dragProgress),
+                modifier = Modifier.size(120.dp)
             )
         }
     }
