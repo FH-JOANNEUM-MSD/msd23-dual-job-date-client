@@ -40,7 +40,10 @@ import androidx.compose.material.icons.outlined.RemoveCircle
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.graphicsLayer
 import fh.msd.jobdating.feature.companies.ui.SwipeHint
 
 @Composable
@@ -90,7 +93,12 @@ fun CompanyCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .background(MaterialTheme.colorScheme.surface),
+                        .graphicsLayer {
+                            val blurRadius = dragProgress * 8f
+                            if (blurRadius > 0f) {
+                                renderEffect = BlurEffect(blurRadius, blurRadius, TileMode.Decal)
+                            }
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
