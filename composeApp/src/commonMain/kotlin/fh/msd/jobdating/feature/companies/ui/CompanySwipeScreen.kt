@@ -14,7 +14,9 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.DoNotDisturb
 import androidx.compose.material.icons.outlined.RemoveCircle
+import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -221,7 +223,7 @@ private fun SwipeActionButtons(
             onClick = onDislike
         )
         SwipeActionButton(
-            icon = Icons.Outlined.RemoveCircle,
+            icon = Icons.Outlined.RemoveCircleOutline,
             contentDescription = "Neutral",
             highlighted = swipeHint == SwipeHint.NEUTRAL,
             highlightColor = NeutralOrange,
@@ -278,7 +280,7 @@ private fun SwipeOverlay(swipeHint: SwipeHint, dragProgress: Float) {
     val icon = when (swipeHint) {
         SwipeHint.LIKE -> Icons.Outlined.CheckCircle
         SwipeHint.DISLIKE -> Icons.Outlined.Cancel
-        SwipeHint.NEUTRAL -> Icons.Outlined.RemoveCircle
+        SwipeHint.NEUTRAL -> Icons.Outlined.RemoveCircleOutline
         SwipeHint.NONE -> null
     }
     val color = when (swipeHint) {
