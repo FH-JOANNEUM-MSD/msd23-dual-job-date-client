@@ -38,4 +38,9 @@ class AuthServiceImpl(
             accept(ContentType.Application.Json)
         }.body()
     }
+
+    override suspend fun tryRestoreSession(): String? {
+        supabaseClient.auth.loadFromStorage()
+        return supabaseClient.auth.currentSessionOrNull()?.accessToken
+    }
 }

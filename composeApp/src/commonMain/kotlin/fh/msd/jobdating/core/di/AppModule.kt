@@ -56,6 +56,6 @@ val appModule = module {
 
     // --- Profile ---
     single<ProfileRepository> { ProfileRepositoryTest() }
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(), get()) }
 
 }

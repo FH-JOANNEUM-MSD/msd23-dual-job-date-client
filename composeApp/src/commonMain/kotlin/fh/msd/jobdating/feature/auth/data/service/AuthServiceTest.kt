@@ -20,4 +20,6 @@ class AuthServiceTest : AuthService {
             status = "ok"
         )
     }
+
+    override suspend fun tryRestoreSession(): String? = null
 }

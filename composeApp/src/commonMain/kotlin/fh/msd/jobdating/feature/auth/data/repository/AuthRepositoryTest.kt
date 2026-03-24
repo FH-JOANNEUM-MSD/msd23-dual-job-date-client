@@ -17,4 +17,5 @@ class AuthRepositoryTest(
     }
 
     override suspend fun logout() = service.logout()
+    override suspend fun tryAutoLogin(): AuthToken? = null
 }

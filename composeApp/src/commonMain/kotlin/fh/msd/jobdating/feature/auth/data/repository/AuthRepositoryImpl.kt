@@ -20,4 +20,13 @@ class AuthRepositoryImpl(
     override suspend fun logout() {
         authService.logout()
     }
+
+    override suspend fun tryAutoLogin(): AuthToken? {
+        val token = authService.tryRestoreSession() ?: return null
+        val me = authService.getMe(token)
+        return AuthToken(
+            token = token,
+            userId = me.userId
+        )
+    }
 }

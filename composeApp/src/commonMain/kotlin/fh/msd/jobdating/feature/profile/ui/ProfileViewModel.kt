@@ -2,6 +2,7 @@ package fh.msd.jobdating.feature.profile.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import fh.msd.jobdating.feature.auth.data.repository.AuthRepository
 import fh.msd.jobdating.feature.profile.data.repository.ProfileRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ sealed class ProfileNavigation {
 }
 
 class ProfileViewModel(
-    private val repository: ProfileRepository
+    private val repository: ProfileRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -127,7 +129,7 @@ class ProfileViewModel(
 
     private fun logout() {
         viewModelScope.launch {
-            repository.logout()
+            authRepository.logout()
             _navigation.emit(ProfileNavigation.ToLogin)
         }
     }

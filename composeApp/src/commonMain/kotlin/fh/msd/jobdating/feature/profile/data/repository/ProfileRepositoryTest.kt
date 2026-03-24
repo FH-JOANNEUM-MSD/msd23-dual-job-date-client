@@ -24,6 +24,4 @@ class ProfileRepositoryTest : ProfileRepository {
         }
     }
 
-    override suspend fun logout() {
-    }
 }
