@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import fh.msd.jobdating.core.ui.AppBackground
 import fh.msd.jobdating.feature.appointments.ui.AppointmentScreen
 import fh.msd.jobdating.feature.auth.ui.LoginScreen
 import fh.msd.jobdating.feature.companies.ui.CompanyListScreen
@@ -50,13 +51,16 @@ fun NavGraph(startDestination: Screen = Screen.Login) {
 
         composable<Screen.Login> {
             Scaffold {
-                LoginScreen(
-                    onLoginSuccess = {
-                        rootNavController.navigate(Screen.Main) {
-                            popUpTo(Screen.Login) { inclusive = true }
+                AppBackground {
+                    LoginScreen(
+                        onLoginSuccess = {
+                            rootNavController.navigate(Screen.Main) {
+                                popUpTo(Screen.Login) { inclusive = true }
+                            }
                         }
-                    }
-                )
+                    )
+
+                }
             }
         }
 
@@ -115,10 +119,12 @@ fun MainScreenWithBottomNav(
     Scaffold(
         bottomBar = { BottomNavigationBar(rootNavController) }
     ) { innerPadding ->
-        androidx.compose.foundation.layout.Box(
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            content()
+        AppBackground {
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                content()
+            }
         }
     }
 }
