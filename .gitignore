@@ -18,3 +18,4 @@ captures
 node_modules/
 upload-keystore.jks
 keystore-release.jks
+local.properties

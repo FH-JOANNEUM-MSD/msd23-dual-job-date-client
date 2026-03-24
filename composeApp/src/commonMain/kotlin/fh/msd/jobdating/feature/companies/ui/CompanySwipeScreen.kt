@@ -1,32 +1,40 @@
 package fh.msd.jobdating.feature.companies.ui
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.RemoveCircle
+import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.RemoveCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.domain.model.VoteType
 import fh.msd.jobdating.feature.companies.ui.components.CompanyCard
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.abs
 
-enum class SwipeHint {
-    NONE, LIKE, DISLIKE, NEUTRAL
-}
+enum class SwipeHint { NONE, LIKE, DISLIKE, NEUTRAL }
+
+val NeutralOrange = Color(0xFFF97316)
 
 @Composable
 fun CompanySwipeScreen(
@@ -40,27 +48,16 @@ fun CompanySwipeScreen(
     ) {
         when {
             state.isLoading -> CircularProgressIndicator()
-
             state.error != null -> Text("Error: ${state.error}")
-
-            state.isDone -> Text(
-                text = "All companies voted!",
-                style = MaterialTheme.typography.headlineMedium
-            )
-
-            state.companies.isEmpty() -> Text(
-                text = "No Companies available!",
-                style = MaterialTheme.typography.headlineMedium
-            )
-
-            else -> _CompanySwipeScreen(state, viewModel)
+            state.isDone -> Text("All companies voted!", style = MaterialTheme.typography.headlineMedium)
+            state.companies.isEmpty() -> Text("No companies available!", style = MaterialTheme.typography.headlineMedium)
+            else -> SwipeContent(state, viewModel)
         }
     }
 }
 
-@Suppress("ComposableNaming")
 @Composable
-private fun _CompanySwipeScreen(
+private fun SwipeContent(
     state: CompanyListState,
     viewModel: CompanyListViewModel
 ) {
@@ -70,71 +67,55 @@ private fun _CompanySwipeScreen(
     var swipeHint by remember(state.currentIndex) { mutableStateOf(SwipeHint.NONE) }
     var dragProgress by remember(state.currentIndex) { mutableStateOf(0f) }
 
-    Box(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(0.75f),
+            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(0.75f),
-                contentAlignment = Alignment.Center
-            ) {
-                if (nextCompany != null) {
-                    val nextCardScale = (0.92f + 0.08f * dragProgress).coerceIn(0.92f, 1f)
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .scale(nextCardScale)
-                    ) {
-                        CompanyCard(
-                            company = nextCompany,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
-
-                key(state.currentIndex) {
-                    SwipeableCompanyCard(
-                        company = company,
-                        onSwipe = { voteType ->
-                            viewModel.onEvent(CompanyListEvent.Vote(company.id, voteType))
-                        },
-                        onHintChanged = { hint, progress ->
-                            swipeHint = hint
-                            dragProgress = progress
-                        }
-                    )
+            if (nextCompany != null) {
+                val nextScale = (0.92f + 0.08f * dragProgress).coerceIn(0.92f, 1f)
+                Box(modifier = Modifier.fillMaxSize().scale(nextScale)) {
+                    CompanyCard(company = nextCompany, modifier = Modifier.fillMaxSize())
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
             key(state.currentIndex) {
-                SwipeActionButtons(
+                SwipeableCompanyCard(
+                    company = company,
                     swipeHint = swipeHint,
-                    onDislike = {
-                        viewModel.onEvent(CompanyListEvent.Vote(company.id, VoteType.DISLIKE))
-                    },
-                    onNeutral = {
-                        viewModel.onEvent(CompanyListEvent.Vote(company.id, VoteType.NEUTRAL))
-                    },
-                    onLike = {
-                        viewModel.onEvent(CompanyListEvent.Vote(company.id, VoteType.LIKE))
+                    dragProgress = dragProgress,
+                    onSwipe = { viewModel.onEvent(CompanyListEvent.Vote(company.id, it)) },
+                    onHintChanged = { hint, progress ->
+                        swipeHint = hint
+                        dragProgress = progress
                     }
                 )
             }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        key(state.currentIndex) {
+            SwipeActionButtons(
+                swipeHint = swipeHint,
+                onDislike = { viewModel.onEvent(CompanyListEvent.Vote(company.id, VoteType.DISLIKE)) },
+                onNeutral = { viewModel.onEvent(CompanyListEvent.Vote(company.id, VoteType.NEUTRAL)) },
+                onLike = { viewModel.onEvent(CompanyListEvent.Vote(company.id, VoteType.LIKE)) }
+            )
         }
     }
 }
 
 @Composable
 private fun SwipeableCompanyCard(
-    company: fh.msd.jobdating.feature.companies.domain.model.Company,
+    company: Company,
+    swipeHint: SwipeHint,
+    dragProgress: Float,
     onSwipe: (VoteType) -> Unit,
     onHintChanged: (SwipeHint, Float) -> Unit
 ) {
@@ -160,41 +141,21 @@ private fun SwipeableCompanyCard(
                         scope.launch {
                             val absX = abs(offsetX.value)
                             val absY = abs(offsetY.value)
-
                             when {
                                 offsetY.value < -verticalSwipeThreshold && absY > absX -> {
                                     launch { offsetY.animateTo(-1500f, animationSpec = tween(300)) }
-                                    launch {
-                                        offsetX.animateTo(
-                                            offsetX.value,
-                                            animationSpec = tween(300)
-                                        )
-                                    }
                                     onHintChanged(SwipeHint.NONE, 0f)
                                     onSwipe(VoteType.NEUTRAL)
                                 }
-
                                 absX > swipeThreshold -> {
-                                    val voteType =
-                                        if (offsetX.value > 0) VoteType.LIKE else VoteType.DISLIKE
+                                    val vote = if (offsetX.value > 0) VoteType.LIKE else VoteType.DISLIKE
                                     val targetX = if (offsetX.value > 0) 1500f else -1500f
-                                    val targetRotation = if (offsetX.value > 0) 30f else -30f
-                                    launch {
-                                        offsetX.animateTo(
-                                            targetX,
-                                            animationSpec = tween(300)
-                                        )
-                                    }
-                                    launch {
-                                        rotation.animateTo(
-                                            targetRotation,
-                                            animationSpec = tween(300)
-                                        )
-                                    }
+                                    val targetR = if (offsetX.value > 0) 30f else -30f
+                                    launch { offsetX.animateTo(targetX, animationSpec = tween(300)) }
+                                    launch { rotation.animateTo(targetR, animationSpec = tween(300)) }
                                     onHintChanged(SwipeHint.NONE, 0f)
-                                    onSwipe(voteType)
+                                    onSwipe(vote)
                                 }
-
                                 else -> {
                                     launch { offsetX.animateTo(0f, animationSpec = tween(300)) }
                                     launch { offsetY.animateTo(0f, animationSpec = tween(300)) }
@@ -213,18 +174,14 @@ private fun SwipeableCompanyCard(
 
                             val absX = abs(offsetX.value)
                             val absY = abs(offsetY.value)
-                            val maxProgress = maxOf(
-                                absX / swipeThreshold,
-                                absY / verticalSwipeThreshold
-                            ).coerceIn(0f, 1f)
-
+                            val progress = maxOf(absX / swipeThreshold, absY / verticalSwipeThreshold).coerceIn(0f, 1f)
                             val hint = when {
                                 offsetY.value < -verticalSwipeThreshold * 0.5f && absY > absX -> SwipeHint.NEUTRAL
                                 offsetX.value > swipeThreshold * 0.5f && absX >= absY -> SwipeHint.LIKE
                                 offsetX.value < -swipeThreshold * 0.5f && absX >= absY -> SwipeHint.DISLIKE
                                 else -> SwipeHint.NONE
                             }
-                            onHintChanged(hint, maxProgress)
+                            onHintChanged(hint, progress)
                         }
                     }
                 )
@@ -232,51 +189,43 @@ private fun SwipeableCompanyCard(
     ) {
         CompanyCard(
             company = company,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            swipeHint = swipeHint,
+            dragProgress = dragProgress
         )
     }
 }
 
 @Composable
-fun SwipeActionButtons(
+private fun SwipeActionButtons(
     swipeHint: SwipeHint,
     onDislike: () -> Unit,
     onNeutral: () -> Unit,
     onLike: () -> Unit
 ) {
-    val dislikeHighlighted = swipeHint == SwipeHint.DISLIKE
-    val neutralHighlighted = swipeHint == SwipeHint.NEUTRAL
-    val likeHighlighted = swipeHint == SwipeHint.LIKE
-
     Row(
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         SwipeActionButton(
-            icon = Icons.Filled.Close,
+            icon = Icons.Outlined.Cancel,
             contentDescription = "Dislike",
-            highlighted = dislikeHighlighted,
+            highlighted = swipeHint == SwipeHint.DISLIKE,
             highlightColor = MaterialTheme.colorScheme.error,
-            defaultColor = MaterialTheme.colorScheme.onSurfaceVariant,
             onClick = onDislike
         )
-
         SwipeActionButton(
-            icon = Icons.Filled.Star,
+            icon = Icons.Outlined.RemoveCircle,
             contentDescription = "Neutral",
-            highlighted = neutralHighlighted,
-            highlightColor = MaterialTheme.colorScheme.tertiary,
-            defaultColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            onClick = onNeutral,
-            size = 48.dp
+            highlighted = swipeHint == SwipeHint.NEUTRAL,
+            highlightColor = NeutralOrange,
+            onClick = onNeutral
         )
-
         SwipeActionButton(
-            icon = Icons.Filled.Favorite,
+            icon = Icons.Outlined.CheckCircle,
             contentDescription = "Like",
-            highlighted = likeHighlighted,
+            highlighted = swipeHint == SwipeHint.LIKE,
             highlightColor = MaterialTheme.colorScheme.primary,
-            defaultColor = MaterialTheme.colorScheme.onSurfaceVariant,
             onClick = onLike
         )
     }
@@ -284,36 +233,33 @@ fun SwipeActionButtons(
 
 @Composable
 private fun SwipeActionButton(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     contentDescription: String,
     highlighted: Boolean,
-    highlightColor: androidx.compose.ui.graphics.Color,
-    defaultColor: androidx.compose.ui.graphics.Color,
+    highlightColor: Color,
     onClick: () -> Unit,
-    size: androidx.compose.ui.unit.Dp = 56.dp
+    size: Dp = 72.dp
 ) {
-    val scale by androidx.compose.animation.core.animateFloatAsState(
+    val scale by animateFloatAsState(
         targetValue = if (highlighted) 1.2f else 1f,
         animationSpec = tween(150)
     )
 
-    val containerColor =
-        if (highlighted) highlightColor.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant
-    val iconColor = if (highlighted) highlightColor else defaultColor
+    val iconColor = if (highlighted) highlightColor else MaterialTheme.colorScheme.onSurface
 
     Surface(
         onClick = onClick,
         modifier = Modifier.size(size).scale(scale),
         shape = CircleShape,
-        color = containerColor,
-        tonalElevation = if (highlighted) 4.dp else 0.dp
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 4.dp
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = icon,
                 contentDescription = contentDescription,
                 tint = iconColor,
-                modifier = Modifier.size(size * 0.5f)
+                modifier = Modifier.size(size * 0.6f)
             )
         }
     }
