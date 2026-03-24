@@ -36,17 +36,19 @@ fun CompanySwipeScreen(
                 text = "All companies voted!",
                 style = MaterialTheme.typography.headlineMedium
             )
+            state.companies.isEmpty() -> Text(
+                text = "No Companies available!",
+                style = MaterialTheme.typography.headlineMedium
+            )
 
             else -> {
                 val company = state.companies[state.currentIndex]
-                key(state.currentIndex){
-                    SwipeableCompanyCard(
-                        company = company,
-                        onSwipe = { voteType ->
-                            viewModel.onEvent(CompanyListEvent.Vote(company.id, voteType))
-                        }
-                    )
-                }
+                SwipeableCompanyCard(
+                    company = company,
+                    onSwipe = { voteType ->
+                        viewModel.onEvent(CompanyListEvent.Vote(company.id, voteType))
+                    }
+                )
             }
         }
     }

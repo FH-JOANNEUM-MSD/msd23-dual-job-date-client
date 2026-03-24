@@ -5,5 +5,5 @@ import fh.msd.jobdating.feature.companies.domain.model.VoteType
 
 interface CompanyService {
     suspend fun getActiveCompanies(): List<CompanyDto>
-    suspend fun submitVote(companyId: String, vote: VoteType)
+    suspend fun submitVote(companyId: Int, vote: VoteType)
 }

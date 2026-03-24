@@ -47,7 +47,7 @@ class CompanyListViewModel(
         }
     }
 
-    private fun vote(companyId: String, vote: VoteType) {
+    private fun vote(companyId: Int, vote: VoteType) {
         viewModelScope.launch {
             try {
                 repository.submitVote(companyId, vote)
