@@ -37,23 +37,12 @@ class CompanyServiceImpl(
     }
 
     override suspend fun submitVote(companyId: Int, vote: VoteType) {
-        val userId = supabaseClient.auth.currentSessionOrNull()?.user?.id
-            ?: error("No active session found")
+        @Serializable data class VoteRequestDto(val vote: String)
 
-        @Serializable
-        data class VoteRequestDto(
-            @SerialName("company_id")
-            val companyId: Int,
-            val liked: Boolean
-        )
-
-        httpClient.post("${BuildKonfig.BACKEND_BASE_URL}/api/students/$userId/preferences") {
+        httpClient.post("${BuildKonfig.BACKEND_BASE_URL}/api/companies/$companyId/vote") {
             header(HttpHeaders.Authorization, "Bearer ${getAccessToken()}")
             contentType(ContentType.Application.Json)
-            setBody(VoteRequestDto(
-                companyId = companyId,
-                liked = vote == VoteType.LIKE
-            ))
+            setBody(VoteRequestDto(vote.text))
         }
     }
 }
