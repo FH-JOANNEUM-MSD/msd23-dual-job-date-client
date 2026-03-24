@@ -55,7 +55,8 @@ fun CompanyCard(
     company: Company,
     modifier: Modifier = Modifier,
     swipeHint: SwipeHint = SwipeHint.NONE,
-    dragProgress: Float = 0f
+    dragProgress: Float = 0f,
+    isBackground: Boolean = false
 ) {
     val borderColor = when (swipeHint) {
         SwipeHint.LIKE -> Color(0xFF639922)
@@ -84,7 +85,7 @@ fun CompanyCard(
                 shape = RoundedCornerShape(16.dp)
             ),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(8.dp),
+        elevation = CardDefaults.cardElevation(0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
