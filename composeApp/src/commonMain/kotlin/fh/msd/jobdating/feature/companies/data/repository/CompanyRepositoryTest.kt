@@ -12,13 +12,17 @@ class CompanyRepositoryTest(
         service.getActiveCompanies().map {
             Company(
                 id = it.id,
+                userId = it.userId,
                 name = it.name,
                 description = it.description,
-                industry = it.industry,
-                logoUrl = it.logoUrl
+                website = it.website,
+                logoUrl = it.logoUrl,
+                active = it.active,
+                lastUpdated = it.lastUpdated
             )
         }
 
-    override suspend fun submitVote(companyId: String, vote: VoteType) =
+
+    override suspend fun submitVote(companyId: Int, vote: VoteType) =
         service.submitVote(companyId, vote)
 }

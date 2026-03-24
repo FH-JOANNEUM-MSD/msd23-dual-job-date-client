@@ -48,7 +48,7 @@ fun CompanyCard(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = company.industry,
+                text = company.description,
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary
             )
