@@ -20,7 +20,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun CompanyListScreen(
     viewModel: CompanyListViewModel = koinViewModel()
-) {   val state by viewModel.state.collectAsState()
+) {
+    val state by viewModel.state.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -37,12 +38,21 @@ fun CompanyListScreen(
             )
 
             else -> LazyColumn(
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                item {
+                    Spacer(modifier = Modifier.height(60.dp))
+                }
+
                 items(state.companies) { company ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(4.dp)
+                        elevation = CardDefaults.cardElevation(4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
                     ) {
                         Row(
                             modifier = Modifier
@@ -51,9 +61,7 @@ fun CompanyListScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = company.name,
                                     style = MaterialTheme.typography.titleMedium
@@ -66,9 +74,7 @@ fun CompanyListScreen(
                                 )
                             }
 
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 IconButton(
                                     onClick = {
                                         viewModel.onEvent(
@@ -98,6 +104,10 @@ fun CompanyListScreen(
                             }
                         }
                     }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }

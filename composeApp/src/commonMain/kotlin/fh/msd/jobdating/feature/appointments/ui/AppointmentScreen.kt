@@ -33,12 +33,21 @@ fun AppointmentScreen(
             )
 
             else -> LazyColumn(
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                item {
+                    Spacer(modifier = Modifier.height(60.dp))
+                }
+
                 items(state.appointments) { appointment ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(4.dp)
+                        elevation = CardDefaults.cardElevation(4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
@@ -53,6 +62,10 @@ fun AppointmentScreen(
                             )
                         }
                     }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }

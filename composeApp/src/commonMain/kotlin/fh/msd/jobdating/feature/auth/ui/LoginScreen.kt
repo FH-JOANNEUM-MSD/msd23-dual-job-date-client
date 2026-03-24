@@ -24,51 +24,67 @@ fun LoginScreen(
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "Dual Job Dating",
-            style = MaterialTheme.typography.headlineLarge
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        OutlinedTextField(
-            value = state.email,
-            onValueChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
-            label = { Text("Email") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = state.password,
-            onValueChange = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) },
-            label = { Text("Password") },
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        state.error?.let {
-            Text(text = it, color = MaterialTheme.colorScheme.error)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        Button(
-            onClick = { viewModel.onEvent(LoginEvent.Submit) },
-            enabled = !state.isLoading,
-            modifier = Modifier.fillMaxWidth()
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
         ) {
-            if (state.isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp))
-            else Text("Login")
+            Column(
+                modifier = Modifier.padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Dual Job Dating",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+
+                Spacer(modifier = Modifier.height(40.dp))
+
+                OutlinedTextField(
+                    value = state.email,
+                    onValueChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
+                    label = { Text("Email") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = state.password,
+                    onValueChange = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) },
+                    label = { Text("Password") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                state.error?.let {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(text = it, color = MaterialTheme.colorScheme.error)
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(
+                    onClick = { viewModel.onEvent(LoginEvent.Submit) },
+                    enabled = !state.isLoading,
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 8.dp,
+                        pressedElevation = 2.dp
+                    )
+                ) {
+                    if (state.isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    else Text("Login", style = MaterialTheme.typography.titleMedium)
+                }
+            }
         }
     }
 }

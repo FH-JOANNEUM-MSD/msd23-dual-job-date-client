@@ -6,8 +6,10 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,17 +25,13 @@ sealed class BottomNavItem(
     val icon: ImageVector
 ) {
     data object CompanySwipe : BottomNavItem(Screen.CompanySwipe, "Swipe", Icons.Default.SwapHoriz)
-    data object CompanyList : BottomNavItem(Screen.CompanyList, "Companies",
-        Icons.AutoMirrored.Filled.List
-    )
+    data object CompanyList : BottomNavItem(Screen.CompanyList, "Companies", Icons.AutoMirrored.Filled.List)
     data object Appointments : BottomNavItem(Screen.Appointments, "Appointments", Icons.Default.DateRange)
     data object Profile : BottomNavItem(Screen.Profile, "Profile", Icons.Default.Person)
 }
 
 @Composable
-fun BottomNavigationBar(
-    navController: NavController
-) {
+fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         BottomNavItem.CompanySwipe,
         BottomNavItem.CompanyList,
@@ -41,19 +39,31 @@ fun BottomNavigationBar(
         BottomNavItem.Profile
     )
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface
+    ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
         items.forEach { item ->
-            val isSelected = currentDestination?.hierarchy?.any { it.route == item.screen::class.qualifiedName } == true
+            val isSelected = currentDestination?.hierarchy?.any {
+                it.route == item.screen::class.qualifiedName
+            } == true
+
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.title) },
                 label = { Text(item.title) },
                 selected = isSelected,
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                ),
                 onClick = {
-                    if (isSelected)
-                        return@NavigationBarItem
+                    if (isSelected) return@NavigationBarItem
                     navController.navigate(item.screen) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = false
@@ -65,5 +75,4 @@ fun BottomNavigationBar(
             )
         }
     }
-
 }
