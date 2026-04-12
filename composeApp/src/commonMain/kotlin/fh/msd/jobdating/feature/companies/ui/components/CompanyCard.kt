@@ -3,7 +3,6 @@ package fh.msd.jobdating.feature.companies.ui.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,8 +29,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,13 +46,17 @@ import coil3.request.crossfade
 import coil3.size.Scale
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.ui.SwipeHint
+import androidx.compose.foundation.background
+import androidx.compose.material.icons.outlined.DoNotDisturb
+import androidx.compose.material.icons.outlined.RemoveCircleOutline
 
 @Composable
 fun CompanyCard(
     company: Company,
     modifier: Modifier = Modifier,
     swipeHint: SwipeHint = SwipeHint.NONE,
-    dragProgress: Float = 0f
+    dragProgress: Float = 0f,
+    isBackground: Boolean = false
 ) {
     val borderColor = when (swipeHint) {
         SwipeHint.LIKE -> Color(0xFF639922)
@@ -79,58 +85,67 @@ fun CompanyCard(
                 shape = RoundedCornerShape(16.dp)
             ),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(8.dp),
+        elevation = CardDefaults.cardElevation(0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            println("Trying to access ${company.logoUrl}")
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .data(company.logoUrl)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .diskCachePolicy(CachePolicy.DISABLED)
-                    .scale(Scale.FIT)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = "Company Logo",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                success = {
-                    SubcomposeAsyncImageContent()
-                },
-                error = {
-                    println("Error: $it")
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Business,
-                            contentDescription = "Logo not available",
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            )
-
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxSize(0.5f)
-                    .align(Alignment.BottomCenter)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.7f)
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        val blurRadius = dragProgress * 8f
+                        if (blurRadius > 0f) {
+                            renderEffect = BlurEffect(blurRadius, blurRadius, TileMode.Decal)
+                        }
+                    }
+            ) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                        .data(company.logoUrl)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .diskCachePolicy(CachePolicy.DISABLED)
+                        .scale(Scale.FIT)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Company Logo",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    success = {
+                        SubcomposeAsyncImageContent()
+                    },
+                    error = {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Business,
+                                contentDescription = "Logo not available",
+                                modifier = Modifier.size(104.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxSize(0.5f)
+                        .align(Alignment.BottomCenter)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Black.copy(alpha = 0.7f)
+                                )
                             )
                         )
-                    )
-            )
+                )
+            }
 
             Column(
                 modifier = Modifier
@@ -162,7 +177,7 @@ fun CompanyCard(
                 val icon = when (swipeHint) {
                     SwipeHint.LIKE -> Icons.Outlined.CheckCircle
                     SwipeHint.DISLIKE -> Icons.Outlined.Cancel
-                    SwipeHint.NEUTRAL -> Icons.Outlined.RemoveCircle
+                    SwipeHint.NEUTRAL -> Icons.Outlined.RemoveCircleOutline
                     SwipeHint.NONE -> null
                 }
                 val iconColor = when (swipeHint) {

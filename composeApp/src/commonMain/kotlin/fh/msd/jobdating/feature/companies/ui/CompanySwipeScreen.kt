@@ -3,26 +3,21 @@ package fh.msd.jobdating.feature.companies.ui
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.RemoveCircle
+import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.BlurEffect
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -70,22 +65,62 @@ private fun SwipeContent(
 
     var swipeHint by remember(state.currentIndex) { mutableStateOf(SwipeHint.NONE) }
     var dragProgress by remember(state.currentIndex) { mutableStateOf(0f) }
+    var dragOnlyProgress by remember(state.currentIndex) { mutableStateOf(0f) }
+
+    val offsetX = remember(state.currentIndex) { Animatable(0f) }
+    val offsetY = remember(state.currentIndex) { Animatable(0f) }
+    val rotation = remember(state.currentIndex) { Animatable(0f) }
+    val scope = rememberCoroutineScope()
+
+
+    val triggerSwipe: (VoteType) -> Unit = { voteType ->
+        scope.launch {
+            dragOnlyProgress = 0f  // keep next card full size
+            when (voteType) {
+                VoteType.LIKE -> {
+                    swipeHint = SwipeHint.LIKE
+                    dragProgress = 1f
+                    launch { offsetX.animateTo(1500f, animationSpec = tween(400)) }
+                    launch { rotation.animateTo(30f, animationSpec = tween(400)) }
+                }
+                VoteType.DISLIKE -> {
+                    swipeHint = SwipeHint.DISLIKE
+                    dragProgress = 1f
+                    launch { offsetX.animateTo(-1500f, animationSpec = tween(400)) }
+                    launch { rotation.animateTo(-30f, animationSpec = tween(400)) }
+                }
+                VoteType.NEUTRAL -> {
+                    swipeHint = SwipeHint.NEUTRAL
+                    dragProgress = 1f
+                    launch { offsetY.animateTo(-1500f, animationSpec = tween(400)) }
+                }
+            }
+            kotlinx.coroutines.delay(400)
+            swipeHint = SwipeHint.NONE
+            dragProgress = 0f
+            viewModel.onEvent(CompanyListEvent.Vote(company.id, voteType))
+        }
+    }
+
 
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(0.75f),
+                .aspectRatio(0.75f)
+                .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {
             if (nextCompany != null) {
-                val nextScale = (0.92f + 0.08f * dragProgress).coerceIn(0.92f, 1f)
-                Box(modifier = Modifier.fillMaxSize().scale(nextScale)) {
-                    CompanyCard(company = nextCompany, modifier = Modifier.fillMaxSize())
-                }
+                CompanyCard(
+                    company = nextCompany,
+                    modifier = Modifier.fillMaxSize(),
+                    isBackground = true
+                )
             }
 
             key(state.currentIndex) {
@@ -93,10 +128,16 @@ private fun SwipeContent(
                     company = company,
                     swipeHint = swipeHint,
                     dragProgress = dragProgress,
-                    onSwipe = { viewModel.onEvent(CompanyListEvent.Vote(company.id, it)) },
+                    offsetX = offsetX,
+                    offsetY = offsetY,
+                    rotation = rotation,
+                    onSwipe = { voteType ->
+                        viewModel.onEvent(CompanyListEvent.Vote(company.id, voteType))
+                    },
                     onHintChanged = { hint, progress ->
                         swipeHint = hint
                         dragProgress = progress
+                        dragOnlyProgress = progress
                     }
                 )
             }
@@ -107,9 +148,9 @@ private fun SwipeContent(
         key(state.currentIndex) {
             SwipeActionButtons(
                 swipeHint = swipeHint,
-                onDislike = { viewModel.onEvent(CompanyListEvent.Vote(company.id, VoteType.DISLIKE)) },
-                onNeutral = { viewModel.onEvent(CompanyListEvent.Vote(company.id, VoteType.NEUTRAL)) },
-                onLike = { viewModel.onEvent(CompanyListEvent.Vote(company.id, VoteType.LIKE)) }
+                onDislike = { triggerSwipe(VoteType.DISLIKE) },
+                onNeutral = { triggerSwipe(VoteType.NEUTRAL) },
+                onLike = { triggerSwipe(VoteType.LIKE) }
             )
         }
     }
@@ -120,14 +161,13 @@ private fun SwipeableCompanyCard(
     company: Company,
     swipeHint: SwipeHint,
     dragProgress: Float,
+    offsetX: Animatable<Float, *>,
+    offsetY: Animatable<Float, *>,
+    rotation: Animatable<Float, *>,
     onSwipe: (VoteType) -> Unit,
     onHintChanged: (SwipeHint, Float) -> Unit
 ) {
-    val offsetX = remember { Animatable(0f) }
-    val offsetY = remember { Animatable(0f) }
-    val rotation = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
-
     val swipeThreshold = 300f
     val verticalSwipeThreshold = 400f
 
@@ -191,14 +231,14 @@ private fun SwipeableCompanyCard(
                 )
             }
     ) {
+
         CompanyCard(
             company = company,
-            modifier = Modifier.fillMaxSize(),
-            swipeHint = SwipeHint.NONE,
+            modifier = Modifier
+                .fillMaxSize(),
+            swipeHint = swipeHint,
             dragProgress = dragProgress
         )
-
-        SwipeOverlay(swipeHint = swipeHint, dragProgress = dragProgress)
     }
 }
 
@@ -221,7 +261,7 @@ private fun SwipeActionButtons(
             onClick = onDislike
         )
         SwipeActionButton(
-            icon = Icons.Outlined.RemoveCircle,
+            icon = Icons.Outlined.RemoveCircleOutline,
             contentDescription = "Neutral",
             highlighted = swipeHint == SwipeHint.NEUTRAL,
             highlightColor = NeutralOrange,
@@ -266,44 +306,6 @@ private fun SwipeActionButton(
                 contentDescription = contentDescription,
                 tint = iconColor,
                 modifier = Modifier.size(size * 0.6f)
-            )
-        }
-    }
-}
-
-@Composable
-private fun SwipeOverlay(swipeHint: SwipeHint, dragProgress: Float) {
-    if (swipeHint == SwipeHint.NONE) return
-
-    val icon = when (swipeHint) {
-        SwipeHint.LIKE -> Icons.Outlined.CheckCircle
-        SwipeHint.DISLIKE -> Icons.Outlined.Cancel
-        SwipeHint.NEUTRAL -> Icons.Outlined.RemoveCircle
-        SwipeHint.NONE -> null
-    }
-    val color = when (swipeHint) {
-        SwipeHint.LIKE -> Color(0xFF639922)
-        SwipeHint.DISLIKE -> Color(0xFFE24B4A)
-        SwipeHint.NEUTRAL -> Color(0xFFF97316)
-        SwipeHint.NONE -> Color.Transparent
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .border(
-                width = (6f * dragProgress).dp,
-                color = color.copy(alpha = dragProgress),
-                shape = RoundedCornerShape(16.dp)
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        icon?.let {
-            Icon(
-                imageVector = it,
-                contentDescription = null,
-                tint = color.copy(alpha = dragProgress),
-                modifier = Modifier.size(120.dp)
             )
         }
     }
