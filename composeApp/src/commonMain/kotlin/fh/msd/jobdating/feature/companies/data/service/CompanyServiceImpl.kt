@@ -31,19 +31,36 @@ class CompanyServiceImpl(
     }
 
     override suspend fun getActiveCompanies(): List<CompanyDto> {
-        return httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/companies/active") {
+        println("[CompanyService] Fetching active companies...")
+
+        val response = httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/companies/active") {
             header(HttpHeaders.Authorization, "Bearer ${getAccessToken()}")
             accept(ContentType.Application.Json)
-        }.body()
+        }
+
+        val rawBody = response.bodyAsText()
+        println("[CompanyService] Response status: ${response.status}")
+        println("[CompanyService] Raw response: $rawBody")
+
+        val companies: List<CompanyDto> = response.body()
+        println("[CompanyService] Parsed ${companies.size} companies")
+
+        return companies
     }
 
     override suspend fun submitVote(companyId: Int, vote: VoteType) {
         @Serializable data class VoteRequestDto(val vote: String)
 
-        httpClient.post("${BuildKonfig.BACKEND_BASE_URL}/api/companies/$companyId/vote") {
+        println("[CompanyService] Submitting vote for company $companyId: ${vote.text}")
+
+        val response = httpClient.post("${BuildKonfig.BACKEND_BASE_URL}/api/companies/$companyId/vote") {
             header(HttpHeaders.Authorization, "Bearer ${getAccessToken()}")
             contentType(ContentType.Application.Json)
             setBody(VoteRequestDto(vote.text))
         }
+
+        val rawBody = response.bodyAsText()
+        println("[CompanyService] Vote response status: ${response.status}")
+        println("[CompanyService] Vote response body: $rawBody")
     }
 }

@@ -3,6 +3,7 @@ package fh.msd.jobdating.feature.companies.ui
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.domain.model.VoteType
 import fh.msd.jobdating.feature.companies.ui.components.CompanyCard
+import fh.msd.jobdating.feature.companies.ui.components.CompanyDetailDialog
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.abs
@@ -62,6 +64,7 @@ private fun SwipeContent(
 ) {
     val company = state.companies[state.currentIndex]
     val nextCompany = state.companies.getOrNull(state.currentIndex + 1)
+    var showDetailDialog by remember { mutableStateOf(false) }
 
     var swipeHint by remember(state.currentIndex) { mutableStateOf(SwipeHint.NONE) }
     var dragProgress by remember(state.currentIndex) { mutableStateOf(0f) }
@@ -72,10 +75,9 @@ private fun SwipeContent(
     val rotation = remember(state.currentIndex) { Animatable(0f) }
     val scope = rememberCoroutineScope()
 
-
     val triggerSwipe: (VoteType) -> Unit = { voteType ->
         scope.launch {
-            dragOnlyProgress = 0f  // keep next card full size
+            dragOnlyProgress = 0f
             when (voteType) {
                 VoteType.LIKE -> {
                     swipeHint = SwipeHint.LIKE
@@ -102,12 +104,21 @@ private fun SwipeContent(
         }
     }
 
+    if (showDetailDialog) {
+        CompanyDetailDialog(
+            company = company,
+            onDismiss = { showDetailDialog = false },
+            onVote = { voteType ->
+                showDetailDialog = false
+                triggerSwipe(voteType)
+            }
+        )
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -138,7 +149,8 @@ private fun SwipeContent(
                         swipeHint = hint
                         dragProgress = progress
                         dragOnlyProgress = progress
-                    }
+                    },
+                    onCardClick = { showDetailDialog = true }
                 )
             }
         }
@@ -165,7 +177,8 @@ private fun SwipeableCompanyCard(
     offsetY: Animatable<Float, *>,
     rotation: Animatable<Float, *>,
     onSwipe: (VoteType) -> Unit,
-    onHintChanged: (SwipeHint, Float) -> Unit
+    onHintChanged: (SwipeHint, Float) -> Unit,
+    onCardClick: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val swipeThreshold = 300f
@@ -179,6 +192,7 @@ private fun SwipeableCompanyCard(
                 translationY = offsetY.value
                 rotationZ = rotation.value
             }
+            .clickable { onCardClick() }
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragEnd = {
@@ -231,11 +245,9 @@ private fun SwipeableCompanyCard(
                 )
             }
     ) {
-
         CompanyCard(
             company = company,
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             swipeHint = swipeHint,
             dragProgress = dragProgress
         )
