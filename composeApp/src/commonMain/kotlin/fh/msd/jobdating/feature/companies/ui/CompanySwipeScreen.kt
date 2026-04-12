@@ -39,12 +39,14 @@ fun CompanySwipeScreen(
 
             else -> {
                 val company = state.companies[state.currentIndex]
-                SwipeableCompanyCard(
-                    company = company,
-                    onSwipe = { voteType ->
-                        viewModel.onEvent(CompanyListEvent.Vote(company.id, voteType))
-                    }
-                )
+                key(state.currentIndex){
+                    SwipeableCompanyCard(
+                        company = company,
+                        onSwipe = { voteType ->
+                            viewModel.onEvent(CompanyListEvent.Vote(company.id, voteType))
+                        }
+                    )
+                }
             }
         }
     }

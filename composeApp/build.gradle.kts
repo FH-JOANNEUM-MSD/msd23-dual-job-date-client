@@ -102,7 +102,7 @@ android {
         applicationId = "fh.msd"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 4
+        versionCode = 10
         versionName = "1.0"
     }
     packaging {
