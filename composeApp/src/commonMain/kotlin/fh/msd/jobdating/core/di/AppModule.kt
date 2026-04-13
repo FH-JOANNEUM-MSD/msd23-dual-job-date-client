@@ -2,6 +2,7 @@ package fh.msd.jobdating.core.di
 
 import fh.msd.jobdating.BuildKonfig
 import fh.msd.jobdating.core.network.HttpClientFactory
+import fh.msd.jobdating.core.session.UserSession
 import fh.msd.jobdating.feature.appointments.data.repository.AppointmentRepository
 import fh.msd.jobdating.feature.appointments.data.repository.AppointmentRepositoryTest
 import fh.msd.jobdating.feature.appointments.data.service.AppointmentService
@@ -17,6 +18,7 @@ import fh.msd.jobdating.feature.companies.data.repository.CompanyRepositoryImpl
 import fh.msd.jobdating.feature.companies.data.service.CompanyService
 import fh.msd.jobdating.feature.companies.data.service.CompanyServiceImpl
 import fh.msd.jobdating.feature.companies.ui.CompanyListViewModel
+import fh.msd.jobdating.feature.companies.ui.CompanySwipeViewModel
 import fh.msd.jobdating.feature.profile.data.repository.ProfileRepository
 import fh.msd.jobdating.feature.profile.data.repository.ProfileRepositoryTest
 import fh.msd.jobdating.feature.profile.ui.ProfileViewModel
@@ -35,18 +37,25 @@ val appModule = module {
             supabaseUrl = BuildKonfig.SUPABASE_URL,
             supabaseKey = BuildKonfig.SUPABASE_ANON_KEY
         ) {
-            install(Auth)
+            install(Auth) {
+                autoLoadFromStorage = false
+                autoSaveToStorage = false
+            }
         }
     }
 
-    // --- auth ---
+    // --- session ---
+    single { UserSession() }
+
+    // Auth
     single<AuthService> { AuthServiceImpl(get(), get()) }
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
     viewModel { LoginViewModel(get()) }
 
-    // --- companies ---
+    // Companies
     single<CompanyService> { CompanyServiceImpl(get(), get()) }
-    single<CompanyRepository> { CompanyRepositoryImpl(get()) }
+    single<CompanyRepository> { CompanyRepositoryImpl(get(), get()) }
+    viewModel { CompanySwipeViewModel(get()) }
     viewModel { CompanyListViewModel(get()) }
 
     // --- appointments ---

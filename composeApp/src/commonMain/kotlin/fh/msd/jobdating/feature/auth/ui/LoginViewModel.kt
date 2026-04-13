@@ -24,29 +24,11 @@ class LoginViewModel(
     private val _navigation = MutableSharedFlow<LoginNavigation>()
     val navigation = _navigation.asSharedFlow()
 
-    init {
-        tryAutoLogin()
-    }
-
     fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.EmailChanged -> _state.update { it.copy(email = event.value) }
             is LoginEvent.PasswordChanged -> _state.update { it.copy(password = event.value) }
             is LoginEvent.Submit -> login()
-        }
-    }
-
-    private fun tryAutoLogin() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            try {
-                val authToken = repository.tryAutoLogin()
-                if (authToken != null) {
-                    _navigation.emit(LoginNavigation.ToCompanies)
-                }
-            } catch (_: Exception) {
-            }
-            _state.update { it.copy(isLoading = false) }
         }
     }
 

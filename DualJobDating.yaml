@@ -1,0 +1,617 @@
+openapi: 3.0.0
+info:
+  title: DualJobDating
+  description: |-
+    Dual Job Dating Backend API (Go + Supabase). Import into Stoplight to view endpoints.
+
+    Variables:
+    - baseUrl: API host (default: production)
+    - jwt: Bearer token (Supabase access token)
+    - studentId: numeric student id for path params
+    - companyId: numeric company id for path params
+    - userUuid: internal users.id (UUID) for PATCH /api/users/{id}
+
+    Most /api routes use Authorization: Bearer {{jwt}}.
+    POST /api/resend-invite is registered without JWT middleware (public); other requests inherit collection Bearer auth.
+  version: 1.0.0
+servers:
+  - url: 'http://{{baseurl}}'
+components:
+  securitySchemes:
+    noauthAuth:
+      type: http
+      scheme: noauth
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []
+tags:
+  - name: System
+  - name: Auth
+  - name: Invites
+  - name: Users
+  - name: Companies
+  - name: Students
+  - name: Meetings
+  - name: Events & Slots
+paths:
+  /:
+    get:
+      tags:
+        - System
+      summary: Healthcheck
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Server läuft!
+  /api/seed:
+    get:
+      tags:
+        - System
+      summary: SeedDatabase
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "Westeros database successfully seeded! Winter is here \U0001F43A\U0001F409❄️"
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Users Error: failed to insert into users: <details>
+  /api/me:
+    get:
+      tags:
+        - Auth
+      summary: GetMyID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                user_id: 9f6f17f0-1f91-4a5a-96e9-bf2b9a4a9f2c
+                status: authenticated
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: Keine valide Session gefunden
+  /api/invite:
+    post:
+      tags:
+        - Invites
+      summary: InviteCompany
+      description: Einladung per E-Mail; legt Supabase-Auth-User und Company-Profil an. Gleiche URL wie InviteStudent. Erfordert JWT.
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: '"{\n  \"email\": \"jake.moe@icloud.com\",\n  \"role\": \"company\",\n  \"company_name\": \"Lannister Gold Corp\"\n}"'
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        '201':
+          description: Created
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Einladung verschickt und Profil in DB angelegt!
+  /api/resend-invite:
+    post:
+      tags:
+        - Invites
+      summary: ResendInvite
+      description: 'Erneutes Versenden der Einladung (Supabase). Öffentliche Route ohne JWT-Middleware. Body wie Invite: mindestens email und role.'
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: '"{\n  \"email\": \"jake.moe41@gmail.com\",\n  \"role\": \"student\"\n}"'
+      security:
+        - noauthAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                message: Einladung wurde erfolgreich erneut versendet.
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Invalid Request
+  '/api/users/{userUuid}':
+    patch:
+      tags:
+        - Users
+      summary: UpdateUserNames
+      description: 'Aktualisiert Vor- und/oder Nachnamen in der users-Tabelle. {id} ist die interne UUID (Primary Key von users), nicht die Supabase-Auth sub. Mindestens eines von first_name oder last_name muss gesetzt sein.'
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: '"{\n  \"first_name\": \"Jon\",\n  \"last_name\": \"Snow\"\n}"'
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: userUuid
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                message: Benutzer erfolgreich aktualisiert
+                status: success
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                example-0:
+                  summary: Invalid UUID (400)
+                  value: |
+                    Ungültige User-ID Format: 'not-a-uuid'
+                example-1:
+                  summary: Missing names (400)
+                  value: |
+                    Mindestens first_name oder last_name muss im JSON angegeben werden
+  /api/companies/active:
+    get:
+      tags:
+        - Companies
+      summary: GetActiveCompanies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - id: 1
+                  user_id: ecf8f2fc-5649-4f8f-92e4-9ed13f82e89f
+                  name: Lannister Gold & Loans
+                  description: A Lannister always pays his debts.
+                  website: 'https://lannister.gold'
+                  logo_url: 'https://...'
+                  active: true
+                  last_updated: '2026-03-09T09:12:33Z'
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Fehler beim Laden der Unternehmen: <details>
+  '/api/companies/{companyId}/vote':
+    post:
+      tags:
+        - Companies
+      summary: VoteCompany
+      description: Speichert die Präferenz (Vote) des aktuell eingeloggten Studenten für eine Company. Der Student wird über den JWT Access Token ermittelt.
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: '"{\n  \"vote\": \"like\"\n}"'
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: companyId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: 42
+                student_id: 1
+                company_id: 1
+                preference_type: like
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                ungueltiger vote, erlaubt: like, dislike, neutral
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Keine valide Session gefunden
+  '/api/companies/{companyId}/logo':
+    post:
+      tags:
+        - Companies
+      summary: UploadCompanyLogo
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                logo:
+                  type: string
+                  format: binary
+      parameters:
+        - name: companyId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                company_id: 1
+                bucket: company-logos
+                object_key: company-1/1741519534-lannister-gold-loans.png
+                logo_url: 'https://dtgigetmxmrqniibjsal.supabase.co/storage/v1/object/public/company-logos/company-1/1741519534-lannister-gold-loans.png'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                example-0:
+                  summary: Invalid Company ID (400)
+                  value: |
+                    ungueltige company id
+                example-1:
+                  summary: Missing File (400)
+                  value: |
+                    file feld 'logo' oder 'file' fehlt
+  /api/students:
+    get:
+      tags:
+        - Students
+      summary: GetAllStudents
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - id: 1
+                  user_id: d3c43f2e-ecf4-4ad7-8f3f-6462c143c312
+                  study_program: Night's Watch Defense
+                  semester: 1
+                  first_name: Jon
+                  last_name: Snow
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Fehler beim Laden der User-Daten: <details>
+  '/api/students/{studentId}/preferences':
+    get:
+      tags:
+        - Students
+      summary: GetPreferencesByStudent
+      parameters:
+        - name: studentId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - id: 1
+                  student_id: 1
+                  company_id: 1
+                  preference_type: like
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Ungültige Studenten-ID
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                <details>
+  '/api/students/{studentId}/meetings':
+    get:
+      tags:
+        - Students
+      summary: GetMeetingsByStudent
+      parameters:
+        - name: studentId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - id: 10
+                  slot_id: 2
+                  student_id: 1
+                  company_id: 3
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Ungültige Studenten-ID
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                <details>
+  /api/meetings/assign:
+    post:
+      tags:
+        - Meetings
+      summary: AssignMeetingsByPreferences
+      description: |-
+        Assign meetings based on student preferences.
+
+        Request body parameters:
+        - dry_run (boolean, optional): If true, calculates assignment but does not write to DB. Default: false.
+        - include_inactive_companies (boolean, optional): If true, also considers inactive companies. Default: false.
+        - replace_existing (boolean, optional): If true, deletes/replaces existing meetings before inserting new ones. Default: false.
+
+        You can send an empty body {} to use defaults.
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: '"{\n  \"dry_run\": true,\n  \"include_inactive_companies\": false,\n  \"replace_existing\": false\n}\n"'
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                dry_run: true
+                planned_meetings:
+                  - slot_id: 1
+                    student_id: 2
+                    company_id: 1
+                    preference_type: like
+                unassigned_company_slots:
+                  - slot_id: 3
+                    company_id: 2
+                    reason: kein verfuegbarer student (slot bereits belegt oder bereits meeting mit firma)
+                inserted_meetings: 0
+                summary:
+                  total_company_slots: 12
+                  existing_meetings_kept: 0
+                  existing_meetings_deleted: 0
+                  generated_meetings: 8
+                  inserted_meetings: 0
+                  assigned_like: 5
+                  assigned_neutral: 3
+                  assigned_dislike: 0
+                  dislike_avoided_slots: 2
+                  unassigned_company_slots: 4
+        '201':
+          description: Created
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                dry_run: false
+                planned_meetings:
+                  - slot_id: 1
+                    student_id: 2
+                    company_id: 1
+                    preference_type: like
+                unassigned_company_slots: []
+                inserted_meetings: 8
+                summary:
+                  total_company_slots: 12
+                  existing_meetings_kept: 0
+                  existing_meetings_deleted: 0
+                  generated_meetings: 8
+                  inserted_meetings: 8
+                  assigned_like: 5
+                  assigned_neutral: 3
+                  assigned_dislike: 0
+                  dislike_avoided_slots: 2
+                  unassigned_company_slots: 0
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: text/plain; charset=utf-8
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Ungültiger JSON-Body
+        '500':
+          description: Internal Server Error
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: text/plain; charset=utf-8
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Fehler bei der Zuteilung: <details>
+  /api/events/active:
+    get:
+      tags:
+        - Events & Slots
+      summary: GetActiveEvents
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - id: 1
+                  name: Westeros Career Fair
+                  location: King's Landing
+                  description: Meet all the high lords.
+                  event_date: '2026-04-09'
+                  is_active: true
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                <details>
+  /api/slots:
+    get:
+      tags:
+        - Events & Slots
+      summary: GetAllSlots
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - id: 1
+                  start_time: '09:00:00'
+                  end_time: '09:15:00'
+        '500':
+          description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                <details>

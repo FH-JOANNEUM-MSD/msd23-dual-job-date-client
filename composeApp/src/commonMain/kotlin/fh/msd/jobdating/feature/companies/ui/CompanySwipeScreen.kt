@@ -25,6 +25,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fh.msd.jobdating.core.ui.theme.DislikeRed
+import fh.msd.jobdating.core.ui.theme.LikeGreen
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.domain.model.VoteType
 import fh.msd.jobdating.feature.companies.ui.components.CompanyCard
@@ -39,7 +41,7 @@ val NeutralOrange = Color(0xFFF97316)
 
 @Composable
 fun CompanySwipeScreen(
-    viewModel: CompanyListViewModel = koinViewModel()
+    viewModel: CompanySwipeViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -60,7 +62,7 @@ fun CompanySwipeScreen(
 @Composable
 private fun SwipeContent(
     state: CompanyListState,
-    viewModel: CompanyListViewModel
+    viewModel: CompanySwipeViewModel
 ) {
     val company = state.companies[state.currentIndex]
     val nextCompany = state.companies.getOrNull(state.currentIndex + 1)
@@ -269,7 +271,7 @@ private fun SwipeActionButtons(
             icon = Icons.Outlined.Cancel,
             contentDescription = "Dislike",
             highlighted = swipeHint == SwipeHint.DISLIKE,
-            highlightColor = MaterialTheme.colorScheme.error,
+            highlightColor = DislikeRed,
             onClick = onDislike
         )
         SwipeActionButton(
@@ -283,11 +285,13 @@ private fun SwipeActionButtons(
             icon = Icons.Outlined.CheckCircle,
             contentDescription = "Like",
             highlighted = swipeHint == SwipeHint.LIKE,
-            highlightColor = MaterialTheme.colorScheme.primary,
+            highlightColor = LikeGreen,
             onClick = onLike
         )
     }
 }
+
+
 
 @Composable
 private fun SwipeActionButton(
@@ -303,20 +307,23 @@ private fun SwipeActionButton(
         animationSpec = tween(150)
     )
 
-    val iconColor = if (highlighted) highlightColor else MaterialTheme.colorScheme.onSurface
-
     Surface(
         onClick = onClick,
         modifier = Modifier.size(size).scale(scale),
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surface,
-        shadowElevation = 4.dp
+        shadowElevation = 4.dp,
+        border = if (highlighted) {
+            androidx.compose.foundation.BorderStroke(3.dp, highlightColor)
+        } else {
+            null
+        }
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = icon,
                 contentDescription = contentDescription,
-                tint = iconColor,
+                tint = highlightColor,
                 modifier = Modifier.size(size * 0.6f)
             )
         }

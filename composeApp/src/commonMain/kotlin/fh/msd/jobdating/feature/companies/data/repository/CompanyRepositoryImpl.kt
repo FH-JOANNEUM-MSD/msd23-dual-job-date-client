@@ -1,34 +1,53 @@
 package fh.msd.jobdating.feature.companies.data.repository
 
+import fh.msd.jobdating.core.session.UserSession
 import fh.msd.jobdating.feature.companies.data.service.CompanyService
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.domain.model.VoteType
 
 class CompanyRepositoryImpl(
-    private val service: CompanyService
+    private val service: CompanyService,
+    private val userSession: UserSession
 ) : CompanyRepository {
 
-    private var cachedCompanies: List<Company>? = null
-
     override suspend fun getActiveCompanies(): List<Company> {
-        cachedCompanies?.let { return it }
+        val companiesDto = service.getActiveCompanies()
+        val studentId = userSession.getStudentId()
 
-        val companies = service.getActiveCompanies().map {
+        val preferencesDto = if (studentId != null) {
+            try {
+                service.getMyPreferences(studentId)
+            } catch (e: Exception) {
+                emptyList()
+            }
+        } else {
+            emptyList()
+        }
+
+        return companiesDto.map { dto ->
+            val pref = preferencesDto.find { it.companyId == dto.id }
+            val vote = when (pref?.preferenceType) {
+                "like" -> VoteType.LIKE
+                "dislike" -> VoteType.DISLIKE
+                "neutral" -> VoteType.NEUTRAL
+                else -> null
+            }
+
             Company(
-                id = it.id,
-                userId = it.userId,
-                name = it.name,
-                description = it.description,
-                website = it.website,
-                logoUrl = it.logoUrl,
-                active = it.active,
-                lastUpdated = it.lastUpdated
+                id = dto.id,
+                userId = dto.userId,
+                name = dto.name,
+                description = dto.description,
+                website = dto.website,
+                logoUrl = dto.logoUrl,
+                active = dto.active,
+                lastUpdated = dto.lastUpdated,
+                vote = vote
             )
         }
-        cachedCompanies = companies
-        return companies
     }
 
-    override suspend fun submitVote(companyId: Int, vote: VoteType) =
+    override suspend fun submitVote(companyId: Int, vote: VoteType) {
         service.submitVote(companyId, vote)
+    }
 }

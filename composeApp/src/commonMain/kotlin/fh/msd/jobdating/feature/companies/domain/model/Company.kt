@@ -9,5 +9,5 @@ data class Company(
     val logoUrl: String,
     val active: Boolean,
     val lastUpdated: String,
-    val vote: VoteType = VoteType.NEUTRAL
+    val vote: VoteType? = null  // null = not voted yet
 )

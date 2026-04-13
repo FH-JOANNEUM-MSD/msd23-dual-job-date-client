@@ -1,8 +1,8 @@
 package fh.msd.jobdating.feature.auth.data.service
 
 import fh.msd.jobdating.BuildKonfig
+import fh.msd.jobdating.core.domain.model.User
 import fh.msd.jobdating.feature.auth.domain.dto.LoginRequestDto
-import fh.msd.jobdating.feature.auth.domain.dto.MeResponseDto
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
@@ -32,7 +32,7 @@ class AuthServiceImpl(
         supabaseClient.auth.signOut()
     }
 
-    override suspend fun getMe(token: String): MeResponseDto {
+    override suspend fun getMe(token: String): User {
         return httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/me") {
             header(HttpHeaders.Authorization, "Bearer $token")
             accept(ContentType.Application.Json)
@@ -40,7 +40,6 @@ class AuthServiceImpl(
     }
 
     override suspend fun tryRestoreSession(): String? {
-        supabaseClient.auth.loadFromStorage()
-        return supabaseClient.auth.currentSessionOrNull()?.accessToken
+        return null
     }
 }
