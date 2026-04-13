@@ -1,5 +1,6 @@
 package fh.msd.jobdating.feature.auth.data.repository
 
+import fh.msd.jobdating.core.domain.model.User
 import fh.msd.jobdating.core.session.UserSession
 import fh.msd.jobdating.feature.auth.data.service.AuthService
 import fh.msd.jobdating.feature.auth.domain.dto.LoginRequestDto
@@ -18,5 +19,13 @@ class AuthRepositoryImpl(
     override suspend fun logout() {
         authService.logout()
         userSession.clear()
+    }
+
+    override suspend fun changePassword(newPassword: String) {
+        authService.changePassword(newPassword)
+    }
+
+    override fun getCurrentUserEmail(): String? {
+        return authService.getCurrentUserEmail()
     }
 }

@@ -71,7 +71,7 @@ fun ProfileScreen(
                             modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            ProfileInfoRow(label = "User ID", value = state.userId)
+                            ProfileInfoRow(label = "Email", value = state.email)
                             ProfileInfoRow(label = "Student ID", value = state.studentId)
                             ProfileInfoRow(label = "Role", value = state.role)
                         }

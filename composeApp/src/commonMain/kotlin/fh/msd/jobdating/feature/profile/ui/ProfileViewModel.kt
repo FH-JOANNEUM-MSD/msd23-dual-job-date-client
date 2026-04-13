@@ -4,9 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fh.msd.jobdating.core.session.UserSession
 import fh.msd.jobdating.feature.auth.data.repository.AuthRepository
-import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.builtin.Email
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,8 +17,7 @@ sealed class ProfileNavigation {
 
 class ProfileViewModel(
     private val userSession: UserSession,
-    private val authRepository: AuthRepository,
-    private val supabaseClient: SupabaseClient
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -52,9 +48,12 @@ class ProfileViewModel(
 
     private fun loadProfile() {
         val user = userSession.getUser()
+        val email = authRepository.getCurrentUserEmail()
+
         if (user != null) {
             _state.update {
                 it.copy(
+                    email = email ?: user.userId,
                     userId = user.userId,
                     studentId = user.studentId.toString(),
                     role = user.role.replaceFirstChar { it.uppercase() },
@@ -107,9 +106,7 @@ class ProfileViewModel(
             }
 
             try {
-                supabaseClient.auth.updateUser {
-                    password = currentState.newPassword
-                }
+                authRepository.changePassword(currentState.newPassword)
 
                 _state.update {
                     it.copy(

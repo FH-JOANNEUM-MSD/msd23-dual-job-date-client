@@ -42,4 +42,14 @@ class AuthServiceImpl(
     override suspend fun tryRestoreSession(): String? {
         return null
     }
+
+    override suspend fun changePassword(newPassword: String) {
+        supabaseClient.auth.updateUser {
+            password = newPassword
+        }
+    }
+
+    override fun getCurrentUserEmail(): String? {
+        return supabaseClient.auth.currentUserOrNull()?.email
+    }
 }

@@ -8,4 +8,6 @@ interface AuthService {
     suspend fun logout()
     suspend fun getMe(token: String): User
     suspend fun tryRestoreSession(): String?
+    suspend fun changePassword(newPassword: String)
+    fun getCurrentUserEmail(): String?
 }

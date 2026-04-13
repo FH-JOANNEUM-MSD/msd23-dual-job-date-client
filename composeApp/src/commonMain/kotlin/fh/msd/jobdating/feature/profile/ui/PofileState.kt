@@ -1,6 +1,7 @@
 package fh.msd.jobdating.feature.profile.ui
 
 data class ProfileState(
+    val email: String = "",
     val userId: String = "",
     val studentId: String = "",
     val role: String = "",
