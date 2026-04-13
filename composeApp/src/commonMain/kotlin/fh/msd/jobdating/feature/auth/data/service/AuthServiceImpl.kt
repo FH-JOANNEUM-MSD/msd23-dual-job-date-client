@@ -24,8 +24,8 @@ class AuthServiceImpl(
             email = request.email
             password = request.password
         }
-        return supabaseClient.auth.currentSessionOrNull()?.accessToken
-            ?: error("Login succeeded but no session found")
+        val token = supabaseClient.auth.currentSessionOrNull()?.accessToken
+        return token ?: error("Login succeeded but no session found")
     }
 
     override suspend fun logout() {
@@ -40,7 +40,8 @@ class AuthServiceImpl(
     }
 
     override suspend fun tryRestoreSession(): String? {
-        return null
+        val token = supabaseClient.auth.currentSessionOrNull()?.accessToken
+        return token
     }
 
     override suspend fun changePassword(newPassword: String) {

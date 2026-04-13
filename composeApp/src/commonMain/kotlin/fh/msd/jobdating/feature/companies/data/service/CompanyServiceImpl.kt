@@ -26,8 +26,8 @@ class CompanyServiceImpl(
 ) : CompanyService {
 
     private fun getAccessToken(): String {
-        return supabaseClient.auth.currentSessionOrNull()?.accessToken
-            ?: error("No active session")
+        val token = supabaseClient.auth.currentSessionOrNull()?.accessToken
+        return token ?: error("No active session")
     }
 
     override suspend fun getActiveCompanies(): List<CompanyDto> {
@@ -58,8 +58,6 @@ class CompanyServiceImpl(
             @SerialName("preference_type") val preferenceType: String
         )
 
-
-
         val response = httpClient.post("${BuildKonfig.BACKEND_BASE_URL}/api/companies/$companyId/vote") {
             header(HttpHeaders.Authorization, "Bearer ${getAccessToken()}")
             contentType(ContentType.Application.Json)
@@ -67,16 +65,13 @@ class CompanyServiceImpl(
             setBody(VoteRequest(vote.text))
         }
 
-        println("[CompanyService] Response status: ${response.status}")
 
         if (response.status.value !in 200..299) {
             val errorBody = response.bodyAsText()
-            println("[CompanyService] Error response: $errorBody")
             error("Vote failed (${response.status.value}): $errorBody")
         }
 
         val voteResponse: VoteResponse = response.body()
-        println("[CompanyService] Vote successful, student_id: ${voteResponse.studentId}")
         return voteResponse.studentId
     }
 }

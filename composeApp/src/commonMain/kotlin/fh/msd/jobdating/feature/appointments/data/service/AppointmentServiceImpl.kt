@@ -24,8 +24,8 @@ class AppointmentServiceImpl(
 ) : AppointmentService {
 
     private fun getAccessToken(): String {
-        return supabaseClient.auth.currentSessionOrNull()?.accessToken
-            ?: error("No active session")
+        val token = supabaseClient.auth.currentSessionOrNull()?.accessToken
+        return token ?: error("No active session")
     }
 
     override suspend fun getActiveEvent(): EventDto {
@@ -37,7 +37,8 @@ class AppointmentServiceImpl(
     }
 
     override suspend fun getMyAppointments(): List<AppointmentDto> {
-        val studentId = userSession.getStudentId() ?: error("No student ID available")
+        val studentId = userSession.getStudentId()
+
         val token = getAccessToken()
 
         val event = getActiveEvent()
@@ -78,8 +79,5 @@ class AppointmentServiceImpl(
                     timeSlot = timeSlot
                 )
             }
-
-
-
     }
 }

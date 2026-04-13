@@ -30,14 +30,14 @@ val appModule = module {
     // --- network ---
     single { HttpClientFactory.create() }
 
-    single {
+    single(createdAtStart = true) {
         createSupabaseClient(
             supabaseUrl = BuildKonfig.SUPABASE_URL,
             supabaseKey = BuildKonfig.SUPABASE_ANON_KEY
         ) {
             install(Auth) {
-                autoLoadFromStorage = false
-                autoSaveToStorage = false
+                autoLoadFromStorage = true
+                autoSaveToStorage = true
             }
         }
     }
