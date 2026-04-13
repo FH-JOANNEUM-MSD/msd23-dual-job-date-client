@@ -66,6 +66,7 @@ kotlin {
             implementation(libs.auth.kt)
             implementation(libs.storage.kt)
             implementation(libs.realtime.kt)
+            implementation(libs.multiplatform.settings)
         }
 
         iosMain.dependencies {
