@@ -18,16 +18,23 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.nav_appointments
+import dualjobdating.composeapp.generated.resources.nav_companies
+import dualjobdating.composeapp.generated.resources.nav_profile
+import dualjobdating.composeapp.generated.resources.nav_swipe
 
 sealed class BottomNavItem(
     val screen: Screen,
-    val title: String,
+    val titleRes: StringResource,
     val icon: ImageVector
 ) {
-    data object CompanySwipe : BottomNavItem(Screen.CompanySwipe, "Swipe", Icons.Default.SwapHoriz)
-    data object CompanyList : BottomNavItem(Screen.CompanyList, "Companies", Icons.AutoMirrored.Filled.List)
-    data object Appointments : BottomNavItem(Screen.Appointments, "Appointments", Icons.Default.DateRange)
-    data object Profile : BottomNavItem(Screen.Profile, "Profile", Icons.Default.Person)
+    data object CompanySwipe : BottomNavItem(Screen.CompanySwipe, Res.string.nav_swipe, Icons.Default.SwapHoriz)
+    data object CompanyList : BottomNavItem(Screen.CompanyList, Res.string.nav_companies, Icons.AutoMirrored.Filled.List)
+    data object Appointments : BottomNavItem(Screen.Appointments, Res.string.nav_appointments, Icons.Default.DateRange)
+    data object Profile : BottomNavItem(Screen.Profile, Res.string.nav_profile, Icons.Default.Person)
 }
 
 @Composable
@@ -52,8 +59,8 @@ fun BottomNavigationBar(navController: NavController) {
             } == true
 
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.title) },
-                label = { Text(item.title) },
+                icon = { Icon(item.icon, contentDescription = stringResource(item.titleRes)) },
+                label = { Text(stringResource(item.titleRes)) },
                 selected = isSelected,
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,

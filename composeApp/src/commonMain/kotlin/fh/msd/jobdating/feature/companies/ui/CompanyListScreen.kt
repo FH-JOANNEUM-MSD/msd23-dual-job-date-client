@@ -22,7 +22,13 @@ import fh.msd.jobdating.core.ui.theme.LikeGreen
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.domain.model.VoteType
 import fh.msd.jobdating.feature.companies.ui.components.CompanyDetailDialog
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.companies_no_available
+import dualjobdating.composeapp.generated.resources.companies_not_voted
+import dualjobdating.composeapp.generated.resources.companies_voted
+import dualjobdating.composeapp.generated.resources.error_prefix
 
 
 @Composable
@@ -44,10 +50,10 @@ fun CompanyListScreen(
         when {
             state.isLoading -> CircularProgressIndicator()
 
-            state.error != null -> Text("Error: ${state.error}")
+            state.error != null -> Text(stringResource(Res.string.error_prefix, state.error ?: ""))
 
             state.companies.isEmpty() -> Text(
-                text = "No companies available",
+                text = stringResource(Res.string.companies_no_available),
                 style = MaterialTheme.typography.bodyLarge
             )
 
@@ -65,7 +71,7 @@ fun CompanyListScreen(
                 if (notVotedCompanies.isNotEmpty()) {
                     item {
                         Text(
-                            text = "Not Voted",
+                            text = stringResource(Res.string.companies_not_voted),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -84,7 +90,7 @@ fun CompanyListScreen(
                 if (votedCompanies.isNotEmpty()) {
                     item {
                         Text(
-                            text = "Voted",
+                            text = stringResource(Res.string.companies_voted),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,

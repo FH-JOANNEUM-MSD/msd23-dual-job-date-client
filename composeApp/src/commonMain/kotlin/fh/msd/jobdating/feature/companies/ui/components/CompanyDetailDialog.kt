@@ -50,6 +50,13 @@ import fh.msd.jobdating.core.ui.theme.LikeGreen
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.domain.model.VoteType
 import fh.msd.jobdating.feature.companies.ui.NeutralOrange
+import org.jetbrains.compose.resources.stringResource
+import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.company_detail_close
+import dualjobdating.composeapp.generated.resources.company_detail_dislike
+import dualjobdating.composeapp.generated.resources.company_detail_like
+import dualjobdating.composeapp.generated.resources.company_detail_neutral
+import dualjobdating.composeapp.generated.resources.logo_not_available
 
 @Composable
 fun CompanyDetailDialog(
@@ -96,7 +103,7 @@ fun CompanyDetailDialog(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Business,
-                                    contentDescription = "Logo not available",
+                                    contentDescription = stringResource(Res.string.logo_not_available),
                                     modifier = Modifier.size(104.dp),
                                     tint = MaterialTheme.colorScheme.onSurface
                                 )
@@ -132,7 +139,7 @@ fun CompanyDetailDialog(
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "Close",
+                                contentDescription = stringResource(Res.string.company_detail_close),
                                 modifier = Modifier.size(24.dp),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
@@ -189,19 +196,19 @@ fun CompanyDetailDialog(
             ) {
                 DetailActionButton(
                     icon = Icons.Outlined.Cancel,
-                    contentDescription = "Dislike",
+                    contentDescription = stringResource(Res.string.company_detail_dislike),
                     color = DislikeRed,
                     onClick = { onVote(VoteType.DISLIKE) }
                 )
                 DetailActionButton(
                     icon = Icons.Outlined.RemoveCircleOutline,
-                    contentDescription = "Neutral",
+                    contentDescription = stringResource(Res.string.company_detail_neutral),
                     color = NeutralOrange,
                     onClick = { onVote(VoteType.NEUTRAL) }
                 )
                 DetailActionButton(
                     icon = Icons.Outlined.CheckCircle,
-                    contentDescription = "Like",
+                    contentDescription = stringResource(Res.string.company_detail_like),
                     color = LikeGreen,
                     onClick = { onVote(VoteType.LIKE) }
                 )

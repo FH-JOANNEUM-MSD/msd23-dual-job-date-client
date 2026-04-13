@@ -19,7 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.RemoveCircle
+import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -47,8 +47,9 @@ import coil3.size.Scale
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.ui.SwipeHint
 import androidx.compose.foundation.background
-import androidx.compose.material.icons.outlined.DoNotDisturb
-import androidx.compose.material.icons.outlined.RemoveCircleOutline
+import org.jetbrains.compose.resources.stringResource
+import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.logo_not_available
 
 @Composable
 fun CompanyCard(
@@ -123,7 +124,7 @@ fun CompanyCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Business,
-                                contentDescription = "Logo not available",
+                                contentDescription = stringResource(Res.string.logo_not_available),
                                 modifier = Modifier.size(104.dp),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )

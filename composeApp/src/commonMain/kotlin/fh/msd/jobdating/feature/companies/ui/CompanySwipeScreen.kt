@@ -35,6 +35,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.companies_all_voted
+import dualjobdating.composeapp.generated.resources.companies_check_appointments
+import dualjobdating.composeapp.generated.resources.companies_no_available
+import dualjobdating.composeapp.generated.resources.company_detail_dislike
+import dualjobdating.composeapp.generated.resources.company_detail_like
+import dualjobdating.composeapp.generated.resources.company_detail_neutral
+import dualjobdating.composeapp.generated.resources.error_prefix
 import fh.msd.jobdating.core.ui.theme.DislikeRed
 import fh.msd.jobdating.core.ui.theme.LikeGreen
 import fh.msd.jobdating.feature.companies.domain.model.Company
@@ -44,8 +52,10 @@ import fh.msd.jobdating.feature.companies.ui.components.CompanyDetailDialog
 import fh.msd.jobdating.feature.companies.ui.components.ConfettiAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.abs
+
 
 enum class SwipeHint { NONE, LIKE, DISLIKE, NEUTRAL }
 
@@ -64,9 +74,9 @@ fun CompanySwipeScreen(
     ) {
         when {
             state.isLoading -> CircularProgressIndicator()
-            state.error != null -> Text("Error: ${state.error}")
+            state.error != null -> Text(stringResource(Res.string.error_prefix, state.error ?: ""))
             state.isDone -> DoneCard(onNavigateToAppointments)
-            state.companies.isEmpty() -> Text("No companies available!", style = MaterialTheme.typography.headlineMedium)
+            state.companies.isEmpty() -> Text(stringResource(Res.string.companies_no_available), style = MaterialTheme.typography.headlineMedium)
             else -> SwipeContent(state, viewModel)
         }
     }
@@ -107,21 +117,21 @@ private fun DoneCard(onNavigateToAppointments: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "All companies voted!",
+                    text = stringResource(Res.string.companies_all_voted),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
-                    text = "Check your appointments",
+                    text = stringResource(Res.string.companies_check_appointments),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Icon(
                     imageVector = Icons.Default.DateRange,
-                    contentDescription = "Go to appointments",
+                    contentDescription = null,
                     modifier = Modifier.size(48.dp),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
@@ -343,21 +353,21 @@ private fun SwipeActionButtons(
     ) {
         SwipeActionButton(
             icon = Icons.Outlined.Cancel,
-            contentDescription = "Dislike",
+            contentDescription = stringResource(Res.string.company_detail_dislike),
             highlighted = swipeHint == SwipeHint.DISLIKE,
             highlightColor = DislikeRed,
             onClick = onDislike
         )
         SwipeActionButton(
             icon = Icons.Outlined.RemoveCircleOutline,
-            contentDescription = "Neutral",
+            contentDescription = stringResource(Res.string.company_detail_neutral),
             highlighted = swipeHint == SwipeHint.NEUTRAL,
             highlightColor = NeutralOrange,
             onClick = onNeutral
         )
         SwipeActionButton(
             icon = Icons.Outlined.CheckCircle,
-            contentDescription = "Like",
+            contentDescription = stringResource(Res.string.company_detail_like),
             highlighted = swipeHint == SwipeHint.LIKE,
             highlightColor = LikeGreen,
             onClick = onLike

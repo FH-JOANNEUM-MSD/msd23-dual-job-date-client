@@ -7,6 +7,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.app_name
+import dualjobdating.composeapp.generated.resources.login_button
+import dualjobdating.composeapp.generated.resources.login_email
+import dualjobdating.composeapp.generated.resources.login_password
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -40,7 +46,7 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Dual Job Dating",
+                    text = stringResource(Res.string.app_name),
                     style = MaterialTheme.typography.headlineLarge
                 )
 
@@ -49,7 +55,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = state.email,
                     onValueChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
-                    label = { Text("Email") },
+                    label = { Text(stringResource(Res.string.login_email)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -59,7 +65,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = state.password,
                     onValueChange = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) },
-                    label = { Text("Password") },
+                    label = { Text(stringResource(Res.string.login_password)) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth()
@@ -82,7 +88,7 @@ fun LoginScreen(
                     )
                 ) {
                     if (state.isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                    else Text("Login", style = MaterialTheme.typography.titleMedium)
+                    else Text(stringResource(Res.string.login_button), style = MaterialTheme.typography.titleMedium)
                 }
             }
         }
