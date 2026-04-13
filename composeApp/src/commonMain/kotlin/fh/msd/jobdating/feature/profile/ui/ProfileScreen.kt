@@ -16,7 +16,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.profile_change_password_button
+import dualjobdating.composeapp.generated.resources.profile_confirm_password
+import dualjobdating.composeapp.generated.resources.profile_current_password
+import dualjobdating.composeapp.generated.resources.profile_data_privacy
+import dualjobdating.composeapp.generated.resources.profile_email
+import dualjobdating.composeapp.generated.resources.profile_impressum
+import dualjobdating.composeapp.generated.resources.profile_logout
+import dualjobdating.composeapp.generated.resources.profile_new_password
+import dualjobdating.composeapp.generated.resources.profile_role
+import dualjobdating.composeapp.generated.resources.profile_section_legal
+import dualjobdating.composeapp.generated.resources.profile_section_password
+import dualjobdating.composeapp.generated.resources.profile_section_personal
+import dualjobdating.composeapp.generated.resources.profile_student_id
 
 @Composable
 fun ProfileScreen(
@@ -62,7 +77,7 @@ fun ProfileScreen(
             ) {
                 Column {
                     SectionHeader(
-                        title = "Personal Information",
+                        title = stringResource(Res.string.profile_section_personal),
                         expanded = personalExpanded,
                         onToggle = { personalExpanded = !personalExpanded }
                     )
@@ -71,16 +86,16 @@ fun ProfileScreen(
                             modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            ProfileInfoRow(label = "Email", value = state.email)
-                            ProfileInfoRow(label = "Student ID", value = state.studentId)
-                            ProfileInfoRow(label = "Role", value = state.role)
+                            ProfileInfoRow(label = stringResource(Res.string.profile_email), value = state.email)
+                            ProfileInfoRow(label = stringResource(Res.string.profile_student_id), value = state.studentId)
+                            ProfileInfoRow(label = stringResource(Res.string.profile_role), value = state.role)
                         }
                     }
 
                     Divider()
 
                     SectionHeader(
-                        title = "Change Password",
+                        title = stringResource(Res.string.profile_section_password),
                         expanded = passwordExpanded,
                         onToggle = { passwordExpanded = !passwordExpanded }
                     )
@@ -92,21 +107,21 @@ fun ProfileScreen(
                             OutlinedTextField(
                                 value = state.currentPassword,
                                 onValueChange = { viewModel.onEvent(ProfileEvent.CurrentPasswordChanged(it)) },
-                                label = { Text("Current Password") },
+                                label = { Text(stringResource(Res.string.profile_current_password)) },
                                 visualTransformation = PasswordVisualTransformation(),
                                 modifier = Modifier.fillMaxWidth()
                             )
                             OutlinedTextField(
                                 value = state.newPassword,
                                 onValueChange = { viewModel.onEvent(ProfileEvent.NewPasswordChanged(it)) },
-                                label = { Text("New Password") },
+                                label = { Text(stringResource(Res.string.profile_new_password)) },
                                 visualTransformation = PasswordVisualTransformation(),
                                 modifier = Modifier.fillMaxWidth()
                             )
                             OutlinedTextField(
                                 value = state.confirmPassword,
                                 onValueChange = { viewModel.onEvent(ProfileEvent.ConfirmPasswordChanged(it)) },
-                                label = { Text("Confirm Password") },
+                                label = { Text(stringResource(Res.string.profile_confirm_password)) },
                                 visualTransformation = PasswordVisualTransformation(),
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -136,7 +151,7 @@ fun ProfileScreen(
                                         color = MaterialTheme.colorScheme.onPrimary
                                     )
                                 } else {
-                                    Text("Change Password", style = MaterialTheme.typography.titleMedium)
+                                    Text(stringResource(Res.string.profile_change_password_button), style = MaterialTheme.typography.titleMedium)
                                 }
                             }
                         }
@@ -145,7 +160,7 @@ fun ProfileScreen(
                     Divider()
 
                     SectionHeader(
-                        title = "Legal",
+                        title = stringResource(Res.string.profile_section_legal),
                         expanded = legalExpanded,
                         onToggle = { legalExpanded = !legalExpanded }
                     )
@@ -157,13 +172,13 @@ fun ProfileScreen(
                                 onClick = { },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text("Impressum")
+                                Text(stringResource(Res.string.profile_impressum))
                             }
                             TextButton(
                                 onClick = { },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text("Data Privacy")
+                                Text(stringResource(Res.string.profile_data_privacy))
                             }
                         }
                     }
@@ -179,13 +194,13 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Logout",
+                            text = stringResource(Res.string.profile_logout),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.error
                         )
                         Icon(
                             imageVector = Icons.Default.Logout,
-                            contentDescription = "Logout",
+                            contentDescription = stringResource(Res.string.profile_logout),
                             tint = MaterialTheme.colorScheme.error
                         )
                     }

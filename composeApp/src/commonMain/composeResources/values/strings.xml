@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">Dual Job Dating</string>
+
+    <!-- Login -->
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
+    <string name="login_button">Login</string>
+
+    <!-- Companies Swipe -->
+    <string name="companies_no_available">No companies available</string>
+    <string name="companies_all_voted">All companies voted!</string>
+    <string name="companies_check_appointments">Check your appointments</string>
+
+    <!-- Companies List -->
+    <string name="companies_not_voted">Not Voted</string>
+    <string name="companies_voted">Voted</string>
+
+    <!-- Company Detail Dialog -->
+    <string name="company_detail_close">Close</string>
+    <string name="company_detail_dislike">Dislike</string>
+    <string name="company_detail_neutral">Neutral</string>
+    <string name="company_detail_like">Like</string>
+
+    <!-- Appointments -->
+    <string name="appointments_no_appointments">No appointments yet.</string>
+    <string name="appointments_default_event_name">Job Dating Event</string>
+    <string name="appointments_your_appointments">Your Appointments</string>
+
+    <!-- Profile -->
+    <string name="profile_section_personal">Personal Information</string>
+    <string name="profile_section_password">Change Password</string>
+    <string name="profile_section_legal">Legal</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_student_id">Student ID</string>
+    <string name="profile_role">Role</string>
+    <string name="profile_current_password">Current Password</string>
+    <string name="profile_new_password">New Password</string>
+    <string name="profile_confirm_password">Confirm Password</string>
+    <string name="profile_change_password_button">Change Password</string>
+    <string name="profile_impressum">Impressum</string>
+    <string name="profile_data_privacy">Data Privacy</string>
+    <string name="profile_logout">Logout</string>
+
+    <!-- Navigation -->
+    <string name="nav_swipe">Swipe</string>
+    <string name="nav_companies">Companies</string>
+    <string name="nav_appointments">Appointments</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Common -->
+    <string name="error_prefix">Error: %s</string>
+    <string name="logo_not_available">Logo not available</string>
+</resources>

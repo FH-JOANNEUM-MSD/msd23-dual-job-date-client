@@ -13,7 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fh.msd.jobdating.feature.companies.ui.components.CompanyDetailDialog
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.appointments_default_event_name
+import dualjobdating.composeapp.generated.resources.appointments_no_appointments
+import dualjobdating.composeapp.generated.resources.appointments_your_appointments
+import dualjobdating.composeapp.generated.resources.error_prefix
 
 @Composable
 fun AppointmentScreen(
@@ -32,10 +38,10 @@ fun AppointmentScreen(
         when {
             state.isLoading -> CircularProgressIndicator()
 
-            state.error != null -> Text("Error: ${state.error}")
+            state.error != null -> Text(stringResource(Res.string.error_prefix, state.error ?: ""))
 
             state.appointments.isEmpty() -> Text(
-                text = "No appointments yet.",
+                text = stringResource(Res.string.appointments_no_appointments),
                 style = MaterialTheme.typography.bodyLarge
             )
 
@@ -48,7 +54,7 @@ fun AppointmentScreen(
 
                 item {
                     EventCard(
-                        eventName = state.eventName ?: "Job Dating Event",
+                        eventName = state.eventName ?: stringResource(Res.string.appointments_default_event_name),
                         eventDate = formatAustrianDate(state.eventDate ?: ""),
                         eventLocation = state.eventLocation ?: "",
                         eventDescription = state.eventDescription ?: ""
@@ -59,7 +65,7 @@ fun AppointmentScreen(
 
                 item {
                     Text(
-                        text = "Your Appointments",
+                        text = stringResource(Res.string.appointments_your_appointments),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -193,8 +199,6 @@ private fun EventCard(
 private fun formatAustrianDate(isoDate: String): String {
     if (isoDate.isBlank()) return ""
 
-    // Input: "2026-04-24"
-    // Output: "24.04.2026"
     val parts = isoDate.split("-")
     if (parts.size != 3) return isoDate
 
@@ -202,8 +206,6 @@ private fun formatAustrianDate(isoDate: String): String {
 }
 
 private fun formatAppointmentTime(timeSlot: String): String {
-    // Input: "2026-04-24 • 09:00 - 09:15"
-    // Output: "24.04.2026 • 09:00 - 09:15"
     val parts = timeSlot.split(" • ")
     if (parts.size != 2) return timeSlot
 

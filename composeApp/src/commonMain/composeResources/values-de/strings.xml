@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">Dual Job Dating</string>
+
+    <!-- Login -->
+    <string name="login_email">E-Mail</string>
+    <string name="login_password">Passwort</string>
+    <string name="login_button">Anmelden</string>
+
+    <!-- Companies Swipe -->
+    <string name="companies_no_available">Keine Unternehmen verfügbar</string>
+    <string name="companies_all_voted">Alle Unternehmen bewertet!</string>
+    <string name="companies_check_appointments">Sieh dir deine Termine an</string>
+
+    <!-- Companies List -->
+    <string name="companies_not_voted">Nicht bewertet</string>
+    <string name="companies_voted">Bewertet</string>
+
+    <!-- Company Detail Dialog -->
+    <string name="company_detail_close">Schließen</string>
+    <string name="company_detail_dislike">Gefällt mir nicht</string>
+    <string name="company_detail_neutral">Neutral</string>
+    <string name="company_detail_like">Gefällt mir</string>
+
+    <!-- Appointments -->
+    <string name="appointments_no_appointments">Noch keine Termine.</string>
+    <string name="appointments_default_event_name">Job Dating Event</string>
+    <string name="appointments_your_appointments">Deine Termine</string>
+
+    <!-- Profile -->
+    <string name="profile_section_personal">Persönliche Informationen</string>
+    <string name="profile_section_password">Passwort ändern</string>
+    <string name="profile_section_legal">Rechtliches</string>
+    <string name="profile_email">E-Mail</string>
+    <string name="profile_student_id">Matrikelnummer</string>
+    <string name="profile_role">Rolle</string>
+    <string name="profile_current_password">Aktuelles Passwort</string>
+    <string name="profile_new_password">Neues Passwort</string>
+    <string name="profile_confirm_password">Passwort bestätigen</string>
+    <string name="profile_change_password_button">Passwort ändern</string>
+    <string name="profile_impressum">Impressum</string>
+    <string name="profile_data_privacy">Datenschutz</string>
+    <string name="profile_logout">Abmelden</string>
+
+    <!-- Navigation -->
+    <string name="nav_swipe">Swipen</string>
+    <string name="nav_companies">Unternehmen</string>
+    <string name="nav_appointments">Termine</string>
+    <string name="nav_profile">Profil</string>
+
+    <!-- Common -->
+    <string name="error_prefix">Fehler: %s</string>
+    <string name="logo_not_available">Logo nicht verfügbar</string>
+</resources>
