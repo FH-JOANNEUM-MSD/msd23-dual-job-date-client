@@ -1,10 +1,15 @@
 package fh.msd.jobdating.feature.auth.ui
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import dualjobdating.composeapp.generated.resources.Res
@@ -12,8 +17,15 @@ import dualjobdating.composeapp.generated.resources.app_name
 import dualjobdating.composeapp.generated.resources.login_button
 import dualjobdating.composeapp.generated.resources.login_email
 import dualjobdating.composeapp.generated.resources.login_password
+import dualjobdating.composeapp.generated.resources.logo
+import dualjobdating.composeapp.generated.resources.logo_dark
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun LoginScreen(
@@ -21,6 +33,7 @@ fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val isDarkTheme = isSystemInDarkTheme()
 
     LaunchedEffect(Unit) {
         viewModel.navigation.collect { nav ->
@@ -45,6 +58,36 @@ fun LoginScreen(
                 modifier = Modifier.padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                if (isSystemInDarkTheme()) {
+                    Image(
+                        painter = painterResource(Res.drawable.logo_dark),
+                        contentDescription = "Logo",
+                        modifier = Modifier
+                            .size(120.dp)
+                            .drawBehind {
+                                val gradient = Brush.radialGradient(
+                                    colors = listOf(
+                                        Color(0xFF444444),
+                                        Color(0xFF222222)
+                                    ),
+                                    center = center,
+                                    radius = size.width / 2
+                                )
+                                drawCircle(brush = gradient)
+                            }
+                            .padding(8.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF2A2A2A))
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(Res.drawable.logo),
+                        contentDescription = "Logo",
+                        modifier = Modifier.size(120.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Text(
                     text = stringResource(Res.string.app_name),
                     style = MaterialTheme.typography.headlineLarge

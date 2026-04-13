@@ -36,6 +36,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation("androidx.core:core-splashscreen:1.0.1")
         }
 
         commonMain.dependencies {
