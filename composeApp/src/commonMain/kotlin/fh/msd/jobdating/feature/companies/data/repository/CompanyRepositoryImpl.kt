@@ -24,27 +24,33 @@ class CompanyRepositoryImpl(
             emptyList()
         }
 
-        return companiesDto.map { dto ->
-            val pref = preferencesDto.find { it.companyId == dto.id }
-            val vote = when (pref?.preferenceType) {
-                "like" -> VoteType.LIKE
-                "dislike" -> VoteType.DISLIKE
-                "neutral" -> VoteType.NEUTRAL
-                else -> null
+        return companiesDto
+            .filter { dto ->
+                dto.description.isNotBlank() &&
+                        dto.website.isNotBlank() &&
+                        dto.logoUrl.isNotBlank()
             }
+            .map { dto ->
+                val pref = preferencesDto.find { it.companyId == dto.id }
+                val vote = when (pref?.preferenceType) {
+                    "like" -> VoteType.LIKE
+                    "dislike" -> VoteType.DISLIKE
+                    "neutral" -> VoteType.NEUTRAL
+                    else -> null
+                }
 
-            Company(
-                id = dto.id,
-                userId = dto.userId,
-                name = dto.name,
-                description = dto.description,
-                website = dto.website,
-                logoUrl = dto.logoUrl,
-                active = dto.active,
-                lastUpdated = dto.lastUpdated,
-                vote = vote
-            )
-        }
+                Company(
+                    id = dto.id,
+                    userId = dto.userId,
+                    name = dto.name,
+                    description = dto.description,
+                    website = dto.website,
+                    logoUrl = dto.logoUrl,
+                    active = dto.active,
+                    lastUpdated = dto.lastUpdated,
+                    vote = vote
+                )
+            }
     }
 
     override suspend fun submitVote(companyId: Int, vote: VoteType) {

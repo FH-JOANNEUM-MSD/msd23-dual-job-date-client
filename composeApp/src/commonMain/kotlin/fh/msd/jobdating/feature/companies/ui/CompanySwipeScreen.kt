@@ -1,17 +1,26 @@
 package fh.msd.jobdating.feature.companies.ui
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
+import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,6 +41,8 @@ import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.domain.model.VoteType
 import fh.msd.jobdating.feature.companies.ui.components.CompanyCard
 import fh.msd.jobdating.feature.companies.ui.components.CompanyDetailDialog
+import fh.msd.jobdating.feature.companies.ui.components.ConfettiAnimation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.abs
@@ -41,6 +53,7 @@ val NeutralOrange = Color(0xFFF97316)
 
 @Composable
 fun CompanySwipeScreen(
+    onNavigateToAppointments: () -> Unit,
     viewModel: CompanySwipeViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -52,12 +65,73 @@ fun CompanySwipeScreen(
         when {
             state.isLoading -> CircularProgressIndicator()
             state.error != null -> Text("Error: ${state.error}")
-            state.isDone -> Text("All companies voted!", style = MaterialTheme.typography.headlineMedium)
+            state.isDone -> DoneCard(onNavigateToAppointments)
             state.companies.isEmpty() -> Text("No companies available!", style = MaterialTheme.typography.headlineMedium)
             else -> SwipeContent(state, viewModel)
         }
     }
 }
+
+
+@Composable
+private fun DoneCard(onNavigateToAppointments: () -> Unit) {
+    var showConfetti by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        delay(3000)
+        showConfetti = false
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (showConfetti) {
+            ConfettiAnimation()
+        }
+
+        Card(
+            onClick = onNavigateToAppointments,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp)
+                .align(Alignment.Center),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = "All companies voted!",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Text(
+                    text = "Check your appointments",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = "Go to appointments",
+                    modifier = Modifier.size(48.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+    }
+}
+
+
+
 
 @Composable
 private fun SwipeContent(

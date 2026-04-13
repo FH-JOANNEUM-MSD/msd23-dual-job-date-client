@@ -4,9 +4,9 @@ import fh.msd.jobdating.BuildKonfig
 import fh.msd.jobdating.core.network.HttpClientFactory
 import fh.msd.jobdating.core.session.UserSession
 import fh.msd.jobdating.feature.appointments.data.repository.AppointmentRepository
-import fh.msd.jobdating.feature.appointments.data.repository.AppointmentRepositoryTest
+import fh.msd.jobdating.feature.appointments.data.repository.AppointmentRepositoryImpl
 import fh.msd.jobdating.feature.appointments.data.service.AppointmentService
-import fh.msd.jobdating.feature.appointments.data.service.AppointmentServiceTest
+import fh.msd.jobdating.feature.appointments.data.service.AppointmentServiceImpl
 import fh.msd.jobdating.feature.appointments.ui.AppointmentViewModel
 import fh.msd.jobdating.feature.auth.data.repository.AuthRepository
 import fh.msd.jobdating.feature.auth.data.repository.AuthRepositoryImpl
@@ -58,10 +58,13 @@ val appModule = module {
     viewModel { CompanySwipeViewModel(get()) }
     viewModel { CompanyListViewModel(get()) }
 
-    // --- appointments ---
-    single<AppointmentService> { AppointmentServiceTest() }
-    single<AppointmentRepository> { AppointmentRepositoryTest(get()) }
-    viewModel { AppointmentViewModel(get()) }
+
+// --- appointments ---
+    single<AppointmentService> { AppointmentServiceImpl(get(), get(), get()) }
+    single<AppointmentRepository> { AppointmentRepositoryImpl(get()) }
+    viewModel { AppointmentViewModel(get(), get()) }
+
+
 
     // --- Profile ---
     single<ProfileRepository> { ProfileRepositoryTest() }

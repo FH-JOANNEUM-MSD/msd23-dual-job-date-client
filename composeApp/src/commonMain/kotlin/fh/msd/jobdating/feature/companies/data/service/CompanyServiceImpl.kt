@@ -13,6 +13,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
@@ -30,10 +31,12 @@ class CompanyServiceImpl(
     }
 
     override suspend fun getActiveCompanies(): List<CompanyDto> {
-        return httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/companies/active") {
+        val companies: List<CompanyDto> = httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/companies/active") {
             header(HttpHeaders.Authorization, "Bearer ${getAccessToken()}")
             accept(ContentType.Application.Json)
         }.body()
+
+        return companies
     }
 
     override suspend fun getMyPreferences(studentId: Int): List<PreferenceDto> {
@@ -55,12 +58,25 @@ class CompanyServiceImpl(
             @SerialName("preference_type") val preferenceType: String
         )
 
-        val response: VoteResponse = httpClient.post("${BuildKonfig.BACKEND_BASE_URL}/api/companies/$companyId/vote") {
+
+
+        val response = httpClient.post("${BuildKonfig.BACKEND_BASE_URL}/api/companies/$companyId/vote") {
             header(HttpHeaders.Authorization, "Bearer ${getAccessToken()}")
             contentType(ContentType.Application.Json)
+            accept(ContentType.Application.Json)
             setBody(VoteRequest(vote.text))
-        }.body()
+        }
 
-        return response.studentId
+        println("[CompanyService] Response status: ${response.status}")
+
+        if (response.status.value !in 200..299) {
+            val errorBody = response.bodyAsText()
+            println("[CompanyService] Error response: $errorBody")
+            error("Vote failed (${response.status.value}): $errorBody")
+        }
+
+        val voteResponse: VoteResponse = response.body()
+        println("[CompanyService] Vote successful, student_id: ${voteResponse.studentId}")
+        return voteResponse.studentId
     }
 }

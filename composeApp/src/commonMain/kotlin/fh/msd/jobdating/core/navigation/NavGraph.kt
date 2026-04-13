@@ -70,7 +70,11 @@ fun NavGraph(startDestination: Screen = Screen.Login) {
                     currentScreen = Screen.CompanySwipe,
                     rootNavController = rootNavController
                 ) {
-                    CompanySwipeScreen()
+                    CompanySwipeScreen(
+                        onNavigateToAppointments = {
+                            rootNavController.navigate(Screen.Appointments)
+                        }
+                    )
                 }
             }
 
