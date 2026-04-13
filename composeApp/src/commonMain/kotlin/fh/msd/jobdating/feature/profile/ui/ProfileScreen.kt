@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
@@ -39,6 +40,7 @@ fun ProfileScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .padding(16.dp),
         contentAlignment = Alignment.TopCenter
     ) {
@@ -48,7 +50,7 @@ fun ProfileScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(1.dp))
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -67,10 +69,11 @@ fun ProfileScreen(
                     AnimatedVisibility(visible = personalExpanded) {
                         Column(
                             modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Text(text = "Name: ${state.name}")
-                            Text(text = "Email: ${state.email}")
+                            ProfileInfoRow(label = "User ID", value = state.userId)
+                            ProfileInfoRow(label = "Student ID", value = state.studentId)
+                            ProfileInfoRow(label = "Role", value = state.role)
                         }
                     }
 
@@ -215,6 +218,22 @@ private fun SectionHeader(
         Icon(
             imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
             contentDescription = null
+        )
+    }
+}
+
+@Composable
+private fun ProfileInfoRow(label: String, value: String) {
+    Column {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }

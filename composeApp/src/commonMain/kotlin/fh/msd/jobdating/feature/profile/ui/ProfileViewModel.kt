@@ -2,12 +2,16 @@ package fh.msd.jobdating.feature.profile.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import fh.msd.jobdating.core.session.UserSession
 import fh.msd.jobdating.feature.auth.data.repository.AuthRepository
-import fh.msd.jobdating.feature.profile.data.repository.ProfileRepository
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.builtin.Email
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed class ProfileNavigation {
@@ -15,8 +19,9 @@ sealed class ProfileNavigation {
 }
 
 class ProfileViewModel(
-    private val repository: ProfileRepository,
+    private val userSession: UserSession,
     private val authRepository: AuthRepository,
+    private val supabaseClient: SupabaseClient
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -32,13 +37,13 @@ class ProfileViewModel(
     fun onEvent(event: ProfileEvent) {
         when (event) {
             is ProfileEvent.CurrentPasswordChanged -> {
-                _state.value = _state.value.copy(currentPassword = event.value)
+                _state.update { it.copy(currentPassword = event.value) }
             }
             is ProfileEvent.NewPasswordChanged -> {
-                _state.value = _state.value.copy(newPassword = event.value)
+                _state.update { it.copy(newPassword = event.value) }
             }
             is ProfileEvent.ConfirmPasswordChanged -> {
-                _state.value = _state.value.copy(confirmPassword = event.value)
+                _state.update { it.copy(confirmPassword = event.value) }
             }
             is ProfileEvent.ChangePassword -> changePassword()
             is ProfileEvent.Logout -> logout()
@@ -46,68 +51,68 @@ class ProfileViewModel(
     }
 
     private fun loadProfile() {
-        viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true)
-            repository.getProfile().fold(
-                onSuccess = { profile ->
-                    _state.value = _state.value.copy(
-                        name = profile.name,
-                        email = profile.email,
-                        isLoading = false
-                    )
-                },
-                onFailure = {
-                    _state.value = _state.value.copy(
-                        isLoading = false
-                    )
-                }
-            )
+        val user = userSession.getUser()
+        if (user != null) {
+            _state.update {
+                it.copy(
+                    userId = user.userId,
+                    studentId = user.studentId.toString(),
+                    role = user.role.replaceFirstChar { it.uppercase() },
+                    isLoading = false
+                )
+            }
         }
     }
 
     private fun changePassword() {
         val currentState = _state.value
 
-        if (currentState.currentPassword.isBlank() ||
-            currentState.newPassword.isBlank() ||
-            currentState.confirmPassword.isBlank()
-        ) {
-            _state.value = _state.value.copy(
-                passwordError = "All fields are required",
-                passwordSuccess = null
-            )
+        if (currentState.newPassword.isBlank() || currentState.confirmPassword.isBlank()) {
+            _state.update {
+                it.copy(
+                    passwordError = "All fields are required",
+                    passwordSuccess = null
+                )
+            }
             return
         }
 
         if (currentState.newPassword != currentState.confirmPassword) {
-            _state.value = _state.value.copy(
-                passwordError = "Passwords do not match",
-                passwordSuccess = null
-            )
+            _state.update {
+                it.copy(
+                    passwordError = "Passwords do not match",
+                    passwordSuccess = null
+                )
+            }
             return
         }
 
         if (currentState.newPassword.length < 6) {
-            _state.value = _state.value.copy(
-                passwordError = "Password must be at least 6 characters",
-                passwordSuccess = null
-            )
+            _state.update {
+                it.copy(
+                    passwordError = "Password must be at least 6 characters",
+                    passwordSuccess = null
+                )
+            }
             return
         }
 
         viewModelScope.launch {
-            _state.value = _state.value.copy(
-                isChangingPassword = true,
-                passwordError = null,
-                passwordSuccess = null
-            )
+            _state.update {
+                it.copy(
+                    isChangingPassword = true,
+                    passwordError = null,
+                    passwordSuccess = null
+                )
+            }
 
-            repository.changePassword(
-                currentPassword = currentState.currentPassword,
-                newPassword = currentState.newPassword
-            ).fold(
-                onSuccess = {
-                    _state.value = _state.value.copy(
+            try {
+                supabaseClient.auth.updateUser {
+                    password = currentState.newPassword
+                }
+
+                _state.update {
+                    it.copy(
                         isChangingPassword = false,
                         currentPassword = "",
                         newPassword = "",
@@ -115,15 +120,16 @@ class ProfileViewModel(
                         passwordError = null,
                         passwordSuccess = "Password changed successfully"
                     )
-                },
-                onFailure = { error ->
-                    _state.value = _state.value.copy(
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
                         isChangingPassword = false,
-                        passwordError = error.message ?: "Failed to change password",
+                        passwordError = e.message ?: "Failed to change password",
                         passwordSuccess = null
                     )
                 }
-            )
+            }
         }
     }
 

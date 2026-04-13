@@ -19,8 +19,6 @@ import fh.msd.jobdating.feature.companies.data.service.CompanyService
 import fh.msd.jobdating.feature.companies.data.service.CompanyServiceImpl
 import fh.msd.jobdating.feature.companies.ui.CompanyListViewModel
 import fh.msd.jobdating.feature.companies.ui.CompanySwipeViewModel
-import fh.msd.jobdating.feature.profile.data.repository.ProfileRepository
-import fh.msd.jobdating.feature.profile.data.repository.ProfileRepositoryTest
 import fh.msd.jobdating.feature.profile.ui.ProfileViewModel
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
@@ -67,7 +65,6 @@ val appModule = module {
 
 
     // --- Profile ---
-    single<ProfileRepository> { ProfileRepositoryTest() }
-    viewModel { ProfileViewModel(get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get()) }
 
 }
