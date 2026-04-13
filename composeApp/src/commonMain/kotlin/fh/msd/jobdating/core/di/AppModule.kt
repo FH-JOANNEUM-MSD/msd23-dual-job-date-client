@@ -2,28 +2,26 @@ package fh.msd.jobdating.core.di
 
 import fh.msd.jobdating.BuildKonfig
 import fh.msd.jobdating.core.network.HttpClientFactory
+import fh.msd.jobdating.core.session.UserSession
 import fh.msd.jobdating.feature.appointments.data.repository.AppointmentRepository
-import fh.msd.jobdating.feature.appointments.data.repository.AppointmentRepositoryTest
+import fh.msd.jobdating.feature.appointments.data.repository.AppointmentRepositoryImpl
 import fh.msd.jobdating.feature.appointments.data.service.AppointmentService
-import fh.msd.jobdating.feature.appointments.data.service.AppointmentServiceTest
+import fh.msd.jobdating.feature.appointments.data.service.AppointmentServiceImpl
 import fh.msd.jobdating.feature.appointments.ui.AppointmentViewModel
 import fh.msd.jobdating.feature.auth.data.repository.AuthRepository
 import fh.msd.jobdating.feature.auth.data.repository.AuthRepositoryImpl
-import fh.msd.jobdating.feature.auth.data.repository.AuthRepositoryTest
 import fh.msd.jobdating.feature.auth.data.service.AuthService
 import fh.msd.jobdating.feature.auth.data.service.AuthServiceImpl
-import fh.msd.jobdating.feature.auth.data.service.AuthServiceTest
 import fh.msd.jobdating.feature.auth.ui.LoginViewModel
 import fh.msd.jobdating.feature.companies.data.repository.CompanyRepository
-import fh.msd.jobdating.feature.companies.data.repository.CompanyRepositoryTest
+import fh.msd.jobdating.feature.companies.data.repository.CompanyRepositoryImpl
 import fh.msd.jobdating.feature.companies.data.service.CompanyService
-import fh.msd.jobdating.feature.companies.data.service.CompanyServiceTest
+import fh.msd.jobdating.feature.companies.data.service.CompanyServiceImpl
 import fh.msd.jobdating.feature.companies.ui.CompanyListViewModel
-import fh.msd.jobdating.feature.profile.data.repository.ProfileRepository
-import fh.msd.jobdating.feature.profile.data.repository.ProfileRepositoryTest
+import fh.msd.jobdating.feature.companies.ui.CompanySwipeViewModel
 import fh.msd.jobdating.feature.profile.ui.ProfileViewModel
-import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.createSupabaseClient
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -32,36 +30,41 @@ val appModule = module {
     // --- network ---
     single { HttpClientFactory.create() }
 
-    single {
+    single(createdAtStart = true) {
         createSupabaseClient(
             supabaseUrl = BuildKonfig.SUPABASE_URL,
             supabaseKey = BuildKonfig.SUPABASE_ANON_KEY
         ) {
-            install(Auth)
+            install(Auth) {
+                autoLoadFromStorage = true
+                autoSaveToStorage = true
+            }
         }
     }
 
-    // --- auth ---
-//    single<AuthService> { AuthServiceTest() }
-//    single<AuthRepository> { AuthRepositoryTest(get()) }
+    // --- session ---
+    single { UserSession() }
+
+    // Auth
+    single<AuthService> { AuthServiceImpl(get(), get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
     viewModel { LoginViewModel(get()) }
 
-    // --- auth (real implementations, swap above when ready) ---
-     single<AuthService> { AuthServiceImpl(get(), get()) }
-     single<AuthRepository> { AuthRepositoryImpl(get()) }
-
-    // --- companies ---
-    single<CompanyService> { CompanyServiceTest() }
-    single<CompanyRepository> { CompanyRepositoryTest(get()) }
+    // Companies
+    single<CompanyService> { CompanyServiceImpl(get(), get()) }
+    single<CompanyRepository> { CompanyRepositoryImpl(get(), get()) }
+    viewModel { CompanySwipeViewModel(get()) }
     viewModel { CompanyListViewModel(get()) }
 
-    // --- appointments ---
-    single<AppointmentService> { AppointmentServiceTest() }
-    single<AppointmentRepository> { AppointmentRepositoryTest(get()) }
-    viewModel { AppointmentViewModel(get()) }
+
+// --- appointments ---
+    single<AppointmentService> { AppointmentServiceImpl(get(), get(), get()) }
+    single<AppointmentRepository> { AppointmentRepositoryImpl(get()) }
+    viewModel { AppointmentViewModel(get(), get()) }
+
+
 
     // --- Profile ---
-    single<ProfileRepository> { ProfileRepositoryTest() }
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(), get()) }
 
 }

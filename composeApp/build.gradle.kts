@@ -66,6 +66,7 @@ kotlin {
             implementation(libs.auth.kt)
             implementation(libs.storage.kt)
             implementation(libs.realtime.kt)
+            implementation(libs.multiplatform.settings)
         }
 
         iosMain.dependencies {
@@ -102,7 +103,7 @@ android {
         applicationId = "fh.msd"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 10
+        versionCode = 11
         versionName = "1.0"
     }
     packaging {

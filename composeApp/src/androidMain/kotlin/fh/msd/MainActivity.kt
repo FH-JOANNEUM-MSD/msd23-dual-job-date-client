@@ -1,30 +1,43 @@
 package fh.msd
 
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
+        window.isNavigationBarContrastEnforced = false
+
         setContent {
-            // Remove when https://issuetracker.google.com/issues/364713509 is fixed
-            LaunchedEffect(isSystemInDarkTheme()) {
-                enableEdgeToEdge()
+            val darkTheme = isSystemInDarkTheme()
+
+            LaunchedEffect(darkTheme) {
+                val color = if (darkTheme) {
+                    Color.parseColor("#1A1A1A")
+                } else {
+                    Color.parseColor("#FFFFFF")
+                }
+
+                window.statusBarColor = color
+                window.navigationBarColor = color
+
+                WindowCompat.getInsetsController(window, window.decorView)?.apply {
+                    isAppearanceLightStatusBars = !darkTheme
+                    isAppearanceLightNavigationBars = !darkTheme
+                }
             }
             App()
         }
     }
-}
-
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    App()
 }

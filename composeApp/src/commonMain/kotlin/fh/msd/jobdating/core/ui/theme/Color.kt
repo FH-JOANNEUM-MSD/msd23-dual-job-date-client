@@ -2,23 +2,21 @@ package fh.msd.jobdating.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val PrimaryLight = Color(0xFF548224)
-val PrimaryDark = Color(0xFFEAF9DA)
+// Dark theme - green accent
+val PrimaryDark = Color(0xFF8DC63F)
+val SecondaryDark = Color(0xFF6AAF2E)
+val BackgroundDark = Color(0xFF0A1628)
+val SurfaceDark = Color(0xFF1A1A1A)
+val OnBackgroundDark = Color(0xFFFFFFFF)
+val OnSurfaceDark = Color(0xFFFFFFFF)
 
-val SecondaryLight = Color(0xFF8B5CF6)
-val SecondaryDark = Color(0xFFC4B5FD)
-
-val BackgroundLight = Color(0xFFFAFAFA)
-val BackgroundDark = Color(0xFF0F172A)
-
+// Light theme - red accent
+val PrimaryLight = Color(0xFFB71C1C)
+val SecondaryLight = Color(0xFFE53935)
+val BackgroundLight = Color(0xFFF5F5F5)
 val SurfaceLight = Color(0xFFFFFFFF)
-val SurfaceDark = Color(0xFF1E293B)
-
-val OnBackgroundLight = Color(0xFF0F172A)
-val OnBackgroundDark = Color(0xFFF8FAFC)
-
-val OnSurfaceLight = Color(0xFF0F172A)
-val OnSurfaceDark = Color(0xFFF8FAFC)
+val OnBackgroundLight = Color(0xFF1A1A1A)
+val OnSurfaceLight = Color(0xFF1A1A1A)
 
 val LikeGreen = Color(0xFF548224)
 val DislikeRed = Color(0xFFEF4444)
