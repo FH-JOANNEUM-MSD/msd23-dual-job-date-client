@@ -160,12 +160,6 @@ fun CompanyCard(
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = company.description,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = Color.White.copy(alpha = 0.8f)
-                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = company.description,
