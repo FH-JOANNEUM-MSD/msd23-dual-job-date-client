@@ -1,5 +1,7 @@
 package fh.msd.jobdating.feature.companies.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,12 +17,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -53,20 +56,25 @@ import fh.msd.jobdating.core.ui.theme.LikeGreen
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.domain.model.VoteType
 import fh.msd.jobdating.feature.companies.ui.NeutralOrange
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import dualjobdating.composeapp.generated.resources.Res
 import dualjobdating.composeapp.generated.resources.company_detail_close
 import dualjobdating.composeapp.generated.resources.company_detail_dislike
 import dualjobdating.composeapp.generated.resources.company_detail_like
 import dualjobdating.composeapp.generated.resources.company_detail_neutral
-import dualjobdating.composeapp.generated.resources.logo_not_available
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CompanyDetailDialog(
     company: Company,
     onDismiss: () -> Unit,
     onVote: (VoteType) -> Unit
 ) {
+    val useFallback = company.logoUrl.isBlank()
+    val fallbackImages = if (useFallback) CompanyImageProvider.getFallbackImages(company.id) else emptyList()
+    val pagerState = rememberPagerState(pageCount = { if (useFallback) 3 else 1 })
+
     PlatformDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -85,34 +93,48 @@ fun CompanyDetailDialog(
                         .fillMaxWidth()
                         .fillMaxHeight(0.5f)
                 ) {
-                    SubcomposeAsyncImage(
-                        model = ImageRequest.Builder(LocalPlatformContext.current)
-                            .data(company.logoUrl)
-                            .memoryCachePolicy(CachePolicy.ENABLED)
-                            .diskCachePolicy(CachePolicy.DISABLED)
-                            .scale(Scale.FIT)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = "Company Logo",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                        success = {
-                            SubcomposeAsyncImageContent()
-                        },
-                        error = {
-                            Box(
+                    if (useFallback) {
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier.fillMaxSize()
+                        ) { page ->
+                            Image(
+                                painter = painterResource(fallbackImages[page]),
+                                contentDescription = "Company Image ${page + 1}",
                                 modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Business,
-                                    contentDescription = stringResource(Res.string.logo_not_available),
-                                    modifier = Modifier.size(104.dp),
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
+                                contentScale = ContentScale.Crop
+                            )
                         }
-                    )
+                    } else {
+                        SubcomposeAsyncImage(
+                            model = ImageRequest.Builder(LocalPlatformContext.current)
+                                .data(company.logoUrl)
+                                .memoryCachePolicy(CachePolicy.ENABLED)
+                                .diskCachePolicy(CachePolicy.DISABLED)
+                                .scale(Scale.FIT)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "Company Logo",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            success = {
+                                SubcomposeAsyncImageContent()
+                            },
+                            error = {
+                                HorizontalPager(
+                                    state = pagerState,
+                                    modifier = Modifier.fillMaxSize()
+                                ) { page ->
+                                    Image(
+                                        painter = painterResource(CompanyImageProvider.getFallbackImages(company.id)[page]),
+                                        contentDescription = "Company Image ${page + 1}",
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            }
+                        )
+                    }
 
                     Box(
                         modifier = Modifier
@@ -146,6 +168,29 @@ fun CompanyDetailDialog(
                                 modifier = Modifier.size(24.dp),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
+                        }
+                    }
+
+                    if (useFallback || pagerState.pageCount > 1) {
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            repeat(pagerState.pageCount) { index ->
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .background(
+                                            color = if (pagerState.currentPage == index)
+                                                MaterialTheme.colorScheme.primary
+                                            else
+                                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                                            shape = CircleShape
+                                        )
+                                )
+                            }
                         }
                     }
                 }
