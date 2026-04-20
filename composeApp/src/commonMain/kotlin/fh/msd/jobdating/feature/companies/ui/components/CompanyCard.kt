@@ -56,6 +56,8 @@ fun CompanyCard(
     dragProgress: Float = 0f,
     isBackground: Boolean = false
 ) {
+    println("COMPANYCARD COMPOSE: id=${company.id}, name=${company.name}, isBackground=$isBackground, logoUrl=${company.logoUrl}")
+    println("IMAGE URLS: ${company.imageUrls}")
     val borderColor = when (swipeHint) {
         SwipeHint.LIKE -> Color(0xFF639922)
         SwipeHint.DISLIKE -> Color(0xFFE24B4A)
@@ -115,7 +117,7 @@ fun CompanyCard(
                             .memoryCachePolicy(CachePolicy.ENABLED)
                             .diskCachePolicy(CachePolicy.DISABLED)
                             .scale(Scale.FIT)
-                            .crossfade(!isBackground)
+                            .crossfade(if (isBackground) false else true)
                             .build(),
                         contentDescription = "Company Logo",
                         modifier = Modifier.fillMaxSize(),
@@ -124,6 +126,7 @@ fun CompanyCard(
                             SubcomposeAsyncImageContent()
                         },
                         error = {
+                            println("IMAGE LOAD FAILED for URL: ${company.logoUrl}")
                             val fallbackImage = CompanyImageProvider.getFallbackImages(company.id)[0]
                             androidx.compose.foundation.Image(
                                 painter = painterResource(fallbackImage),
@@ -165,7 +168,7 @@ fun CompanyCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = company.description,
+                    text = company.shortDescription.ifBlank { company.description },
                     style = MaterialTheme.typography.labelLarge,
                     color = Color.White.copy(alpha = 0.8f)
                 )

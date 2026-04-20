@@ -75,9 +75,19 @@ fun CompanyDetailDialog(
     onDismiss: () -> Unit,
     onVote: (VoteType) -> Unit
 ) {
-    var imageLoadFailed by remember { mutableStateOf(false) }
-    val shouldUseFallback = company.logoUrl.isBlank() || imageLoadFailed
-    val pagerState = rememberPagerState(pageCount = { if (shouldUseFallback) 3 else 1 })
+
+
+    // Build image list: logo first, then imageUrls
+    val allImages = buildList {
+        if (company.logoUrl.isNotBlank()) add(company.logoUrl)
+        addAll(company.imageUrls)
+    }
+
+    val shouldUseFallback = allImages.isEmpty()
+    val pagerState = rememberPagerState(pageCount = {
+        if (shouldUseFallback) 3 else allImages.size
+    })
+    println("PAGER STATE: pageCount=${pagerState.pageCount}, allImages.size=${allImages.size}, shouldUseFallback=$shouldUseFallback")
 
     PlatformDialog(
         onDismissRequest = onDismiss,
@@ -111,31 +121,36 @@ fun CompanyDetailDialog(
                             )
                         }
                     } else {
-                        SubcomposeAsyncImage(
-                            model = ImageRequest.Builder(LocalPlatformContext.current)
-                                .data(company.logoUrl)
-                                .memoryCachePolicy(CachePolicy.ENABLED)
-                                .diskCachePolicy(CachePolicy.DISABLED)
-                                .scale(Scale.FIT)
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = "Company Logo",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop,
-                            success = {
-                                SubcomposeAsyncImageContent()
-                            },
-                            error = {
-                                imageLoadFailed = true
-                                val fallbackImages = CompanyImageProvider.getFallbackImages(company.id)
-                                Image(
-                                    painter = painterResource(fallbackImages[0]),
-                                    contentDescription = "Company Image",
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-                        )
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier.fillMaxSize()
+                        ) { page ->
+                            SubcomposeAsyncImage(
+                                model = ImageRequest.Builder(LocalPlatformContext.current)
+                                    .data(allImages[page])
+                                    .memoryCachePolicy(CachePolicy.ENABLED)
+                                    .diskCachePolicy(CachePolicy.DISABLED)
+                                    .scale(Scale.FIT)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = "Company Image ${page + 1}",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop,
+                                success = {
+                                    SubcomposeAsyncImageContent()
+                                },
+                                error = {
+                                    println("DETAIL IMAGE LOAD FAILED for URL: ${allImages[page]}")
+                                    val fallbackImages = CompanyImageProvider.getFallbackImages(company.id)
+                                    Image(
+                                        painter = painterResource(fallbackImages[0]),
+                                        contentDescription = "Company Image",
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            )
+                        }
                     }
 
                     Box(

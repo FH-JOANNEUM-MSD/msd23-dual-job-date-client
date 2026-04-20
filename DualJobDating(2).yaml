@@ -9,6 +9,7 @@ info:
     - jwt: Bearer token (Supabase access token)
     - studentId: numeric student id for path params
     - companyId: numeric company id for path params
+    - slotId: numeric slot id for DELETE /api/slots/{id}
     - userUuid: internal users.id (UUID) for PATCH /api/users/{id}
 
     Most /api routes use Authorization: Bearer {{jwt}}.
@@ -30,6 +31,16 @@ tags:
   - name: System
   - name: Auth
   - name: Invites
+    description: |-
+      **Ein Endpunkt:** `POST /api/invite` (URL identisch in beiden Requests unten).
+
+      Der Server erkennt an `role`, ob ein **Student**- oder **Company**-Profil angelegt wird. Unterschied ist ausschließlich der JSON-Body:
+
+      **Student:** `role: "student"`, Pflicht `email`, typisch `study_program`, optional `semester`, optional `first_name` / `last_name`.
+
+      **Company:** `role: "company"`, Pflicht `email`, typisch `company_name`.
+
+      E-Mail-Adressen in den Beispielen: **`@example.com`** (reserviert für Dokumentation, keine echten Postfächer).
   - name: Users
   - name: Companies
   - name: Students
@@ -98,13 +109,16 @@ paths:
       tags:
         - Invites
       summary: InviteCompany
-      description: Einladung per E-Mail; legt Supabase-Auth-User und Company-Profil an. Gleiche URL wie InviteStudent. Erfordert JWT.
+      description: |-
+        **URL:** `POST /api/invite` (gleich wie Invite Student).
+
+        Legt Supabase-Auth-User und **Company**-Zeile an. Erfordert JWT. Body muss `role: "company"` und typisch `company_name` enthalten.
       requestBody:
         content:
           '*/*':
             schema:
               type: string
-              example: '"{\n  \"email\": \"jake.moe@icloud.com\",\n  \"role\": \"company\",\n  \"company_name\": \"Lannister Gold Corp\"\n}"'
+              example: '"{\n  \"email\": \"company.invite@example.com\",\n  \"role\": \"company\",\n  \"company_name\": \"Example Corp GmbH\"\n}"'
       parameters:
         - name: Content-Type
           in: header
@@ -124,13 +138,13 @@ paths:
       tags:
         - Invites
       summary: ResendInvite
-      description: 'Erneutes Versenden der Einladung (Supabase). Öffentliche Route ohne JWT-Middleware. Body wie Invite: mindestens email und role.'
+      description: 'Erneutes Versenden der Einladung (Supabase). Öffentliche Route ohne JWT-Middleware. Body wie **POST /api/invite**: mindestens `email` und `role` (`student` oder `company`). Beispiel nutzt `@example.com`.'
       requestBody:
         content:
           '*/*':
             schema:
               type: string
-              example: '"{\n  \"email\": \"jake.moe41@gmail.com\",\n  \"role\": \"student\"\n}"'
+              example: '"{\n  \"email\": \"student.invite@example.com\",\n  \"role\": \"student\"\n}"'
       security:
         - noauthAuth: []
       parameters:
@@ -219,6 +233,14 @@ paths:
       tags:
         - Companies
       summary: GetActiveCompanies
+      description: 'Liefert aktive Companies. Optionaler Query-Parameter `only_unvoted=true` zeigt nur Companies, die der eingeloggte Student noch nicht gevotet hat.'
+      parameters:
+        - name: only_unvoted
+          in: query
+          schema:
+            type: boolean
+          description: Optional. true = nur noch nicht gevotete aktive Companies.
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -230,11 +252,21 @@ paths:
                 - id: 1
                   user_id: ecf8f2fc-5649-4f8f-92e4-9ed13f82e89f
                   name: Lannister Gold & Loans
+                  short_description: Finanzierung fuer ambitionierte Talente.
                   description: A Lannister always pays his debts.
                   website: 'https://lannister.gold'
                   logo_url: 'https://...'
+                  image_urls: 'https://img.one.jpg;https://img.two.jpg'
                   active: true
-                  last_updated: '2026-03-09T09:12:33Z'
+                  last_updated: '2026-04-20T09:12:33Z'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Ungueltiger Query-Parameter only_unvoted (erlaubt: true/false)
         '500':
           description: Internal Server Error
           content:
@@ -299,6 +331,7 @@ paths:
       tags:
         - Companies
       summary: UploadCompanyLogo
+      description: 'Lädt ein Logo hoch und setzt ausschließlich `logo_url`. Images sind getrennt über `/companies/{id}/images`.'
       requestBody:
         content:
           multipart/form-data:
@@ -341,6 +374,92 @@ paths:
                   summary: Missing File (400)
                   value: |
                     file feld 'logo' oder 'file' fehlt
+  '/api/companies/{companyId}/images':
+    post:
+      tags:
+        - Companies
+      summary: UploadCompanyImage
+      description: Lädt ein Company-Bild hoch (separat vom Logo) und hängt die URL an `image_urls` (Semikolon-getrennt) an.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      parameters:
+        - name: companyId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                company_id: 1
+                bucket: company-images
+                object_key: company-1/1741519534-lannister-gold-loans.png
+                image_url: 'https://dtgigetmxmrqniibjsal.supabase.co/storage/v1/object/public/company-images/company-1/1741519534-lannister-gold-loans.png'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                example-0:
+                  summary: Invalid Company ID (400)
+                  value: |
+                    ungueltige company id
+                example-1:
+                  summary: Missing File (400)
+                  value: |
+                    file feld 'image' oder 'file' fehlt
+  '/api/companies/{companyId}':
+    patch:
+      tags:
+        - Companies
+      summary: UpdateCompany
+      description: 'Partial update der Firma (Delta-JSON). Erlaubte Felder: name, short_description, description, website, logo_url, image_urls, active. `image_urls` ist ein Semikolon-getrennter String. Entfernte URLs werden best-effort auch im Image-Bucket geloescht.'
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: '"{\n  \"name\": \"TechNova Solutions GmbH\",\n  \"short_description\": \"Cloud- und Mobile-Loesungen fuer KMU\",\n  \"description\": \"Wir bauen skalierbare digitale Produkte.\",\n  \"image_urls\": \"https://img.one.jpg;https://img.two.jpg\",\n  \"active\": true\n}"'
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: companyId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                message: Firma erfolgreich aktualisiert
+                status: success
   /api/students:
     get:
       tags:
@@ -446,6 +565,78 @@ paths:
                 type: string
               example: |
                 <details>
+  '/api/students/{studentId}':
+    patch:
+      tags:
+        - Students
+      summary: UpdateStudent
+      description: 'Partial update: students (study_program, semester) und/oder users (first_name, last_name) über verknüpfte user_id. Mindestens ein Feld muss im Body stehen. {id} = numerische students.id.'
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: '"{\n  \"study_program\": \"Software Engineering\",\n  \"semester\": 4\n}"'
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: studentId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                message: Student erfolgreich aktualisiert
+                status: success
+        '404':
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                student nicht gefunden
+    delete:
+      tags:
+        - Students
+      summary: DeleteStudent
+      description: 'Löscht Student inkl. verknüpfter Daten und Auth-Account (Hard Delete). Vorsicht: irreversibel.'
+      parameters:
+        - name: studentId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                message: 'Student, alle Daten und Auth-Account restlos gelöscht'
+                status: success
   /api/meetings/assign:
     post:
       tags:
@@ -615,3 +806,30 @@ paths:
                 type: string
               example: |
                 <details>
+  '/api/slots/{slotId}':
+    delete:
+      tags:
+        - Events & Slots
+      summary: DeleteSlot
+      description: Löscht den Slot und zugehörige Meetings (Reihenfolge im Backend).
+      parameters:
+        - name: slotId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                message: Slot und zugehörige Meetings erfolgreich gelöscht
+                status: success

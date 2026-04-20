@@ -33,6 +33,19 @@ echo ""
 
 STUDENT_IDS=$(echo "$STUDENTS" | grep -o '"id":[0-9]*' | sed 's/"id"://' | head -15)
 
+
+echo "=== Fetching Active Companies ==="
+COMPANIES=$(curl -s -X GET "${BACKEND_URL}/api/companies/active" \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+  -H "Content-Type: application/json")
+
+echo "$COMPANIES"
+echo ""
+
+COMPANY_COUNT=$(echo "$COMPANIES" | grep -o '"id":[0-9]*' | wc -l)
+echo "Total active companies: $COMPANY_COUNT"
+echo ""
+
 echo "=== Checking Preferences for Each Student ==="
 echo ""
 

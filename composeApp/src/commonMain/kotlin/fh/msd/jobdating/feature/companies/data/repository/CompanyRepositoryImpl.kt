@@ -43,9 +43,11 @@ class CompanyRepositoryImpl(
                     id = dto.id,
                     userId = dto.userId,
                     name = dto.name,
+                    shortDescription = dto.shortDescription,
                     description = dto.description,
                     website = dto.website,
                     logoUrl = dto.logoUrl,
+                    imageUrls = dto.imageUrls.split(";").filter { it.isNotBlank() },
                     active = dto.active,
                     lastUpdated = dto.lastUpdated,
                     vote = vote
