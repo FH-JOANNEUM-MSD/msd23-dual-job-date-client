@@ -140,17 +140,25 @@ private fun DoneCard(onNavigateToAppointments: () -> Unit) {
     }
 }
 
-
-
-
 @Composable
 private fun SwipeContent(
     state: CompanyListState,
     viewModel: CompanySwipeViewModel
 ) {
+    println("SWIPE_CONTENT RECOMPOSE: currentIndex=${state.currentIndex}")
+
     val company = state.companies[state.currentIndex]
     val nextCompany = state.companies.getOrNull(state.currentIndex + 1)
     var showDetailDialog by remember { mutableStateOf(false) }
+
+    // Keep old background card until new one is ready
+    var displayedBackground by remember { mutableStateOf(nextCompany) }
+
+    LaunchedEffect(nextCompany) {
+        if (nextCompany != null) {
+            displayedBackground = nextCompany
+        }
+    }
 
     var swipeHint by remember(state.currentIndex) { mutableStateOf(SwipeHint.NONE) }
     var dragProgress by remember(state.currentIndex) { mutableStateOf(0f) }
@@ -205,22 +213,29 @@ private fun SwipeContent(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(0.75f)
-                .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp)),
+                .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp), clip = false),
             contentAlignment = Alignment.Center
         ) {
-            if (nextCompany != null) {
-                CompanyCard(
-                    company = nextCompany,
-                    modifier = Modifier.fillMaxSize(),
-                    isBackground = true
-                )
+            // Render background card with persisted state
+            displayedBackground?.let { bgCompany ->
+                key(bgCompany.id) {
+                    println("RENDERING BACKGROUND: id=${bgCompany.id}, name=${bgCompany.name}")
+                    CompanyCard(
+                        company = bgCompany,
+                        modifier = Modifier.fillMaxSize(),
+                        isBackground = true
+                    )
+                }
             }
 
-            key(state.currentIndex) {
+            // Foreground swipeable card
+            key(company.id) {
+                println("RENDERING FOREGROUND: id=${company.id}, name=${company.name}")
                 SwipeableCompanyCard(
                     company = company,
                     swipeHint = swipeHint,
@@ -241,6 +256,7 @@ private fun SwipeContent(
             }
         }
 
+
         Spacer(modifier = Modifier.height(24.dp))
 
         key(state.currentIndex) {
@@ -253,7 +269,6 @@ private fun SwipeContent(
         }
     }
 }
-
 @Composable
 private fun SwipeableCompanyCard(
     company: Company,

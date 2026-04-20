@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
@@ -47,9 +46,7 @@ import coil3.size.Scale
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.ui.SwipeHint
 import androidx.compose.foundation.background
-import org.jetbrains.compose.resources.stringResource
-import dualjobdating.composeapp.generated.resources.Res
-import dualjobdating.composeapp.generated.resources.logo_not_available
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun CompanyCard(
@@ -103,34 +100,40 @@ fun CompanyCard(
                         }
                     }
             ) {
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .data(company.logoUrl)
-                        .memoryCachePolicy(CachePolicy.ENABLED)
-                        .diskCachePolicy(CachePolicy.DISABLED)
-                        .scale(Scale.FIT)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "Company Logo",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                    success = {
-                        SubcomposeAsyncImageContent()
-                    },
-                    error = {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Business,
-                                contentDescription = stringResource(Res.string.logo_not_available),
-                                modifier = Modifier.size(104.dp),
-                                tint = MaterialTheme.colorScheme.onSurface
+                if (company.logoUrl.isBlank()) {
+                    val fallbackImage = CompanyImageProvider.getFallbackImages(company.id)[0]
+                    androidx.compose.foundation.Image(
+                        painter = painterResource(fallbackImage),
+                        contentDescription = "Company Image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalPlatformContext.current)
+                            .data(company.logoUrl)
+                            .memoryCachePolicy(CachePolicy.ENABLED)
+                            .diskCachePolicy(CachePolicy.DISABLED)
+                            .scale(Scale.FIT)
+                            .crossfade(!isBackground)
+                            .build(),
+                        contentDescription = "Company Logo",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        success = {
+                            SubcomposeAsyncImageContent()
+                        },
+                        error = {
+                            val fallbackImage = CompanyImageProvider.getFallbackImages(company.id)[0]
+                            androidx.compose.foundation.Image(
+                                painter = painterResource(fallbackImage),
+                                contentDescription = "Company Image",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
                             )
                         }
-                    }
-                )
+                    )
+                }
 
                 Box(
                     modifier = Modifier
@@ -165,12 +168,6 @@ fun CompanyCard(
                     text = company.description,
                     style = MaterialTheme.typography.labelLarge,
                     color = Color.White.copy(alpha = 0.8f)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = company.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.7f)
                 )
             }
 
