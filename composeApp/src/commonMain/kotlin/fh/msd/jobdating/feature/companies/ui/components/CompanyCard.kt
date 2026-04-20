@@ -115,7 +115,7 @@ fun CompanyCard(
                             .memoryCachePolicy(CachePolicy.ENABLED)
                             .diskCachePolicy(CachePolicy.DISABLED)
                             .scale(Scale.FIT)
-                            .crossfade(true)
+                            .crossfade(!isBackground)
                             .build(),
                         contentDescription = "Company Logo",
                         modifier = Modifier.fillMaxSize(),
