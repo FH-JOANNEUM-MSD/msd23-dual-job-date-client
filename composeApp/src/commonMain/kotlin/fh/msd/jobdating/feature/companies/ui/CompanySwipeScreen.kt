@@ -209,7 +209,7 @@ private fun SwipeContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(0.75f)
-                .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp)),
+                .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp), clip = false),
             contentAlignment = Alignment.Center
         ) {
             if (nextCompany != null) {
