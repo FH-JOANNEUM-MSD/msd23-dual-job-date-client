@@ -33,6 +33,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -71,9 +75,9 @@ fun CompanyDetailDialog(
     onDismiss: () -> Unit,
     onVote: (VoteType) -> Unit
 ) {
-    val useFallback = company.logoUrl.isBlank()
-    val fallbackImages = if (useFallback) CompanyImageProvider.getFallbackImages(company.id) else emptyList()
-    val pagerState = rememberPagerState(pageCount = { if (useFallback) 3 else 1 })
+    var imageLoadFailed by remember { mutableStateOf(false) }
+    val shouldUseFallback = company.logoUrl.isBlank() || imageLoadFailed
+    val pagerState = rememberPagerState(pageCount = { if (shouldUseFallback) 3 else 1 })
 
     PlatformDialog(
         onDismissRequest = onDismiss,
@@ -93,7 +97,8 @@ fun CompanyDetailDialog(
                         .fillMaxWidth()
                         .fillMaxHeight(0.5f)
                 ) {
-                    if (useFallback) {
+                    if (shouldUseFallback) {
+                        val fallbackImages = CompanyImageProvider.getFallbackImages(company.id)
                         HorizontalPager(
                             state = pagerState,
                             modifier = Modifier.fillMaxSize()
@@ -121,17 +126,14 @@ fun CompanyDetailDialog(
                                 SubcomposeAsyncImageContent()
                             },
                             error = {
-                                HorizontalPager(
-                                    state = pagerState,
-                                    modifier = Modifier.fillMaxSize()
-                                ) { page ->
-                                    Image(
-                                        painter = painterResource(CompanyImageProvider.getFallbackImages(company.id)[page]),
-                                        contentDescription = "Company Image ${page + 1}",
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                }
+                                imageLoadFailed = true
+                                val fallbackImages = CompanyImageProvider.getFallbackImages(company.id)
+                                Image(
+                                    painter = painterResource(fallbackImages[0]),
+                                    contentDescription = "Company Image",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
                             }
                         )
                     }
@@ -171,7 +173,7 @@ fun CompanyDetailDialog(
                         }
                     }
 
-                    if (useFallback || pagerState.pageCount > 1) {
+                    if (pagerState.pageCount > 1) {
                         Row(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
