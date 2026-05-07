@@ -20,7 +20,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -126,4 +126,3 @@ android {
 dependencies {
     debugImplementation(libs.compose.uiTooling)
 }
-
