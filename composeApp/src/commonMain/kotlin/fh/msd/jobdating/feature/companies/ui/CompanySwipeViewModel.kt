@@ -25,16 +25,22 @@ class CompanySwipeViewModel(
             _state.update { it.copy(isLoading = true) }
             try {
                 val allCompanies = repository.getActiveCompanies()
-                // Only show companies that haven't been voted on (vote is null)
+                println("[VM] Loaded ${allCompanies.size} companies")
+                allCompanies.forEach { println("[VM] id=${it.id}, vote=${it.vote}") }
+
                 val unvotedCompanies = allCompanies.filter { it.vote == null }
+                println("[VM] ${unvotedCompanies.size} unvoted")
+
                 _state.update {
                     it.copy(
                         companies = unvotedCompanies,
+                        currentIndex = 0,
                         isLoading = false,
                         isDone = unvotedCompanies.isEmpty()
                     )
                 }
             } catch (e: Exception) {
+                println("[VM] Error: ${e.message}")
                 _state.update { it.copy(error = e.message, isLoading = false) }
             }
         }
@@ -49,18 +55,14 @@ class CompanySwipeViewModel(
     private fun vote(companyId: Int, vote: VoteType) {
         viewModelScope.launch {
             try {
+                println("[VM] VOTING: companyId=$companyId, vote=$vote")
                 repository.submitVote(companyId, vote)
-                _state.update { current ->
-                    val nextIndex = current.currentIndex + 1
-                    current.copy(
-                        currentIndex = nextIndex,
-                        isDone = nextIndex >= current.companies.size
-                    )
-                }
+                println("[VM] VOTE SUCCESS, waiting for backend...")
+                kotlinx.coroutines.delay(500)
+                loadCompanies()
             } catch (e: Exception) {
-                println("[CompanySwipeViewModel] Vote failed: ${e.message}")
+                println("[VM] VOTE FAILED: ${e.message}")
             }
         }
     }
-
 }
