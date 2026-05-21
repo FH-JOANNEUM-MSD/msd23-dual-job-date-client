@@ -40,7 +40,22 @@ class LoginViewModel(
                 _state.update { it.copy(isLoading = false) }
                 _navigation.emit(LoginNavigation.ToCompanies)
             } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, error = e.message) }
+                e.printStackTrace()
+                val friendlyMessage = when {
+                    e.message?.contains("invalid_credentials", ignoreCase = true) == true ||
+                    e.message?.contains("user_not_found", ignoreCase = true) == true ->
+                        "Invalid email or password."
+                    e.message?.contains("email_not_confirmed", ignoreCase = true) == true ->
+                        "Please verify your email address first."
+                    e.message?.contains("too_many_requests", ignoreCase = true) == true ->
+                        "Too many attempts. Please wait a moment and try again."
+                    e.message?.contains("network", ignoreCase = true) == true ||
+                    e.message?.contains("connect", ignoreCase = true) == true ||
+                    e.message?.contains("UnknownHostException", ignoreCase = true) == true ->
+                        "Network error. Please check your connection."
+                    else -> "Login failed. Please try again."
+                }
+                _state.update { it.copy(isLoading = false, error = friendlyMessage) }
             }
         }
     }
