@@ -1,10 +1,11 @@
 package fh.msd.jobdating.feature.auth.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +15,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import dualjobdating.composeapp.generated.resources.Res
 import dualjobdating.composeapp.generated.resources.app_name
+import dualjobdating.composeapp.generated.resources.error_generic
+import dualjobdating.composeapp.generated.resources.error_invalid_credentials
+import dualjobdating.composeapp.generated.resources.error_no_internet
 import dualjobdating.composeapp.generated.resources.login_button
 import dualjobdating.composeapp.generated.resources.login_email
 import dualjobdating.composeapp.generated.resources.login_password
@@ -33,7 +37,6 @@ fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val isDarkTheme = isSystemInDarkTheme()
 
     LaunchedEffect(Unit) {
         viewModel.navigation.collect { nav ->
@@ -50,9 +53,7 @@ fun LoginScreen(
         Card(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(
                 modifier = Modifier.padding(32.dp),
@@ -66,10 +67,7 @@ fun LoginScreen(
                             .size(120.dp)
                             .drawBehind {
                                 val gradient = Brush.radialGradient(
-                                    colors = listOf(
-                                        Color(0xFF444444),
-                                        Color(0xFF222222)
-                                    ),
+                                    colors = listOf(Color(0xFF444444), Color(0xFF222222)),
                                     center = center,
                                     radius = size.width / 2
                                 )
@@ -86,6 +84,7 @@ fun LoginScreen(
                         modifier = Modifier.size(120.dp)
                     )
                 }
+
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
@@ -114,9 +113,38 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                state.error?.let {
+                state.loginError?.let { error ->
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text(text = it, color = MaterialTheme.colorScheme.error)
+                    when (error) {
+                        LoginError.Network -> Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.WifiOff,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(Res.string.error_no_internet),
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        LoginError.InvalidCredentials -> Text(
+                            text = stringResource(Res.string.error_invalid_credentials),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        LoginError.Generic -> Text(
+                            text = stringResource(Res.string.error_generic),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))

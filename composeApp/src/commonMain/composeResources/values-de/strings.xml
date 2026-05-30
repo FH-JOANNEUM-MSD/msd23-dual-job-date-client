@@ -52,4 +52,7 @@
     <!-- Common -->
     <string name="error_prefix">Fehler: %s</string>
     <string name="logo_not_available">Logo nicht verfügbar</string>
+    <string name="error_no_internet">Keine Internetverbindung. Bitte überprüfe deine Verbindung und versuche es erneut.</string>
+    <string name="error_invalid_credentials">Ungültige E-Mail oder Passwort.</string>
+    <string name="error_generic">Etwas ist schiefgelaufen. Bitte versuche es erneut.</string>
 </resources>
