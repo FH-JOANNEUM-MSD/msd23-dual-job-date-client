@@ -1,6 +1,6 @@
 # Dual Job Dating - Technical Documentation
 
-> **For organizers:** The `docs/` folder contains the student-facing setup guides and the full organizer handover document. The PDFs (`How_to_Get_the_App.pdf`, `So_bekommst_du_die_App.pdf`) are to be distributed to students. See `docs/handover.html` for the complete distribution guide.
+> **For organizers:** The `docs/` folder contains student-facing setup guides. The PDFs (`How_to_Get_the_App.pdf`, `So_bekommst_du_die_App.pdf`) are to be distributed to students.
 
 ## Tech Stack
 
