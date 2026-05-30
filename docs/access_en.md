@@ -10,15 +10,14 @@ The app is distributed via Google Play as a closed test. To install it you need 
 
 Open the Google Group link you received from the event organizer. Make sure you are logged in with your Google account, then click **Join group**.
 
-![Join group page](res/join_group.png)
-
+![Join group page](join_group.png)
 ---
 
 ## Step 2 - Confirm
 
 A dialog appears asking for your display name and subscription settings. Click **Join group** to confirm.
 
-![Join confirmation dialog](res/join.png)
+![Join confirmation dialog](join.png)
 
 ---
 
@@ -28,4 +27,4 @@ Once you are a member, open the **App Download** post in the group and click the
 
 On the Play Store page, click **Join the testing program** if prompted. After that, click **Install**.
 
-![App Download link in group](res/link.png)
+![App Download link in group](link.png)

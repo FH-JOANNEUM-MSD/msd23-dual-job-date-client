@@ -10,7 +10,7 @@ Die App wird über Google Play als geschlossener Test verteilt. Du brauchst ein 
 
 Öffne den Google-Group-Link, den du vom Veranstalter erhalten hast. Stelle sicher, dass du mit deinem Google-Konto eingeloggt bist, und klicke auf **Gruppe beitreten**.
 
-![Gruppe beitreten](res/join_group.png)
+![Gruppe beitreten](join_group.png)
 
 ---
 
@@ -18,7 +18,7 @@ Die App wird über Google Play als geschlossener Test verteilt. Du brauchst ein 
 
 Es erscheint ein Dialog mit deinem Anzeigenamen und Abo-Einstellungen. Klicke auf **Gruppe beitreten** um zu bestätigen.
 
-![Bestätigungsdialog](res/join.png)
+![Bestätigungsdialog](join.png)
 
 ---
 
@@ -28,4 +28,4 @@ Sobald du Mitglied bist, öffne den **App Download** Beitrag in der Gruppe und k
 
 Falls auf der Play-Store-Seite **Am Testprogramm teilnehmen** erscheint, klicke darauf. Anschließend auf **Installieren** klicken.
 
-![App-Download-Link in der Gruppe](res/link.png)
+![App-Download-Link in der Gruppe](link.png)
