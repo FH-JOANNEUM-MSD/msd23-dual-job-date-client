@@ -29,7 +29,7 @@ class AppointmentViewModel(
 
     private fun loadAppointments() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isLoading = true, hasError = false) }
             try {
                 val appointments = repository.getMyAppointments()
                 val eventInfo = repository.getEventInfo()
@@ -47,7 +47,7 @@ class AppointmentViewModel(
                     )
                 }
             } catch (e: Exception) {
-                _state.update { it.copy(error = e.message, isLoading = false) }
+                _state.update { it.copy(isLoading = false, hasError = true) }
             }
         }
     }

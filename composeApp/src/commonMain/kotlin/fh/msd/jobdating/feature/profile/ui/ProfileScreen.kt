@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.error_generic
 import dualjobdating.composeapp.generated.resources.profile_change_password_button
 import dualjobdating.composeapp.generated.resources.profile_confirm_password
 import dualjobdating.composeapp.generated.resources.profile_current_password
@@ -30,6 +31,11 @@ import dualjobdating.composeapp.generated.resources.profile_new_password
 import dualjobdating.composeapp.generated.resources.profile_role
 import dualjobdating.composeapp.generated.resources.profile_section_legal
 import dualjobdating.composeapp.generated.resources.profile_section_password
+import dualjobdating.composeapp.generated.resources.profile_password_change_success
+import dualjobdating.composeapp.generated.resources.profile_password_fields_required
+import dualjobdating.composeapp.generated.resources.profile_password_mismatch
+import dualjobdating.composeapp.generated.resources.profile_password_too_short
+import dualjobdating.composeapp.generated.resources.profile_password_change_failed
 import dualjobdating.composeapp.generated.resources.profile_section_personal
 import dualjobdating.composeapp.generated.resources.profile_student_id
 
@@ -125,16 +131,22 @@ fun ProfileScreen(
                                 visualTransformation = PasswordVisualTransformation(),
                                 modifier = Modifier.fillMaxWidth()
                             )
-                            state.passwordError?.let {
+                            state.passwordError?.let { error ->
+                                val msg = when (error) {
+                                    ProfilePasswordError.FieldsRequired -> stringResource(Res.string.profile_password_fields_required)
+                                    ProfilePasswordError.PasswordMismatch -> stringResource(Res.string.profile_password_mismatch)
+                                    ProfilePasswordError.TooShort -> stringResource(Res.string.profile_password_too_short)
+                                    ProfilePasswordError.ChangeFailed -> stringResource(Res.string.profile_password_change_failed)
+                                }
                                 Text(
-                                    text = it,
+                                    text = msg,
                                     color = MaterialTheme.colorScheme.error,
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
-                            state.passwordSuccess?.let {
+                            if (state.passwordSuccess) {
                                 Text(
-                                    text = it,
+                                    text = stringResource(Res.string.profile_password_change_success),
                                     color = MaterialTheme.colorScheme.primary,
                                     style = MaterialTheme.typography.bodySmall
                                 )

@@ -42,7 +42,7 @@ import dualjobdating.composeapp.generated.resources.companies_no_available
 import dualjobdating.composeapp.generated.resources.company_detail_dislike
 import dualjobdating.composeapp.generated.resources.company_detail_like
 import dualjobdating.composeapp.generated.resources.company_detail_neutral
-import dualjobdating.composeapp.generated.resources.error_prefix
+import dualjobdating.composeapp.generated.resources.error_generic
 import fh.msd.jobdating.core.ui.theme.DislikeRed
 import fh.msd.jobdating.core.ui.theme.LikeGreen
 import fh.msd.jobdating.feature.companies.domain.model.Company
@@ -74,7 +74,7 @@ fun CompanySwipeScreen(
     ) {
         when {
             state.isLoading -> CircularProgressIndicator()
-            state.error != null -> Text(stringResource(Res.string.error_prefix, state.error ?: ""))
+            state.hasError -> Text(stringResource(Res.string.error_generic))
             state.isDone -> DoneCard(onNavigateToAppointments)
             state.companies.isEmpty() -> Text(stringResource(Res.string.companies_no_available), style = MaterialTheme.typography.headlineMedium)
             else -> SwipeContent(state, viewModel)
@@ -145,8 +145,6 @@ private fun SwipeContent(
     state: CompanyListState,
     viewModel: CompanySwipeViewModel
 ) {
-    println("SWIPE_CONTENT RECOMPOSE: currentIndex=${state.currentIndex}")
-
     val company = state.companies[state.currentIndex]
     val nextCompany = state.companies.getOrNull(state.currentIndex + 1)
     var showDetailDialog by remember { mutableStateOf(false) }
@@ -224,7 +222,6 @@ private fun SwipeContent(
             // Render background card with persisted state
             displayedBackground?.let { bgCompany ->
                 key(bgCompany.id) {
-                    println("RENDERING BACKGROUND: id=${bgCompany.id}, name=${bgCompany.name}")
                     CompanyCard(
                         company = bgCompany,
                         modifier = Modifier.fillMaxSize(),
@@ -235,7 +232,6 @@ private fun SwipeContent(
 
             // Foreground swipeable card
             key(company.id) {
-                println("RENDERING FOREGROUND: id=${company.id}, name=${company.name}")
                 SwipeableCompanyCard(
                     company = company,
                     swipeHint = swipeHint,

@@ -13,22 +13,14 @@ class CompanyRepositoryImpl(
     override suspend fun getActiveCompanies(): List<Company> {
         val companiesDto = service.getActiveCompanies()
         val studentId = userSession.getStudentId()
-        val user = userSession.getUser()
-
-        println("[REPO] studentId from session: $studentId")
-        println("[REPO] Full user object: $user")
 
         val preferencesDto = if (studentId != null) {
             try {
-                val prefs = service.getMyPreferences(studentId)
-                println("[REPO] Fetched ${prefs.size} preferences")
-                prefs
+                service.getMyPreferences(studentId)
             } catch (e: Exception) {
-                println("[REPO] Failed to fetch preferences: ${e.message}")
                 emptyList()
             }
         } else {
-            println("[REPO] No studentId, skipping preferences fetch")
             emptyList()
         }
 
@@ -64,8 +56,6 @@ class CompanyRepositoryImpl(
     }
 
     override suspend fun submitVote(companyId: Int, vote: VoteType) {
-        println("[REPO] submitVote: companyId=$companyId, vote=$vote")
         service.submitVote(companyId, vote)
-        println("[REPO] Vote submitted")
     }
 }

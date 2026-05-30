@@ -55,4 +55,9 @@
     <string name="error_no_internet">Keine Internetverbindung. Bitte überprüfe deine Verbindung und versuche es erneut.</string>
     <string name="error_invalid_credentials">Ungültige E-Mail oder Passwort.</string>
     <string name="error_generic">Etwas ist schiefgelaufen. Bitte versuche es erneut.</string>
+    <string name="profile_password_fields_required">Alle Felder sind erforderlich.</string>
+    <string name="profile_password_mismatch">Die Passwörter stimmen nicht überein.</string>
+    <string name="profile_password_too_short">Das Passwort muss mindestens 6 Zeichen lang sein.</string>
+    <string name="profile_password_change_failed">Passwort konnte nicht geändert werden. Bitte versuche es erneut.</string>
+    <string name="profile_password_change_success">Passwort erfolgreich geändert.</string>
 </resources>

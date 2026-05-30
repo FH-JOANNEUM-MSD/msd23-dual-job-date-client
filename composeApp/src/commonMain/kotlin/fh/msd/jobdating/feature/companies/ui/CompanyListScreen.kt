@@ -28,7 +28,7 @@ import dualjobdating.composeapp.generated.resources.Res
 import dualjobdating.composeapp.generated.resources.companies_no_available
 import dualjobdating.composeapp.generated.resources.companies_not_voted
 import dualjobdating.composeapp.generated.resources.companies_voted
-import dualjobdating.composeapp.generated.resources.error_prefix
+import dualjobdating.composeapp.generated.resources.error_generic
 
 
 @Composable
@@ -50,7 +50,7 @@ fun CompanyListScreen(
         when {
             state.isLoading -> CircularProgressIndicator()
 
-            state.error != null -> Text(stringResource(Res.string.error_prefix, state.error ?: ""))
+            state.hasError -> Text(stringResource(Res.string.error_generic))
 
             state.companies.isEmpty() -> Text(
                 text = stringResource(Res.string.companies_no_available),

@@ -19,7 +19,7 @@ import dualjobdating.composeapp.generated.resources.Res
 import dualjobdating.composeapp.generated.resources.appointments_default_event_name
 import dualjobdating.composeapp.generated.resources.appointments_no_appointments
 import dualjobdating.composeapp.generated.resources.appointments_your_appointments
-import dualjobdating.composeapp.generated.resources.error_prefix
+import dualjobdating.composeapp.generated.resources.error_generic
 
 @Composable
 fun AppointmentScreen(
@@ -38,7 +38,7 @@ fun AppointmentScreen(
         when {
             state.isLoading -> CircularProgressIndicator()
 
-            state.error != null -> Text(stringResource(Res.string.error_prefix, state.error ?: ""))
+            state.hasError -> Text(stringResource(Res.string.error_generic))
 
             state.appointments.isEmpty() -> Text(
                 text = stringResource(Res.string.appointments_no_appointments),

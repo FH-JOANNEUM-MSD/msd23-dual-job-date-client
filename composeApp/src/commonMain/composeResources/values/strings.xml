@@ -55,4 +55,9 @@
     <string name="error_no_internet">No internet connection. Please check your network and try again.</string>
     <string name="error_invalid_credentials">Invalid email or password.</string>
     <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="profile_password_fields_required">All fields are required.</string>
+    <string name="profile_password_mismatch">Passwords do not match.</string>
+    <string name="profile_password_too_short">Password must be at least 6 characters.</string>
+    <string name="profile_password_change_failed">Failed to change password. Please try again.</string>
+    <string name="profile_password_change_success">Password changed successfully.</string>
 </resources>
