@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dual Job Dating - Technical Handover</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 22mm 25mm 22mm;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.6;
+      color: #1A1A1A;
+      background: #fff;
+    }
+
+    /* ── DOCUMENT HEADER ── */
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 10mm;
+      border-bottom: 2.5pt solid #B71C1C;
+      margin-bottom: 8mm;
+    }
+
+    .doc-header img {
+      height: 36pt;
+      display: block;
+    }
+
+    .doc-header-right {
+      text-align: right;
+    }
+
+    .doc-header-right .doc-title {
+      font-size: 16pt;
+      font-weight: 700;
+      color: #B71C1C;
+      line-height: 1.2;
+    }
+
+    .doc-header-right .doc-subtitle {
+      font-size: 9pt;
+      color: #555;
+      margin-top: 3pt;
+    }
+
+    .doc-header-right .doc-date {
+      font-size: 8.5pt;
+      color: #888;
+      margin-top: 2pt;
+    }
+
+    /* ── NOTICE BOXES ── */
+    .notice {
+      border-left: 3pt solid #B71C1C;
+      background: #fdf5f5;
+      padding: 8pt 10pt;
+      margin: 6mm 0;
+      font-size: 9.5pt;
+    }
+
+    .notice strong { color: #B71C1C; }
+
+    .notice-placeholder {
+      border-left: 3pt solid #999;
+      background: #f5f5f5;
+      padding: 8pt 10pt;
+      margin: 4mm 0;
+      font-size: 9.5pt;
+      color: #555;
+    }
+
+    .notice-placeholder strong { color: #333; }
+
+    /* ── SECTION HEADINGS ── */
+    h2 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #B71C1C;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 8mm;
+      margin-bottom: 3mm;
+      padding-bottom: 2pt;
+      border-bottom: 1pt solid #e0e0e0;
+    }
+
+    h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-top: 5mm;
+      margin-bottom: 2mm;
+    }
+
+    p {
+      margin-bottom: 4pt;
+    }
+
+    /* ── PLATFORM SECTION HEADER ── */
+    .platform-heading {
+      display: flex;
+      align-items: center;
+      gap: 8pt;
+      margin-top: 8mm;
+      margin-bottom: 4mm;
+      padding-bottom: 3pt;
+      border-bottom: 1.5pt solid #1A1A1A;
+      page-break-after: avoid;
+    }
+
+    .platform-heading h2 {
+      margin: 0;
+      border: none;
+      padding: 0;
+      font-size: 12pt;
+      letter-spacing: 0.04em;
+    }
+
+    .platform-tag {
+      font-size: 7.5pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2pt 7pt;
+      border-radius: 3pt;
+    }
+
+    .tag-android { background: #e8f5e9; color: #2e7d32; border: 0.5pt solid #a5d6a7; }
+    .tag-ios     { background: #fde8e8; color: #B71C1C; border: 0.5pt solid #f5a0a0; }
+
+    /* ── STEPS ── */
+    .steps { margin: 0 0 4mm 0; }
+
+    .step {
+      display: flex;
+      gap: 10pt;
+      margin-bottom: 4mm;
+      page-break-inside: avoid;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 20pt;
+      height: 20pt;
+      border-radius: 50%;
+      background: #B71C1C;
+      color: #fff;
+      font-weight: 700;
+      font-size: 9pt;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1pt;
+    }
+
+    .step-num-placeholder {
+      background: #999;
+    }
+
+    .step-body h3 {
+      margin-top: 0;
+      margin-bottom: 2pt;
+    }
+
+    /* ── URL BLOCKS ── */
+    .url-block {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      color: #B71C1C;
+      background: #fdf5f5;
+      border: 0.5pt solid #e0b0b0;
+      padding: 5pt 8pt;
+      margin: 4pt 0;
+      word-break: break-all;
+      display: block;
+    }
+
+    .url-block-placeholder {
+      color: #777;
+      background: #f5f5f5;
+      border-color: #ccc;
+      font-style: italic;
+    }
+
+    /* ── ATTACHMENTS LIST ── */
+    .file-list {
+      margin: 4pt 0 4pt 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .file-list li {
+      font-size: 9.5pt;
+      padding: 3pt 0 3pt 14pt;
+      position: relative;
+      border-bottom: 0.5pt solid #f0f0f0;
+    }
+
+    .file-list li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #B71C1C;
+    }
+
+    .file-list li.placeholder {
+      color: #888;
+      font-style: italic;
+    }
+
+    /* ── CHECKLIST ── */
+    .checklist {
+      list-style: none;
+      margin: 4pt 0;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8pt;
+      font-size: 9.5pt;
+      margin-bottom: 4pt;
+      page-break-inside: avoid;
+    }
+
+    .checklist li .box {
+      flex-shrink: 0;
+      width: 11pt;
+      height: 11pt;
+      border: 1pt solid #B71C1C;
+      margin-top: 2pt;
+      display: inline-block;
+    }
+
+    .checklist li.placeholder-item { color: #888; font-style: italic; }
+
+    /* ── INFO NOTE ── */
+    .note {
+      font-size: 9pt;
+      color: #555;
+      background: #f9f9f9;
+      border-left: 2pt solid #ccc;
+      padding: 5pt 8pt;
+      margin: 4pt 0;
+    }
+
+    /* ── TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      margin: 4mm 0;
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #B71C1C;
+      color: #fff;
+      font-weight: 700;
+      padding: 5pt 8pt;
+      text-align: left;
+    }
+
+    td {
+      padding: 5pt 8pt;
+      border-bottom: 0.5pt solid #e0e0e0;
+    }
+
+    tr:nth-child(even) td { background: #fafafa; }
+
+    /* ── PAGE BREAK ── */
+    .page-break { page-break-before: always; }
+
+    /* ── FOOTER ── */
+    .doc-footer {
+      margin-top: 12mm;
+      padding-top: 4pt;
+      border-top: 0.5pt solid #ccc;
+      font-size: 8pt;
+      color: #aaa;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    ul.plain { padding-left: 16pt; margin: 4pt 0; }
+    ul.plain li { margin-bottom: 2pt; font-size: 9.5pt; }
+
+    /* Screen only - comfortable reading width */
+    @media screen {
+      body { background: #e8e8e8; padding: 10mm; }
+      .page {
+        background: #fff;
+        max-width: 210mm;
+        margin: 0 auto;
+        padding: 20mm 22mm 25mm;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+        min-height: 297mm;
+      }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page { padding: 0; }
+      a { text-decoration: none; color: inherit; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- DOCUMENT HEADER -->
+  <div class="doc-header">
+    <img src="logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Technical Handover</div>
+      <div class="doc-subtitle">Organizer Guide - App Distribution to Students</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <!-- SCOPE NOTICE -->
+  <div class="notice">
+    <strong>Scope.</strong> This document covers everything the organizer must do to get students onto the Dual Job Dating app. It assumes student accounts have already been created in the backend and that each student has received their login credentials (email address and password) from the organizer. Account provisioning is out of scope.
+  </div>
+
+  <!-- OVERVIEW -->
+  <h2>Overview</h2>
+  <p>The Dual Job Dating app allows students to browse participating companies and vote on them (Like, Dislike, or Neutral). After the organizer runs the matching process in the backend, each student can view their assigned appointments in the app.</p>
+  <p>The app is available on <strong>Android</strong> and <strong>iOS</strong>. Each platform uses a different distribution channel described in the sections below.</p>
+
+  <!-- PREREQUISITES -->
+  <h2>Prerequisites</h2>
+  <table>
+    <tr><th>Item</th><th>Required for</th></tr>
+    <tr><td>Student accounts created in backend, credentials distributed</td><td>Both platforms</td></tr>
+    <tr><td>Access to the Google Group for Play Store distribution</td><td>Android</td></tr>
+    <tr><td>TestFlight invite link active and ready</td><td>iOS</td></tr>
+    <tr><td>Android device running Android 7.0 (API 24) or higher</td><td>Android students</td></tr>
+    <tr><td>iPhone or iPad running iOS 16 or higher</td><td>iOS students</td></tr>
+  </table>
+
+
+  <!-- ====== ANDROID ====== -->
+  <div class="platform-heading">
+    <h2>Android Distribution</h2>
+    <span class="platform-tag tag-android">Google Play - Closed Testing</span>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Send the Google Group link to Android students</h3>
+        <p>Students must join the closed testing group before they can install the app. Send every Android student the following link and ask them to sign in with their Google account and join the group:</p>
+        <span class="url-block">https://groups.google.com/g/dualjobdating</span>
+        <p class="note">It can take a few minutes after joining for the Play Store to grant access. If the app is not visible immediately, ask the student to wait and refresh.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Send the setup guide PDF and login credentials</h3>
+        <p>Along with the Google Group link, provide each student with their email address and password, and attach the relevant setup guide PDF:</p>
+        <ul class="file-list">
+          <li>How_to_Get_the_App.pdf &nbsp;(English)</li>
+          <li>So_bekommst_du_die_App.pdf &nbsp;(Deutsch)</li>
+        </ul>
+        <p>The PDF guides the student step-by-step through joining the group, finding the app in the Play Store, and installing it.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Student installs the app from the Play Store</h3>
+        <p>Once the student has joined the group and the Play Store has synced, they search for Dual Job Dating in the Play Store and install the app. The PDF includes the direct Play Store link.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Student logs in and votes on companies</h3>
+        <p>On first launch the student enters their email address and password. After a successful login they see the company voting screen. They swipe or tap to vote Like, Dislike, or Neutral on each company. Votes are submitted to the backend in real time. A confirmation screen appears when all companies have been voted on.</p>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ====== iOS ====== -->
+  <div class="page-break"></div>
+
+  <div class="doc-header">
+    <img src="logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Technical Handover</div>
+      <div class="doc-subtitle">Organizer Guide - App Distribution to Students</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="platform-heading">
+    <h2>iOS Distribution</h2>
+    <span class="platform-tag tag-ios">TestFlight</span>
+  </div>
+
+  <div class="notice-placeholder">
+    <strong>Incomplete - action required.</strong> The iOS TestFlight setup is managed by a separate team member. The steps below are structurally correct but the TestFlight invite link and the iOS setup guide PDF are placeholders. These must be filled in before this document is shared with students.
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Student installs TestFlight</h3>
+        <p>TestFlight is Apple's official beta distribution platform and must be installed before the student can install Dual Job Dating. The student searches for TestFlight in the App Store, or uses the link below, and installs it for free:</p>
+        <span class="url-block">https://apps.apple.com/app/testflight/id899247664</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num step-num-placeholder">2</div>
+      <div class="step-body">
+        <h3>Send the TestFlight invite link to iOS students</h3>
+        <p>Share the TestFlight public link for the Dual Job Dating beta with all iOS students. The student opens the link on their device, which launches TestFlight and allows them to install the app directly.</p>
+        <span class="url-block url-block-placeholder">[PLACEHOLDER - TestFlight public invite link - to be provided by iOS team]</span>
+        <p class="note">The invite link is generated in App Store Connect under TestFlight &gt; Public Link. TestFlight builds expire after 90 days - ensure the build is active before the event date.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num step-num-placeholder">3</div>
+      <div class="step-body">
+        <h3>Send the iOS setup guide PDF and login credentials</h3>
+        <p>Along with the TestFlight link, provide each student with their email address and password, and attach the iOS setup guide PDF:</p>
+        <ul class="file-list">
+          <li class="placeholder">[PLACEHOLDER - iOS setup guide PDF (English) - to be provided by iOS team]</li>
+          <li class="placeholder">[PLACEHOLDER - iOS setup guide PDF (Deutsch) - to be provided by iOS team]</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Student installs the app via TestFlight</h3>
+        <p>After opening the invite link on their device, the student taps Accept in TestFlight and then Install. Dual Job Dating is installed on the device.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>Student logs in and votes on companies</h3>
+        <p>Identical to Android - on first launch the student enters their email address and password. After login they see the company voting screen and can vote on each company.</p>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ====== AFTER MATCHING ====== -->
+  <h2>After the Matching Process (Both Platforms)</h2>
+  <p>Once the organizer has run the matching algorithm in the backend, each student's assigned appointments automatically appear in the Appointments tab of the app - on both Android and iOS. The student sees the company name and time slot for each appointment. No further action is required from the organizer on the app side.</p>
+
+
+  <!-- ====== ORGANIZER CHECKLIST ====== -->
+  <h2>Organizer Checklist</h2>
+
+  <h3>Android</h3>
+  <ul class="checklist">
+    <li><span class="box"></span> Student accounts created and credentials distributed.</li>
+    <li><span class="box"></span> Google Group link sent to all Android students.</li>
+    <li><span class="box"></span> Setup guide PDF (English / German) sent to all Android students.</li>
+    <li><span class="box"></span> All Android students confirmed they can log in.</li>
+    <li><span class="box"></span> All Android students have completed their company votes.</li>
+  </ul>
+
+  <h3>iOS</h3>
+  <ul class="checklist">
+    <li><span class="box"></span> Student accounts created and credentials distributed.</li>
+    <li><span class="box"></span><span class="placeholder-item">TestFlight invite link confirmed active. [Placeholder]</span></li>
+    <li><span class="box"></span><span class="placeholder-item">TestFlight link and iOS setup guide PDF sent to all iOS students. [Placeholder]</span></li>
+    <li><span class="box"></span> All iOS students confirmed they can log in.</li>
+    <li><span class="box"></span> All iOS students have completed their company votes.</li>
+  </ul>
+
+  <h3>Both Platforms</h3>
+  <ul class="checklist">
+    <li><span class="box"></span> Matching process run in the backend.</li>
+    <li><span class="box"></span> Students can see their appointments in the app.</li>
+  </ul>
+
+
+  <!-- ====== REFERENCE ====== -->
+  <h2>Reference</h2>
+
+  <h3>Android - Google Play Group</h3>
+  <span class="url-block">https://groups.google.com/g/dualjobdating</span>
+
+  <h3>iOS - TestFlight</h3>
+  <span class="url-block url-block-placeholder">[PLACEHOLDER - TestFlight invite link]</span>
+
+  <h3>Attached Documents</h3>
+  <ul class="file-list">
+    <li>How_to_Get_the_App.pdf (English) - Android student setup guide</li>
+    <li>So_bekommst_du_die_App.pdf (Deutsch) - Android student setup guide</li>
+    <li class="placeholder">[PLACEHOLDER] iOS setup guide PDF (English)</li>
+    <li class="placeholder">[PLACEHOLDER] iOS setup guide PDF (Deutsch)</li>
+  </ul>
+
+  <h3>Platform Requirements</h3>
+  <table>
+    <tr><th>Platform</th><th>Minimum OS</th><th>Distribution channel</th></tr>
+    <tr><td>Android</td><td>Android 7.0 (API 24)</td><td>Google Play - Closed Testing</td></tr>
+    <tr><td>iOS</td><td>iOS 16</td><td>TestFlight</td></tr>
+  </table>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <span>Dual Job Dating - Technical Handover</span>
+    <span>FH Joanneum - 2026</span>
+  </div>
+
+</div>
+</body>
+</html>
