@@ -54,7 +54,8 @@ fun CompanyCard(
     modifier: Modifier = Modifier,
     swipeHint: SwipeHint = SwipeHint.NONE,
     dragProgress: Float = 0f,
-    isBackground: Boolean = false
+    isBackground: Boolean = false,
+    applyAspectRatio: Boolean = true
 ) {
     val borderColor = when (swipeHint) {
         SwipeHint.LIKE -> Color(0xFF639922)
@@ -73,15 +74,17 @@ fun CompanyCard(
         animationSpec = tween(150)
     )
 
+    val cardModifier = modifier
+        .fillMaxWidth()
+        .then(if (applyAspectRatio) Modifier.aspectRatio(0.75f) else Modifier)
+        .border(
+            width = animatedBorderWidth.dp,
+            color = animatedBorderColor,
+            shape = RoundedCornerShape(16.dp)
+        )
+
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(0.75f)
-            .border(
-                width = animatedBorderWidth.dp,
-                color = animatedBorderColor,
-                shape = RoundedCornerShape(16.dp)
-            ),
+        modifier = cardModifier,
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(0.dp),
         colors = CardDefaults.cardColors(

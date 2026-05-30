@@ -3,7 +3,9 @@ package fh.msd.jobdating.feature.auth.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.*
@@ -46,120 +48,131 @@ fun LoginScreen(
         }
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        val isLandscape = maxWidth > maxHeight
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(if (isLandscape) Modifier.verticalScroll(rememberScrollState()) else Modifier)
+                .padding(horizontal = 24.dp, vertical = if (isLandscape) 16.dp else 0.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Column(
-                modifier = Modifier.padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
-                if (isSystemInDarkTheme()) {
-                    Image(
-                        painter = painterResource(Res.drawable.logo_dark),
-                        contentDescription = "Logo",
-                        modifier = Modifier
-                            .size(120.dp)
-                            .drawBehind {
-                                val gradient = Brush.radialGradient(
-                                    colors = listOf(Color(0xFF444444), Color(0xFF222222)),
-                                    center = center,
-                                    radius = size.width / 2
-                                )
-                                drawCircle(brush = gradient)
-                            }
-                            .padding(8.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF2A2A2A))
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(Res.drawable.logo),
-                        contentDescription = "Logo",
-                        modifier = Modifier.size(120.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = stringResource(Res.string.app_name),
-                    style = MaterialTheme.typography.headlineLarge
-                )
-
-                Spacer(modifier = Modifier.height(40.dp))
-
-                OutlinedTextField(
-                    value = state.email,
-                    onValueChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
-                    label = { Text(stringResource(Res.string.login_email)) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = state.password,
-                    onValueChange = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) },
-                    label = { Text(stringResource(Res.string.login_password)) },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                state.loginError?.let { error ->
-                    Spacer(modifier = Modifier.height(12.dp))
-                    when (error) {
-                        LoginError.Network -> Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.WifiOff,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(16.dp)
+                Column(
+                    modifier = Modifier.padding(if (isLandscape) 24.dp else 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (!isLandscape) {
+                        if (isSystemInDarkTheme()) {
+                            Image(
+                                painter = painterResource(Res.drawable.logo_dark),
+                                contentDescription = "Logo",
+                                modifier = Modifier
+                                    .size(120.dp)
+                                    .drawBehind {
+                                        val gradient = Brush.radialGradient(
+                                            colors = listOf(Color(0xFF444444), Color(0xFF222222)),
+                                            center = center,
+                                            radius = size.width / 2
+                                        )
+                                        drawCircle(brush = gradient)
+                                    }
+                                    .padding(8.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF2A2A2A))
                             )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = stringResource(Res.string.error_no_internet),
+                        } else {
+                            Image(
+                                painter = painterResource(Res.drawable.logo),
+                                contentDescription = "Logo",
+                                modifier = Modifier.size(120.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    Text(
+                        text = stringResource(Res.string.app_name),
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+
+                    Spacer(modifier = Modifier.height(if (isLandscape) 16.dp else 40.dp))
+
+                    OutlinedTextField(
+                        value = state.email,
+                        onValueChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
+                        label = { Text(stringResource(Res.string.login_email)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = state.password,
+                        onValueChange = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) },
+                        label = { Text(stringResource(Res.string.login_password)) },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    state.loginError?.let { error ->
+                        Spacer(modifier = Modifier.height(12.dp))
+                        when (error) {
+                            LoginError.Network -> Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.WifiOff,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = stringResource(Res.string.error_no_internet),
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                            LoginError.InvalidCredentials -> Text(
+                                text = stringResource(Res.string.error_invalid_credentials),
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                            LoginError.Generic -> Text(
+                                text = stringResource(Res.string.error_generic),
                                 color = MaterialTheme.colorScheme.error,
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
-                        LoginError.InvalidCredentials -> Text(
-                            text = stringResource(Res.string.error_invalid_credentials),
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        LoginError.Generic -> Text(
-                            text = stringResource(Res.string.error_generic),
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
                     }
-                }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(if (isLandscape) 16.dp else 32.dp))
 
-                Button(
-                    onClick = { viewModel.onEvent(LoginEvent.Submit) },
-                    enabled = !state.isLoading,
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 8.dp,
-                        pressedElevation = 2.dp
-                    )
-                ) {
-                    if (state.isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                    else Text(stringResource(Res.string.login_button), style = MaterialTheme.typography.titleMedium)
+                    Button(
+                        onClick = { viewModel.onEvent(LoginEvent.Submit) },
+                        enabled = !state.isLoading,
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 8.dp,
+                            pressedElevation = 2.dp
+                        )
+                    ) {
+                        if (state.isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                        else Text(stringResource(Res.string.login_button), style = MaterialTheme.typography.titleMedium)
+                    }
                 }
             }
         }

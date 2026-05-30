@@ -1,13 +1,7 @@
 package fh.msd.jobdating.feature.companies.ui
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,10 +11,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
-import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,8 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -122,13 +116,11 @@ private fun DoneCard(onNavigateToAppointments: () -> Unit) {
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-
                 Text(
                     text = stringResource(Res.string.companies_check_appointments),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = null,
@@ -149,13 +141,9 @@ private fun SwipeContent(
     val nextCompany = state.companies.getOrNull(state.currentIndex + 1)
     var showDetailDialog by remember { mutableStateOf(false) }
 
-    // Keep old background card until new one is ready
     var displayedBackground by remember { mutableStateOf(nextCompany) }
-
     LaunchedEffect(nextCompany) {
-        if (nextCompany != null) {
-            displayedBackground = nextCompany
-        }
+        if (nextCompany != null) displayedBackground = nextCompany
     }
 
     var swipeHint by remember(state.currentIndex) { mutableStateOf(SwipeHint.NONE) }
@@ -207,64 +195,143 @@ private fun SwipeContent(
         )
     }
 
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val isLandscape = maxWidth > maxHeight
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(0.75f)
-                .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp), clip = false),
-            contentAlignment = Alignment.Center
-        ) {
-            // Render background card with persisted state
-            displayedBackground?.let { bgCompany ->
-                key(bgCompany.id) {
-                    CompanyCard(
-                        company = bgCompany,
-                        modifier = Modifier.fillMaxSize(),
-                        isBackground = true
+        if (isLandscape) {
+            // ── Landscape: card left, info + buttons right ──
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Left panel: swipeable card (no aspect ratio — fills full height)
+                Box(
+                    modifier = Modifier
+                        .weight(0.6f)
+                        .fillMaxHeight()
+                        .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp), clip = false),
+                    contentAlignment = Alignment.Center
+                ) {
+                    displayedBackground?.let { bgCompany ->
+                        key(bgCompany.id) {
+                            CompanyCard(
+                                company = bgCompany,
+                                modifier = Modifier.fillMaxSize(),
+                                isBackground = true,
+                                applyAspectRatio = false
+                            )
+                        }
+                    }
+                    key(company.id) {
+                        SwipeableCompanyCard(
+                            company = company,
+                            swipeHint = swipeHint,
+                            dragProgress = dragProgress,
+                            offsetX = offsetX,
+                            offsetY = offsetY,
+                            rotation = rotation,
+                            applyAspectRatio = false,
+                            onSwipe = { viewModel.onEvent(CompanyListEvent.Vote(company.id, it)) },
+                            onHintChanged = { hint, progress ->
+                                swipeHint = hint
+                                dragProgress = progress
+                                dragOnlyProgress = progress
+                            },
+                            onCardClick = { showDetailDialog = true }
+                        )
+                    }
+                }
+
+                // Right panel: company info + action buttons
+                Column(
+                    modifier = Modifier
+                        .weight(0.4f)
+                        .fillMaxHeight()
+                        .padding(horizontal = 8.dp, vertical = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = company.name,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    if (company.shortDescription.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = company.shortDescription,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(32.dp))
+                    key(state.currentIndex) {
+                        SwipeActionButtons(
+                            swipeHint = swipeHint,
+                            onDislike = { triggerSwipe(VoteType.DISLIKE) },
+                            onNeutral = { triggerSwipe(VoteType.NEUTRAL) },
+                            onLike = { triggerSwipe(VoteType.LIKE) }
+                        )
+                    }
+                }
+            }
+        } else {
+            // ── Portrait: unchanged ──
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(0.75f)
+                        .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp), clip = false),
+                    contentAlignment = Alignment.Center
+                ) {
+                    displayedBackground?.let { bgCompany ->
+                        key(bgCompany.id) {
+                            CompanyCard(
+                                company = bgCompany,
+                                modifier = Modifier.fillMaxSize(),
+                                isBackground = true
+                            )
+                        }
+                    }
+                    key(company.id) {
+                        SwipeableCompanyCard(
+                            company = company,
+                            swipeHint = swipeHint,
+                            dragProgress = dragProgress,
+                            offsetX = offsetX,
+                            offsetY = offsetY,
+                            rotation = rotation,
+                            onSwipe = { viewModel.onEvent(CompanyListEvent.Vote(company.id, it)) },
+                            onHintChanged = { hint, progress ->
+                                swipeHint = hint
+                                dragProgress = progress
+                                dragOnlyProgress = progress
+                            },
+                            onCardClick = { showDetailDialog = true }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                key(state.currentIndex) {
+                    SwipeActionButtons(
+                        swipeHint = swipeHint,
+                        onDislike = { triggerSwipe(VoteType.DISLIKE) },
+                        onNeutral = { triggerSwipe(VoteType.NEUTRAL) },
+                        onLike = { triggerSwipe(VoteType.LIKE) }
                     )
                 }
             }
-
-            // Foreground swipeable card
-            key(company.id) {
-                SwipeableCompanyCard(
-                    company = company,
-                    swipeHint = swipeHint,
-                    dragProgress = dragProgress,
-                    offsetX = offsetX,
-                    offsetY = offsetY,
-                    rotation = rotation,
-                    onSwipe = { voteType ->
-                        viewModel.onEvent(CompanyListEvent.Vote(company.id, voteType))
-                    },
-                    onHintChanged = { hint, progress ->
-                        swipeHint = hint
-                        dragProgress = progress
-                        dragOnlyProgress = progress
-                    },
-                    onCardClick = { showDetailDialog = true }
-                )
-            }
-        }
-
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        key(state.currentIndex) {
-            SwipeActionButtons(
-                swipeHint = swipeHint,
-                onDislike = { triggerSwipe(VoteType.DISLIKE) },
-                onNeutral = { triggerSwipe(VoteType.NEUTRAL) },
-                onLike = { triggerSwipe(VoteType.LIKE) }
-            )
         }
     }
 }
+
 @Composable
 private fun SwipeableCompanyCard(
     company: Company,
@@ -275,7 +342,8 @@ private fun SwipeableCompanyCard(
     rotation: Animatable<Float, *>,
     onSwipe: (VoteType) -> Unit,
     onHintChanged: (SwipeHint, Float) -> Unit,
-    onCardClick: () -> Unit
+    onCardClick: () -> Unit,
+    applyAspectRatio: Boolean = true
 ) {
     val scope = rememberCoroutineScope()
     val swipeThreshold = 300f
@@ -346,7 +414,8 @@ private fun SwipeableCompanyCard(
             company = company,
             modifier = Modifier.fillMaxSize(),
             swipeHint = swipeHint,
-            dragProgress = dragProgress
+            dragProgress = dragProgress,
+            applyAspectRatio = applyAspectRatio
         )
     }
 }
@@ -385,8 +454,6 @@ private fun SwipeActionButtons(
         )
     }
 }
-
-
 
 @Composable
 private fun SwipeActionButton(
