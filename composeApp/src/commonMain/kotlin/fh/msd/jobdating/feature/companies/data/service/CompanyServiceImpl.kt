@@ -31,18 +31,13 @@ class CompanyServiceImpl(
     }
 
     override suspend fun getActiveCompanies(): List<CompanyDto> {
-        val companies: List<CompanyDto> = httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/companies/active") {
+        return httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/companies/active") {
             header(HttpHeaders.Authorization, "Bearer ${getAccessToken()}")
             accept(ContentType.Application.Json)
         }.body()
-
-        return companies
     }
 
     override suspend fun getMyPreferences(studentId: Int): List<PreferenceDto> {
-        println("[SERVICE] Fetching preferences for studentId=$studentId")
-        println("[SERVICE] JWT token first 50 chars: ${getAccessToken().take(50)}")
-
         return httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/students/$studentId/preferences") {
             header(HttpHeaders.Authorization, "Bearer ${getAccessToken()}")
             accept(ContentType.Application.Json)
@@ -61,28 +56,17 @@ class CompanyServiceImpl(
             @SerialName("preference_type") val preferenceType: String
         )
 
-        val url = "${BuildKonfig.BACKEND_BASE_URL}/api/companies/$companyId/vote"
-        val body = VoteRequest(vote.text)
-        println("[SERVICE] submitVote: POST $url")
-        println("[SERVICE] submitVote: body=$body")
-
-        val response = httpClient.post(url) {
+        val response = httpClient.post("${BuildKonfig.BACKEND_BASE_URL}/api/companies/$companyId/vote") {
             header(HttpHeaders.Authorization, "Bearer ${getAccessToken()}")
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
-            setBody(body)
+            setBody(VoteRequest(vote.text))
         }
-
-        println("[SERVICE] submitVote: status=${response.status.value}")
 
         if (response.status.value !in 200..299) {
-            val errorBody = response.bodyAsText()
-            println("[SERVICE] submitVote: error body=$errorBody")
-            error("Vote failed (${response.status.value}): $errorBody")
+            error("Vote failed (${response.status.value})")
         }
 
-        val voteResponse: VoteResponse = response.body()
-        println("[SERVICE] submitVote: response=$voteResponse")
-        return voteResponse.studentId
+        return response.body<VoteResponse>().studentId
     }
 }
