@@ -29,13 +29,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Write local.properties
-        run: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
-          echo "BACKEND_BASE_URL=${{ secrets.BACKEND_BASE_URL }}" >> local.properties
-          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> local.properties
-          echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> local.properties
-
       - name: Download dependencies
         run: ./gradlew --no-daemon dependencies
 
@@ -57,7 +50,10 @@ jobs:
             -Pandroid.injected.signing.store.password='${{ secrets.KEYSTORE_PASSWORD }}' \
             -Pandroid.injected.signing.key.alias='${{ secrets.KEY_ALIAS }}' \
             -Pandroid.injected.signing.key.password='${{ secrets.KEY_PASSWORD }}' \
-            -PversionCode=${{ env.VERSION_CODE }}
+            -PversionCode=${{ env.VERSION_CODE }} \
+            -PBACKEND_BASE_URL='${{ secrets.BACKEND_BASE_URL }}' \
+            -PSUPABASE_URL='${{ secrets.SUPABASE_URL }}' \
+            -PSUPABASE_ANON_KEY='${{ secrets.SUPABASE_ANON_KEY }}'
 
       - name: Upload to Play Store Internal Testing
         uses: r0adkll/upload-google-play@v1
