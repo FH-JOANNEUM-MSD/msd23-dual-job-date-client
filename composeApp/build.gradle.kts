@@ -92,9 +92,9 @@ buildkonfig {
 
     defaultConfigs {
         buildConfigField(BOOLEAN, "IS_PRODUCTION", (findProperty("isProduction") as? String ?: "false"))
-        buildConfigField(STRING, "BACKEND_BASE_URL", localProperties["BACKEND_BASE_URL"] as String)
-        buildConfigField(STRING, "SUPABASE_URL", localProperties["SUPABASE_URL"] as String)
-        buildConfigField(STRING, "SUPABASE_ANON_KEY", localProperties["SUPABASE_ANON_KEY"] as String)
+        buildConfigField(STRING, "BACKEND_BASE_URL", localProperties["BACKEND_BASE_URL"] as? String ?: "")
+        buildConfigField(STRING, "SUPABASE_URL", localProperties["SUPABASE_URL"] as? String ?: "")
+        buildConfigField(STRING, "SUPABASE_ANON_KEY", localProperties["SUPABASE_ANON_KEY"] as? String ?: "")
     }
 }
 
