@@ -52,6 +52,18 @@
     <!-- Common -->
     <string name="error_prefix">Error: %s</string>
     <string name="logo_not_available">Logo not available</string>
+
+    <!-- Accessibility -->
+    <string name="cd_logo">Dual Job Dating app logo</string>
+    <string name="cd_company_image">%1$s, company image</string>
+    <string name="cd_company_logo">%1$s, company logo</string>
+    <string name="cd_vote_like">Voted: Like</string>
+    <string name="cd_vote_dislike">Voted: Dislike</string>
+    <string name="cd_vote_neutral">Voted: Neutral</string>
+    <string name="cd_vote_none">Not yet voted</string>
+    <string name="cd_swipe_card">%1$s. %2$s. Double tap to open details, or use actions to vote.</string>
+    <string name="cd_section_expanded">%1$s, expanded. Tap to collapse.</string>
+    <string name="cd_section_collapsed">%1$s, collapsed. Tap to expand.</string>
     <string name="error_no_internet">No internet connection. Please check your network and try again.</string>
     <string name="error_invalid_credentials">Invalid email or password.</string>
     <string name="error_generic">Something went wrong. Please try again.</string>

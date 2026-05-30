@@ -13,6 +13,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -36,6 +38,8 @@ import dualjobdating.composeapp.generated.resources.profile_password_fields_requ
 import dualjobdating.composeapp.generated.resources.profile_password_mismatch
 import dualjobdating.composeapp.generated.resources.profile_password_too_short
 import dualjobdating.composeapp.generated.resources.profile_password_change_failed
+import dualjobdating.composeapp.generated.resources.cd_section_collapsed
+import dualjobdating.composeapp.generated.resources.cd_section_expanded
 import dualjobdating.composeapp.generated.resources.profile_section_personal
 import dualjobdating.composeapp.generated.resources.profile_student_id
 
@@ -230,9 +234,15 @@ private fun SectionHeader(
     expanded: Boolean,
     onToggle: () -> Unit
 ) {
+    val sectionDesc = if (expanded) {
+        stringResource(Res.string.cd_section_expanded, title)
+    } else {
+        stringResource(Res.string.cd_section_collapsed, title)
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .semantics { contentDescription = sectionDesc }
             .clickable { onToggle() }
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,

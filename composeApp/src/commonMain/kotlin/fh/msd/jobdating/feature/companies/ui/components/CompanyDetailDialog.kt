@@ -60,6 +60,7 @@ import fh.msd.jobdating.feature.companies.ui.NeutralOrange
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.cd_company_image
 import dualjobdating.composeapp.generated.resources.company_detail_close
 import dualjobdating.composeapp.generated.resources.company_detail_dislike
 import dualjobdating.composeapp.generated.resources.company_detail_like
@@ -426,7 +427,7 @@ private fun ImagePager(
         HorizontalPager(state = pagerState, modifier = modifier) { page ->
             Image(
                 painter = painterResource(fallbackImages[page]),
-                contentDescription = "Company Image ${page + 1}",
+                contentDescription = stringResource(Res.string.cd_company_image, company.name),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -441,7 +442,7 @@ private fun ImagePager(
                     .scale(Scale.FIT)
                     .crossfade(true)
                     .build(),
-                contentDescription = "Company Image ${page + 1}",
+                contentDescription = stringResource(Res.string.cd_company_image, company.name),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
                 success = { SubcomposeAsyncImageContent() },
@@ -449,7 +450,7 @@ private fun ImagePager(
                     val fallbackImages = CompanyImageProvider.getFallbackImages(company.id)
                     Image(
                         painter = painterResource(fallbackImages[0]),
-                        contentDescription = "Company Image",
+                        contentDescription = stringResource(Res.string.cd_company_image, company.name),
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )

@@ -29,7 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
 import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.cd_swipe_card
 import dualjobdating.composeapp.generated.resources.companies_all_voted
 import dualjobdating.composeapp.generated.resources.companies_check_appointments
 import dualjobdating.composeapp.generated.resources.companies_no_available
@@ -349,9 +354,26 @@ private fun SwipeableCompanyCard(
     val swipeThreshold = 300f
     val verticalSwipeThreshold = 400f
 
+    val cardDesc = stringResource(
+        Res.string.cd_swipe_card,
+        company.name,
+        company.shortDescription.ifBlank { company.description }
+    )
+    val likeLabel = stringResource(Res.string.company_detail_like)
+    val neutralLabel = stringResource(Res.string.company_detail_neutral)
+    val dislikeLabel = stringResource(Res.string.company_detail_dislike)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .semantics(mergeDescendants = true) {
+                contentDescription = cardDesc
+                customActions = listOf(
+                    CustomAccessibilityAction(likeLabel) { onSwipe(VoteType.LIKE); true },
+                    CustomAccessibilityAction(neutralLabel) { onSwipe(VoteType.NEUTRAL); true },
+                    CustomAccessibilityAction(dislikeLabel) { onSwipe(VoteType.DISLIKE); true }
+                )
+            }
             .graphicsLayer {
                 translationX = offsetX.value
                 translationY = offsetY.value

@@ -23,6 +23,7 @@ import dualjobdating.composeapp.generated.resources.error_no_internet
 import dualjobdating.composeapp.generated.resources.login_button
 import dualjobdating.composeapp.generated.resources.login_email
 import dualjobdating.composeapp.generated.resources.login_password
+import dualjobdating.composeapp.generated.resources.cd_logo
 import dualjobdating.composeapp.generated.resources.logo
 import dualjobdating.composeapp.generated.resources.logo_dark
 import org.jetbrains.compose.resources.painterResource
@@ -74,7 +75,7 @@ fun LoginScreen(
                         if (isSystemInDarkTheme()) {
                             Image(
                                 painter = painterResource(Res.drawable.logo_dark),
-                                contentDescription = "Logo",
+                                contentDescription = stringResource(Res.string.cd_logo),
                                 modifier = Modifier
                                     .size(120.dp)
                                     .drawBehind {
@@ -92,7 +93,7 @@ fun LoginScreen(
                         } else {
                             Image(
                                 painter = painterResource(Res.drawable.logo),
-                                contentDescription = "Logo",
+                                contentDescription = stringResource(Res.string.cd_logo),
                                 modifier = Modifier.size(120.dp)
                             )
                         }

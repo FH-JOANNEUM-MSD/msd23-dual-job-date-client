@@ -46,7 +46,11 @@ import coil3.size.Scale
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.ui.SwipeHint
 import androidx.compose.foundation.background
+import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.cd_company_image
+import dualjobdating.composeapp.generated.resources.cd_company_logo
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CompanyCard(
@@ -107,7 +111,7 @@ fun CompanyCard(
                     val fallbackImage = CompanyImageProvider.getFallbackImages(company.id)[0]
                     androidx.compose.foundation.Image(
                         painter = painterResource(fallbackImage),
-                        contentDescription = "Company Image",
+                        contentDescription = stringResource(Res.string.cd_company_image, company.name),
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
@@ -120,7 +124,7 @@ fun CompanyCard(
                             .scale(Scale.FIT)
                             .crossfade(if (isBackground) false else true)
                             .build(),
-                        contentDescription = "Company Logo",
+                        contentDescription = stringResource(Res.string.cd_company_logo, company.name),
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
                         success = {
@@ -130,7 +134,7 @@ fun CompanyCard(
                             val fallbackImage = CompanyImageProvider.getFallbackImages(company.id)[0]
                             androidx.compose.foundation.Image(
                                 painter = painterResource(fallbackImage),
-                                contentDescription = "Company Image",
+                                contentDescription = stringResource(Res.string.cd_company_image, company.name),
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
