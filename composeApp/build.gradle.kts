@@ -1,3 +1,4 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -90,6 +91,7 @@ buildkonfig {
     packageName = "fh.msd.jobdating"
 
     defaultConfigs {
+        buildConfigField(BOOLEAN, "IS_PRODUCTION", (findProperty("isProduction") as? String ?: "false"))
         buildConfigField(STRING, "BACKEND_BASE_URL", localProperties["BACKEND_BASE_URL"] as String)
         buildConfigField(STRING, "SUPABASE_URL", localProperties["SUPABASE_URL"] as String)
         buildConfigField(STRING, "SUPABASE_ANON_KEY", localProperties["SUPABASE_ANON_KEY"] as String)
@@ -114,7 +116,12 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
