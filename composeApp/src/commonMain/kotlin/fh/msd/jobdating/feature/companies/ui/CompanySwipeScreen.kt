@@ -282,7 +282,11 @@ private fun SwipeContent(
                 }
             }
         } else {
-            // ── Portrait: unchanged ──
+            // ── Portrait: center vertically so cards don't cover the logo ──
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -333,6 +337,7 @@ private fun SwipeContent(
                     )
                 }
             }
+            } // end centering Box
         }
     }
 }
