@@ -39,8 +39,8 @@
     <string name="profile_new_password">Neues Passwort</string>
     <string name="profile_confirm_password">Passwort bestätigen</string>
     <string name="profile_change_password_button">Passwort ändern</string>
-    <string name="profile_impressum">Impressum</string>
     <string name="profile_data_privacy">Datenschutz</string>
+    <string name="profile_open_source">Open-Source-Bibliotheken</string>
     <string name="profile_logout">Abmelden</string>
 
     <!-- Navigation -->

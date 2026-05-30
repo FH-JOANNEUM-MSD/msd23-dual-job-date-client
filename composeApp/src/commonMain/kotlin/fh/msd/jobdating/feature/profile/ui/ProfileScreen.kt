@@ -27,8 +27,8 @@ import dualjobdating.composeapp.generated.resources.profile_confirm_password
 import dualjobdating.composeapp.generated.resources.profile_current_password
 import dualjobdating.composeapp.generated.resources.profile_data_privacy
 import dualjobdating.composeapp.generated.resources.profile_email
-import dualjobdating.composeapp.generated.resources.profile_impressum
 import dualjobdating.composeapp.generated.resources.profile_logout
+import dualjobdating.composeapp.generated.resources.profile_open_source
 import dualjobdating.composeapp.generated.resources.profile_new_password
 import dualjobdating.composeapp.generated.resources.profile_role
 import dualjobdating.composeapp.generated.resources.profile_section_legal
@@ -53,6 +53,8 @@ fun ProfileScreen(
     var personalExpanded by remember { mutableStateOf(true) }
     var passwordExpanded by remember { mutableStateOf(false) }
     var legalExpanded by remember { mutableStateOf(false) }
+    var showPrivacyDialog by remember { mutableStateOf(false) }
+    var showLibrariesDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.navigation.collect { nav ->
@@ -185,16 +187,16 @@ fun ProfileScreen(
                             modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 8.dp)
                         ) {
                             TextButton(
-                                onClick = { },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(stringResource(Res.string.profile_impressum))
-                            }
-                            TextButton(
-                                onClick = { },
+                                onClick = { showPrivacyDialog = true },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(stringResource(Res.string.profile_data_privacy))
+                            }
+                            TextButton(
+                                onClick = { showLibrariesDialog = true },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(stringResource(Res.string.profile_open_source))
                             }
                         }
                     }
@@ -225,6 +227,13 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(80.dp))
         }
+    }
+
+    if (showPrivacyDialog) {
+        DataPrivacyDialog(onDismiss = { showPrivacyDialog = false })
+    }
+    if (showLibrariesDialog) {
+        OpenSourceLibrariesDialog(onDismiss = { showLibrariesDialog = false })
     }
 }
 
