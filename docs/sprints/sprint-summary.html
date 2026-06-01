@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dual Job Dating - Sprint-Zusammenfassung</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 22mm 25mm 22mm;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.6;
+      color: #1A1A1A;
+      background: #fff;
+    }
+
+    /* ── DOCUMENT HEADER ── */
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 10mm;
+      border-bottom: 2.5pt solid #B71C1C;
+      margin-bottom: 8mm;
+    }
+    .doc-header img { height: 36pt; display: block; }
+    .doc-header-right { text-align: right; }
+    .doc-header-right .doc-title { font-size: 16pt; font-weight: 700; color: #B71C1C; line-height: 1.2; }
+    .doc-header-right .doc-subtitle { font-size: 9pt; color: #555; margin-top: 3pt; }
+    .doc-header-right .doc-date { font-size: 8.5pt; color: #888; margin-top: 2pt; }
+
+    .notice {
+      border-left: 3pt solid #B71C1C;
+      background: #fdf5f5;
+      padding: 8pt 10pt;
+      margin: 6mm 0;
+      font-size: 9.5pt;
+    }
+    .notice strong { color: #B71C1C; }
+
+    h2 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #B71C1C;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 8mm;
+      margin-bottom: 3mm;
+      padding-bottom: 2pt;
+      border-bottom: 1pt solid #e0e0e0;
+    }
+
+    h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-top: 5mm;
+      margin-bottom: 2mm;
+    }
+
+    p { margin-bottom: 4pt; }
+
+    code {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      background: #f5f5f5;
+      padding: 1pt 4pt;
+      border-radius: 2pt;
+    }
+
+    /* ── SPRINT HEADER ── */
+    .sprint-heading {
+      display: flex;
+      align-items: center;
+      gap: 8pt;
+      margin-top: 8mm;
+      margin-bottom: 4mm;
+      padding-bottom: 3pt;
+      border-bottom: 1.5pt solid #1A1A1A;
+      page-break-after: avoid;
+    }
+    .sprint-heading h2 {
+      margin: 0;
+      border: none;
+      padding: 0;
+      font-size: 12pt;
+      letter-spacing: 0.04em;
+    }
+    .sprint-tag {
+      font-size: 7.5pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2pt 7pt;
+      border-radius: 3pt;
+      background: #fde8e8;
+      color: #B71C1C;
+      border: 0.5pt solid #f5a0a0;
+    }
+    .sprint-tag.done {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-color: #a5d6a7;
+    }
+
+    /* ── KPI ROW ── */
+    .kpis {
+      display: flex;
+      gap: 10pt;
+      margin: 3mm 0 5mm 0;
+    }
+    .kpi {
+      flex: 1;
+      border: 0.5pt solid #e0e0e0;
+      padding: 5pt 8pt;
+      background: #fafafa;
+    }
+    .kpi-label {
+      font-size: 8pt;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #888;
+    }
+    .kpi-value {
+      font-size: 16pt;
+      font-weight: 700;
+      color: #1A1A1A;
+      line-height: 1.1;
+    }
+    .kpi-sub {
+      font-size: 8.5pt;
+      color: #666;
+    }
+
+    /* ── TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      margin: 3mm 0 5mm 0;
+      page-break-inside: auto;
+    }
+    th {
+      background: #B71C1C;
+      color: #fff;
+      font-weight: 700;
+      padding: 5pt 8pt;
+      text-align: left;
+    }
+    td {
+      padding: 4pt 8pt;
+      border-bottom: 0.5pt solid #e0e0e0;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+    tr { page-break-inside: avoid; }
+
+    .id-cell {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      color: #B71C1C;
+      white-space: nowrap;
+      width: 60pt;
+    }
+
+    .state-cell {
+      width: 60pt;
+      font-size: 8.5pt;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-align: center;
+    }
+    .state-done { color: #2e7d32; }
+    .state-todo { color: #B71C1C; }
+    .state-progress { color: #b86e00; }
+    .state-waiting { color: #555; }
+    .state-deferred { color: #b86e00; }
+    .state-scope { color: #555; }
+
+    .req-table td.req-num {
+      width: 24pt;
+      font-weight: 700;
+      color: #888;
+    }
+    .req-table td.req-evidence {
+      width: 165pt;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 8.5pt;
+      color: #555;
+    }
+    .req-table td.req-status {
+      width: 70pt;
+      font-size: 8.5pt;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .group-label {
+      font-size: 8pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #555;
+      padding: 6pt 8pt 2pt 0;
+      border-bottom: 0.5pt solid #1A1A1A;
+      margin: 5mm 0 1mm 0;
+    }
+
+    .page-break { page-break-before: always; }
+
+    .doc-footer {
+      margin-top: 12mm;
+      padding-top: 4pt;
+      border-top: 0.5pt solid #ccc;
+      font-size: 8pt;
+      color: #aaa;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media screen {
+      body { background: #e8e8e8; padding: 10mm; }
+      .page {
+        background: #fff;
+        max-width: 210mm;
+        margin: 0 auto 10mm auto;
+        padding: 20mm 22mm 25mm;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+        min-height: 297mm;
+      }
+    }
+    @media print {
+      body { background: #fff; }
+      .page { padding: 0; }
+      a { text-decoration: none; color: inherit; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- =============================================================== -->
+<!-- DECKBLATT + ÜBERSICHT                                            -->
+<!-- =============================================================== -->
+<div class="page">
+
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Sprint-Zusammenfassung</div>
+      <div class="doc-subtitle">SCRUM/Kanban Lieferübersicht - Sprints 1 / 2 / 3</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>Umfang.</strong> Dieses Dokument fasst die agile Lieferung der Dual Job Dating Mobile-App über drei Sprints zusammen. Die Ticket-Liste wurde aus YouTrack exportiert (Projektkürzel <code>JOB</code>). Jeder Sprint wird mit einem Zielsatz, den wichtigsten Kennzahlen sowie den ausgelieferten User Stories und Tasks - gruppiert nach Arbeitsbereich - dargestellt.</p>
+  </div>
+
+  <h2>Programmübersicht</h2>
+  <p>Die Arbeit war als Kanban-orientiertes SCRUM in drei Sprints organisiert. Sprint 1 hat das technische Fundament gelegt: ein Kotlin Multiplatform Projekt, die Paketstruktur, Dependency Injection, Navigation und die CI/CD-Pipeline zum Google Play Store. Sprint 2 hat die beiden zentralen User Flows umgesetzt: Authentifizierung und das Unternehmens-Swipe-/Voting-Erlebnis, beide gestützt auf einen Ktor-basierten Netzwerk-Layer und eine persistente Session. Sprint 3 hat die restliche Produktoberfläche ergänzt (Unternehmens-Detail, Profil, Termine), die UX poliert, Sicherheit gehärtet und die App für den Release auf Android und iOS vorbereitet - abgeschlossen mit der technischen Übergabe an den Auftraggeber.</p>
+  <p>Alle <strong>acht studierendenseitigen User Stories</strong> aus dem Anforderungsdokument sind ausgeliefert und auf den <code>main</code>-Branch gemergt. Die Zuordnung der Stories zu Tickets und Code findet sich auf Seite 2.</p>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-label">Erledigte Tickets</div>
+      <div class="kpi-value">100</div>
+      <div class="kpi-sub">von 100 angelegt (Status: Erledigt)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">User Stories</div>
+      <div class="kpi-value">8 / 8</div>
+      <div class="kpi-sub">Studierenden-Flows auf main gemergt</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Sprints</div>
+      <div class="kpi-value">3</div>
+      <div class="kpi-sub">Fundament · Kern · Release</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Plattformen</div>
+      <div class="kpi-value">2</div>
+      <div class="kpi-sub">Android (Play Store) · iOS (App Store)</div>
+    </div>
+  </div>
+
+  <h2>Prozess</h2>
+  <p>Das Team hat ein einziges YouTrack-Board mit dem Fluss Waiting → To do → In Progress → Done verwendet. Tickets wurden entweder als User Stories (<em>"Als Studierende möchte ich..."</em>) oder als technische Tasks (Architektur, CI, Bugfixes) angelegt. Jeder gemergte Pull Request schließt mindestens ein Ticket; der <code>main</code>-Branch war geschützt und jede Änderung lief über einen PR-Review. Eine Story gilt als abgeschlossen, sobald sie auf <code>main</code> gemergt und das zugehörige Ticket auf <em>Done</em> gesetzt wurde. Releases wurden aus einem langlebigen <code>android-production</code>-Branch geschnitten, der eine GitHub Actions Pipeline auslöst, die ein signiertes AAB baut und in das Google Play Closed Testing hochlädt.</p>
+
+</div>
+
+
+<!-- =============================================================== -->
+<!-- ABNAHME                                                          -->
+<!-- =============================================================== -->
+<div class="page-break"></div>
+<div class="page">
+
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Sprint-Zusammenfassung</div>
+      <div class="doc-subtitle">SCRUM/Kanban Lieferübersicht - Sprints 1 / 2 / 3</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <h2>Abnahme - App User Stories</h2>
+  <p>Die folgenden User Stories stammen aus dem Anforderungsdokument für Dual Job Dating. Jede Story ist den YouTrack-Tickets und/oder Code-Stellen zugeordnet, die die Umsetzung belegen. Alle Stories sind umgesetzt und auf den <code>main</code>-Branch gemergt.</p>
+
+  <h3>Studierenden-Stories</h3>
+  <table class="req-table">
+    <tr>
+      <th class="req-num">#</th>
+      <th>User Story</th>
+      <th class="req-status">Status</th>
+      <th class="req-evidence">Nachweis</th>
+    </tr>
+    <tr>
+      <td class="req-num">1</td>
+      <td>Als Studierende kann ich mich in der App einloggen / ausloggen</td>
+      <td class="req-status state-done">Erledigt</td>
+      <td class="req-evidence">JOB-17, JOB-18, JOB-19, JOB-100</td>
+    </tr>
+    <tr>
+      <td class="req-num">2</td>
+      <td>Als Studierende kann ich mein Passwort in der App ändern</td>
+      <td class="req-status state-done">Erledigt</td>
+      <td class="req-evidence">ProfileViewModel#changePassword<br/>(über Supabase Auth)</td>
+    </tr>
+    <tr>
+      <td class="req-num">3</td>
+      <td>Als Studierende sehe ich eine Liste aller "aktiven" Unternehmen</td>
+      <td class="req-status state-done">Erledigt</td>
+      <td class="req-evidence">JOB-56, JOB-57<br/>CompanyListScreen</td>
+    </tr>
+    <tr>
+      <td class="req-num">4</td>
+      <td>Als Studierende kann ich Details zu aktiven Unternehmen ansehen, bevor ich das Voting eingehe</td>
+      <td class="req-status state-done">Erledigt</td>
+      <td class="req-evidence">JOB-46, JOB-47, JOB-48</td>
+    </tr>
+    <tr>
+      <td class="req-num">5</td>
+      <td>Als Studierende kann ich ein Like zu einem Unternehmen abgeben</td>
+      <td class="req-status state-done">Erledigt</td>
+      <td class="req-evidence">JOB-33, JOB-42 - 44</td>
+    </tr>
+    <tr>
+      <td class="req-num">6</td>
+      <td>Als Studierende kann ich ein Dislike zu einem Unternehmen abgeben</td>
+      <td class="req-status state-done">Erledigt</td>
+      <td class="req-evidence">JOB-33, JOB-42 - 44</td>
+    </tr>
+    <tr>
+      <td class="req-num">7</td>
+      <td>Als Studierende kann ich ein Unternehmen als neutral bewerten, indem ich nichts mache</td>
+      <td class="req-status state-done">Erledigt</td>
+      <td class="req-evidence">CompanySwipeViewModel<br/>per Design (kein Vote = neutral)</td>
+    </tr>
+    <tr>
+      <td class="req-num">8</td>
+      <td>Als Studierende kann ich die Zuteilung sehen, welche Partnerunternehmen ich beim Dual Job Dating wann besuchen komme</td>
+      <td class="req-status state-done">Erledigt</td>
+      <td class="req-evidence">JOB-61 - 66<br/>AppointmentScreen</td>
+    </tr>
+  </table>
+
+</div>
+
+
+<!-- =============================================================== -->
+<!-- SPRINT 1                                                         -->
+<!-- =============================================================== -->
+<div class="page-break"></div>
+<div class="page">
+
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Sprint-Zusammenfassung</div>
+      <div class="doc-subtitle">SCRUM/Kanban Lieferübersicht - Sprints 1 / 2 / 3</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="sprint-heading">
+    <h2>Sprint 1 - Fundament</h2>
+    <span class="sprint-tag done">13 von 13 erledigt</span>
+  </div>
+
+  <h3>Ziel</h3>
+  <p>Das Kotlin Multiplatform Projekt aufsetzen, Paketstruktur und Architektur festlegen, Dependency Injection und Navigation verdrahten und eine vollautomatisierte Release-Pipeline einrichten, die signierte Android-Bundles in den Google Play Store schiebt - alles vor Beginn der eigentlichen Feature-Arbeit.</p>
+
+  <h3>Wesentliche Ergebnisse</h3>
+  <p>Leeres, aber architektonisch vollständiges App-Skelett, sauberer Schnitt zwischen <code>feature</code> und <code>core</code>, funktionierende Koin DI in <code>commonMain</code>, typsicherer Navigationsgraph mit Bottom Navigation und ein grüner GitHub Actions Workflow, der bei jedem Push auf <code>android-testing</code> baut, signiert und in das Play Store Internal Testing hochlädt.</p>
+
+  <h3>Erledigte Tickets</h3>
+
+  <div class="group-label">Projekt &amp; Architektur</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-1</td><td>Kotlin Multiplatform Projekt aufsetzen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-2</td><td>Paketstruktur nach Clean Architecture anlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-3</td><td>Leere Stubs für alle Features anlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-4</td><td>Projektabhängigkeiten in build.gradle definieren</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-5</td><td>Koin Dependency Injection einrichten</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-6</td><td>Navigationsgraph (NavGraph) aufbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-7</td><td>Bottom-Navigation-Bar bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-13</td><td>Projektdokumentation anlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">CI / CD &amp; Release-Werkzeuge</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-8</td><td>GitHub Actions Workflow anlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-9</td><td>CI/CD Pipeline für Google Play Store einrichten</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-10</td><td>Keystore und Secrets für die Pipeline konfigurieren</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-11</td><td>Pipeline-Fehler durch fehlende Unit-Tests beheben</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-12</td><td>Versionsnummer-Konflikt in der Build-Pipeline lösen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+</div>
+
+
+<!-- =============================================================== -->
+<!-- SPRINT 2                                                         -->
+<!-- =============================================================== -->
+<div class="page-break"></div>
+<div class="page">
+
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Sprint-Zusammenfassung</div>
+      <div class="doc-subtitle">SCRUM/Kanban Lieferübersicht - Sprints 1 / 2 / 3</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="sprint-heading">
+    <h2>Sprint 2 - Kern-Features</h2>
+    <span class="sprint-tag done">32 von 32 erledigt</span>
+  </div>
+
+  <h3>Ziel</h3>
+  <p>Die beiden zentralen User Flows ausliefern: <strong>Authentifizierung</strong> (Login + persistente Session) und <strong>Unternehmens-Swipe + Voting</strong>. Den unterstützenden Netzwerk-Layer (Ktor), das geteilte Theme und die Typografie aufbauen und den Swipe-Flow an das echte Backend anschließen.</p>
+
+  <h3>Wesentliche Ergebnisse</h3>
+  <p>End-to-End-Login über Supabase Auth mit Auto-Login bei späteren App-Starts, persistente Session-Speicherung auf beiden Plattformen, ein MVI-orientiertes <code>LoginViewModel</code>, ein Tinder-artiger Swipe-Screen mit Vote-Übermittlung an das Backend, das vollständige Design-System (Theme + Typografie + App-Hintergrund) sowie ein nativer Bestätigungsdialog, der aus <code>commonMain</code> heraus erreichbar ist.</p>
+
+  <h3>Erledigte Tickets</h3>
+
+  <div class="group-label">Authentifizierung &amp; Session</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-14</td><td>LoginDto und AuthToken Datenklassen definieren</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-15</td><td>AuthService aufbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-16</td><td>AuthRepository aufbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-17</td><td>Login-Screen bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-18</td><td>LoginViewModel nach MVI-Pattern bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-19</td><td>Login mit Backend-API und Supabase verbinden</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-20</td><td>Auto-Login mit gespeicherter Session einbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-23</td><td>UserSession als globale Session-Verwaltung aufbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-24</td><td>Session auf iOS und Android persistent speichern</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-25</td><td>Echte Benutzer-E-Mail von Supabase abrufen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">Netzwerk-Layer</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-21</td><td>HTTP-Client mit Ktor aufsetzen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-22</td><td>API-Endpunkt-Konstanten zentral definieren</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">Theme &amp; Design-System</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-26</td><td>Farbschema für Hell- und Dunkel-Theme festlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-27</td><td>Typografie für die App festlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-28</td><td>App-Theme (DualJobDatingTheme) aufbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-29</td><td>App-Hintergrund-Komponente bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-30</td><td>Platform-spezifischen Dialog für Android und iOS bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">Unternehmen - Domain &amp; Daten</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-31</td><td>Company-Domänenmodell definieren</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-32</td><td>CompanyDto für API-Antwort anlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-33</td><td>VoteType Enum für Like/Dislike anlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-34</td><td>CompanyService aufbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-35</td><td>CompanyRepository aufbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-36</td><td>Echte Backend-API für Unternehmensdaten anbinden</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">Swipe &amp; Voting</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-37</td><td>CompanyCard Komponente bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-38</td><td>Swipe-Screen Grundlayout bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-39</td><td>Swipe-Screen finales Design umsetzen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-40</td><td>Theme-sensitiven Hintergrund für Swipe-Screen einbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-41</td><td>Blur-Effekt auf dem Swipe-Screen einbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-42</td><td>Voting-API anbinden</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-43</td><td>Voting-Funktion im Swipe-Screen verdrahten</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-44</td><td>Vollständigen Voting-Flow fertigstellen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-45</td><td>CompanySwipeViewModel bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+</div>
+
+
+<!-- =============================================================== -->
+<!-- SPRINT 3                                                         -->
+<!-- =============================================================== -->
+<div class="page-break"></div>
+<div class="page">
+
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Sprint-Zusammenfassung</div>
+      <div class="doc-subtitle">SCRUM/Kanban Lieferübersicht - Sprints 1 / 2 / 3</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="sprint-heading">
+    <h2>Sprint 3 - Politur &amp; Release</h2>
+    <span class="sprint-tag done">55 von 55 erledigt</span>
+  </div>
+
+  <h3>Ziel</h3>
+  <p>Die restliche Produktoberfläche fertigstellen (Unternehmens-Detail, Profil, Termine), die App lokalisieren, Sicherheit härten, UX polieren und sowohl auf Android (Play Store Closed Testing) als auch auf iOS (App Store / TestFlight) veröffentlichen. Der Sprint endet mit der technischen Übergabe an den Auftraggeber.</p>
+
+  <h3>Wesentliche Ergebnisse</h3>
+  <p>Volle Feature-Parität auf Android erreicht, App über die CI-Pipeline ins Play Store Closed Testing (Alpha) veröffentlicht. iOS-Distribution läuft (Bundle ID + Provisioning fertig, App Store Listing eingereicht, Gerätetests abgeschlossen). Security-Härtung abgeschlossen (JWT-Logs entfernt, R8 Obfuscation, verschlüsselte Session-Speicherung, Token-Refresh). UX-Politur (Skeleton Loader, Pull-to-Refresh, Offline-Hinweis, Landscape-Unterstützung, Accessibility-Labels) gemergt. Technische Übergabedokumentation in dieser Verzeichnisstruktur (<code>docs/</code>).</p>
+
+  <h3>Erledigte Tickets</h3>
+
+  <div class="group-label">Unternehmens-Detail &amp; -Liste</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-46</td><td>Unternehmens-Detail-Screen bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-47</td><td>Unternehmens-Detail-Dialog bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-48</td><td>Website-Link in Detailansicht klickbar machen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-49</td><td>Bug - doppelte Beschreibung auf Swipe-Karte entfernen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-50</td><td>Bug - Karten werden beim Wischen abgeschnitten</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-51</td><td>Bug - Unternehmenskarten flackern beim Wischen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-52</td><td>Bug - Swipe-Geste im Detail-Screen funktioniert nicht</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-53</td><td>Fallback-Bilder für Unternehmen ohne Logo einbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-54</td><td>CompanyImageProvider Komponente bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-55</td><td>Konfetti-Animation bei Match einbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-56</td><td>Unternehmens-Listen-Screen bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-57</td><td>CompanyListViewModel bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">Profil</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-58</td><td>Profil-Screen bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-59</td><td>ProfileViewModel bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-60</td><td>Bug - Profil zeigt keine echten Nutzerdaten</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-102</td><td>Tippfehler in PofileState.kt korrigieren</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">Termine</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-61</td><td>Termin-Domänenmodelle anlegen (Appointment, EventInfo)</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-62</td><td>Termin-DTOs für API-Antwort anlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-63</td><td>AppointmentService aufbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-64</td><td>AppointmentRepository aufbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-65</td><td>Termin-Screen bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-66</td><td>AppointmentViewModel bauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-67</td><td>Student- und User-Domänenmodelle anlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">App-Identität &amp; Lokalisierung</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-68</td><td>App-Icon für Android und iOS erstellen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-69</td><td>App-Logo und Splashscreen einbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-70</td><td>Lokalisierung (Mehrsprachigkeit) einrichten</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-71</td><td>Kurz- und Langbeschreibung für App-Store pflegen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-72</td><td>Intent für JobDating-App konfigurieren</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">Security-Härtung</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-77</td><td>Fehlerbehandlung im Login-Flow verbessern</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-79</td><td>Debug-Logs mit JWT-Token aus Production-Code entfernen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-80</td><td>ProGuard/R8 Obfuscation für Release-Build einrichten</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-81</td><td>Token-Refresh-Mechanismus für abgelaufene Sessions einbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-82</td><td>Sensible Session-Daten verschlüsselt speichern</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-100</td><td>Logout-Flow vollständig absichern</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">UX-Politur &amp; Barrierefreiheit</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-73</td><td>Bug - Theme-Wechsel setzt Supabase-Client zurück</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-76</td><td>Landscape-Mode Design für alle Screens umsetzen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-94</td><td>"Keine weiteren Unternehmen"-Zustand auf Swipe-Screen anzeigen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-95</td><td>Pull-to-Refresh auf Listen-Screen einbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-96</td><td>Kein-Internet-Hinweis bei fehlender Netzwerkverbindung</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-97</td><td>Skeleton-Ladescreen für Listen- und Termin-Screen einbauen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-99</td><td>App auf Low-End Android-Gerät testen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-101</td><td>Mindest-Android-Version und Zielversion in build.gradle prüfen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-103</td><td>Accessibility - Beschriftungen für Screen-Reader hinzufügen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">Android-Release</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-74</td><td>Neue Version für Google Play Store vorbereiten und veröffentlichen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-90</td><td>Android - Datenschutzerklärung für Play Store hinterlegen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-89</td><td>Android - Play Store Listing mit Screenshots vervollständigen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">iOS-Release</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-75</td><td>iOS MainViewController und Platform-Dialog einrichten</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-83</td><td>iOS - App Store Connect Konto einrichten und Bundle ID registrieren</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-84</td><td>iOS - Provisioning Profile und Signing-Zertifikate konfigurieren</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-104</td><td>iOS Login Error</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-85</td><td>iOS - CI/CD Pipeline für App Store aufsetzen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-86</td><td>iOS - App auf echtem Gerät testen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-87</td><td>iOS - App Store Listing erstellen und einreichen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="group-label">Übergabe</div>
+  <table>
+    <tr><th class="id-cell">ID</th><th>Zusammenfassung</th><th class="state-cell">Status</th></tr>
+    <tr><td class="id-cell">JOB-92</td><td>Technische Übergabedokumentation erstellen</td><td class="state-cell state-done">Erledigt</td></tr>
+    <tr><td class="id-cell">JOB-93</td><td>Übergabe-Meeting mit Auftraggeber durchführen</td><td class="state-cell state-done">Erledigt</td></tr>
+  </table>
+
+  <div class="doc-footer">
+    <span>Dual Job Dating - Sprint-Zusammenfassung</span>
+    <span>Export aus YouTrack Projekt JOB</span>
+  </div>
+
+</div>
+
+</body>
+</html>
