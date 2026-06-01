@@ -1,6 +1,6 @@
 # Dual Job Dating - Technical Documentation
 
-> **For organizers:** The `docs/` folder contains student-facing setup guides. The PDFs (`How_to_Get_the_App.pdf`, `So_bekommst_du_die_App.pdf`) are to be distributed to students.
+> **For organizers:** The `docs/` folder is split into `docs/src/` (HTML sources, SVG diagrams, screenshots) and `docs/pdf/` (printable PDF deliverables). The student-facing setup guides (`How_to_Get_the_App.pdf`, `So_bekommst_du_die_App.pdf`, and the iOS HTML guides in `docs/src/handoff/`) are to be distributed to students.
 
 ## Tech Stack
 
