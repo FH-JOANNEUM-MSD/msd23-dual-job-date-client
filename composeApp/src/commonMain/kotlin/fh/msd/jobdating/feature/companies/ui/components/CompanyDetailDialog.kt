@@ -1,8 +1,8 @@
 package fh.msd.jobdating.feature.companies.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.material.icons.outlined.Business
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,10 +57,8 @@ import fh.msd.jobdating.core.ui.theme.LikeGreen
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.domain.model.VoteType
 import fh.msd.jobdating.feature.companies.ui.NeutralOrange
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import dualjobdating.composeapp.generated.resources.Res
-import dualjobdating.composeapp.generated.resources.cd_company_image
 import dualjobdating.composeapp.generated.resources.company_detail_close
 import dualjobdating.composeapp.generated.resources.company_detail_dislike
 import dualjobdating.composeapp.generated.resources.company_detail_like
@@ -77,11 +75,9 @@ fun CompanyDetailDialog(
         if (company.logoUrl.isNotBlank()) add(company.logoUrl)
         addAll(company.imageUrls)
     }
+    println("[CompanyDetail] company=${company.name} logoUrl='${company.logoUrl}' imageUrls=${company.imageUrls} allImages=$allImages")
 
-    val shouldUseFallback = allImages.isEmpty()
-    val pagerState = rememberPagerState(pageCount = {
-        if (shouldUseFallback) 3 else allImages.size
-    })
+    val pagerState = rememberPagerState(pageCount = { allImages.size.coerceAtLeast(1) })
 
     PlatformDialog(
         onDismissRequest = onDismiss,
@@ -107,9 +103,7 @@ fun CompanyDetailDialog(
                     ) {
                         ImagePager(
                             allImages = allImages,
-                            shouldUseFallback = shouldUseFallback,
                             pagerState = pagerState,
-                            company = company,
                             modifier = Modifier.fillMaxSize()
                         )
 
@@ -266,9 +260,7 @@ fun CompanyDetailDialog(
                         ) {
                             ImagePager(
                                 allImages = allImages,
-                                shouldUseFallback = shouldUseFallback,
                                 pagerState = pagerState,
-                                company = company,
                                 modifier = Modifier.fillMaxSize()
                             )
 
@@ -417,21 +409,27 @@ fun CompanyDetailDialog(
 @Composable
 private fun ImagePager(
     allImages: List<String>,
-    shouldUseFallback: Boolean,
     pagerState: androidx.compose.foundation.pager.PagerState,
-    company: Company,
     modifier: Modifier = Modifier
 ) {
-    if (shouldUseFallback) {
-        val fallbackImages = CompanyImageProvider.getFallbackImages(company.id)
-        HorizontalPager(state = pagerState, modifier = modifier) { page ->
-            Image(
-                painter = painterResource(fallbackImages[page]),
-                contentDescription = stringResource(Res.string.cd_company_image, company.name),
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+    val noImage: @Composable () -> Unit = {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Business,
+                contentDescription = null,
+                modifier = Modifier.size(120.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+
+    if (allImages.isEmpty()) {
+        noImage()
     } else {
         HorizontalPager(state = pagerState, modifier = modifier) { page ->
             SubcomposeAsyncImage(
@@ -442,19 +440,11 @@ private fun ImagePager(
                     .scale(Scale.FIT)
                     .crossfade(true)
                     .build(),
-                contentDescription = stringResource(Res.string.cd_company_image, company.name),
+                contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
                 success = { SubcomposeAsyncImageContent() },
-                error = {
-                    val fallbackImages = CompanyImageProvider.getFallbackImages(company.id)
-                    Image(
-                        painter = painterResource(fallbackImages[0]),
-                        contentDescription = stringResource(Res.string.cd_company_image, company.name),
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                error = { noImage() }
             )
         }
     }

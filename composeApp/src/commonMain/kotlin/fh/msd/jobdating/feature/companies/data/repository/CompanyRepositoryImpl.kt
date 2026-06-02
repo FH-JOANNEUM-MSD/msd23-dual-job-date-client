@@ -27,8 +27,7 @@ class CompanyRepositoryImpl(
         return companiesDto
             .filter { dto ->
                 dto.description.isNotBlank() &&
-                        dto.website.isNotBlank() &&
-                        dto.logoUrl.isNotBlank()
+                        dto.website.isNotBlank()
             }
             .map { dto ->
                 val pref = preferencesDto.find { it.companyId == dto.id }
@@ -39,6 +38,10 @@ class CompanyRepositoryImpl(
                     else -> null
                 }
 
+                val extraImages = dto.imageUrls.split(";").filter { it.isNotBlank() }
+                val logoUrl = dto.logoUrl.ifBlank { extraImages.firstOrNull() ?: "" }
+                val remainingImages = extraImages.filter { it != logoUrl }
+
                 Company(
                     id = dto.id,
                     userId = dto.userId,
@@ -46,8 +49,8 @@ class CompanyRepositoryImpl(
                     shortDescription = dto.shortDescription,
                     description = dto.description,
                     website = dto.website,
-                    logoUrl = dto.logoUrl,
-                    imageUrls = dto.imageUrls.split(";").filter { it.isNotBlank() },
+                    logoUrl = logoUrl,
+                    imageUrls = remainingImages,
                     active = dto.active,
                     lastUpdated = dto.lastUpdated,
                     vote = vote
