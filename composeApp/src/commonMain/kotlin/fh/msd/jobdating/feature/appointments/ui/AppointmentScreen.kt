@@ -40,11 +40,6 @@ fun AppointmentScreen(
 
             state.hasError -> Text(stringResource(Res.string.error_generic))
 
-            state.appointments.isEmpty() -> Text(
-                text = stringResource(Res.string.appointments_no_appointments),
-                style = MaterialTheme.typography.bodyLarge
-            )
-
             else -> LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 100.dp),
@@ -74,31 +69,40 @@ fun AppointmentScreen(
 
                 item { Spacer(modifier = Modifier.height(4.dp)) }
 
-                items(state.appointments) { appointment ->
-                    Card(
-                        onClick = { selectedCompanyId = appointment.companyId },
-                        modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(4.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            contentColor = MaterialTheme.colorScheme.onSurface
+                if (state.appointments.isEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(Res.string.appointments_no_appointments),
+                            style = MaterialTheme.typography.bodyLarge
                         )
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
+                    }
+                } else {
+                    items(state.appointments) { appointment ->
+                        Card(
+                            onClick = { selectedCompanyId = appointment.companyId },
+                            modifier = Modifier.fillMaxWidth(),
+                            elevation = CardDefaults.cardElevation(4.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            )
                         ) {
-                            Text(
-                                text = appointment.companyName,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = formatAppointmentTime(appointment.timeSlot),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = appointment.companyName,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = formatAppointmentTime(appointment.timeSlot),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }

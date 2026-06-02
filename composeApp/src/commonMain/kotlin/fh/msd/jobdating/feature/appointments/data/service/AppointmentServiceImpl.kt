@@ -38,25 +38,30 @@ class AppointmentServiceImpl(
 
     override suspend fun getMyAppointments(): List<AppointmentDto> {
         val studentId = userSession.getStudentId()
+        println("[AppointmentService] studentId=$studentId")
 
         val token = getAccessToken()
 
         val event = getActiveEvent()
+        println("[AppointmentService] active event: id=${event.id}, date=${event.eventDate}, isActive=${event.isActive}")
 
         val meetings: List<MeetingDto> = httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/students/$studentId/meetings") {
             header(HttpHeaders.Authorization, "Bearer $token")
             accept(ContentType.Application.Json)
         }.body()
+        println("[AppointmentService] meetings count=${meetings.size}, meetings=$meetings")
 
         val slots: List<SlotDto> = httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/slots") {
             header(HttpHeaders.Authorization, "Bearer $token")
             accept(ContentType.Application.Json)
         }.body()
+        println("[AppointmentService] slots count=${slots.size}")
 
         val companies: List<CompanyDto> = httpClient.get("${BuildKonfig.BACKEND_BASE_URL}/api/companies/active") {
             header(HttpHeaders.Authorization, "Bearer $token")
             accept(ContentType.Application.Json)
         }.body()
+        println("[AppointmentService] companies count=${companies.size}")
 
         val slotMap = slots.associateBy { it.id }
         val companyMap = companies.associateBy { it.id }
