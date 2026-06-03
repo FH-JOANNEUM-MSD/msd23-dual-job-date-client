@@ -81,6 +81,22 @@ kotlin {
         }
     }
 }
+fun getCurrentGitBranch(): String {
+    val gradleBranch = project.findProperty("gitBranch") as? String
+    if (gradleBranch != null) {
+        println("Using branch from gradle property: $gradleBranch")
+        return gradleBranch
+    }
+
+    return try {
+        providers.exec {
+            commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+        }.standardOutput.asText.get().trim()
+    } catch (_: Exception) {
+        println("Could not detect git branch, defaulting to staging config for safety")
+        "unknown"
+    }
+}
 
 val localProperties = Properties().apply {
     val localPropertiesFile = rootProject.file("local.properties")
@@ -88,11 +104,15 @@ val localProperties = Properties().apply {
         localPropertiesFile.inputStream().use { load(it) }
     }
 }
+
 buildkonfig {
     packageName = "fh.msd.jobdating"
 
+    val currentBranch = getCurrentGitBranch()
+    val isProduction = currentBranch == "ios-production"
+
     defaultConfigs {
-        buildConfigField(BOOLEAN, "IS_PRODUCTION", (findProperty("isProduction") as? String ?: "false"))
+        buildConfigField(BOOLEAN, "IS_PRODUCTION", (findProperty("isProduction") as? String ?: isProduction.toString()))
         buildConfigField(STRING, "BACKEND_BASE_URL", localProperties["BACKEND_BASE_URL"] as? String ?: findProperty("BACKEND_BASE_URL") as? String ?: "")
         buildConfigField(STRING, "SUPABASE_URL", localProperties["SUPABASE_URL"] as? String ?: findProperty("SUPABASE_URL") as? String ?: "")
         buildConfigField(STRING, "SUPABASE_ANON_KEY", localProperties["SUPABASE_ANON_KEY"] as? String ?: findProperty("SUPABASE_ANON_KEY") as? String ?: "")
