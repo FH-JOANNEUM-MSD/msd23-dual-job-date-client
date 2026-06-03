@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dual Job Dating - README</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 22mm 25mm 22mm;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.6;
+      color: #1A1A1A;
+      background: #fff;
+    }
+
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 10mm;
+      border-bottom: 2.5pt solid #B71C1C;
+      margin-bottom: 8mm;
+    }
+    .doc-header img { height: 36pt; display: block; }
+    .doc-header-right { text-align: right; }
+    .doc-header-right .doc-title { font-size: 16pt; font-weight: 700; color: #B71C1C; line-height: 1.2; }
+    .doc-header-right .doc-subtitle { font-size: 9pt; color: #555; margin-top: 3pt; }
+    .doc-header-right .doc-date { font-size: 8.5pt; color: #888; margin-top: 2pt; }
+
+    .notice {
+      border-left: 3pt solid #B71C1C;
+      background: #fdf5f5;
+      padding: 8pt 10pt;
+      margin: 6mm 0;
+      font-size: 9.5pt;
+    }
+    .notice strong { color: #B71C1C; }
+
+    h2 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #B71C1C;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 8mm;
+      margin-bottom: 3mm;
+      padding-bottom: 2pt;
+      border-bottom: 1pt solid #e0e0e0;
+    }
+
+    h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-top: 5mm;
+      margin-bottom: 2mm;
+    }
+
+    p { margin-bottom: 4pt; }
+
+    code {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      background: #f5f5f5;
+      padding: 1pt 4pt;
+      border-radius: 2pt;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      margin: 3mm 0 5mm 0;
+      page-break-inside: avoid;
+    }
+    th {
+      background: #B71C1C;
+      color: #fff;
+      font-weight: 700;
+      padding: 5pt 8pt;
+      text-align: left;
+    }
+    td {
+      padding: 5pt 8pt;
+      border-bottom: 0.5pt solid #e0e0e0;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    .doc-cell {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 8.5pt;
+      color: #B71C1C;
+      white-space: nowrap;
+    }
+
+    .url-block {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      color: #B71C1C;
+      background: #fdf5f5;
+      border: 0.5pt solid #e0b0b0;
+      padding: 5pt 8pt;
+      margin: 4pt 0;
+      word-break: break-all;
+      display: block;
+    }
+
+    ul.plain { padding-left: 16pt; margin: 4pt 0; }
+    ul.plain li { margin-bottom: 2pt; font-size: 9.5pt; }
+
+    .tree {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      background: #fafafa;
+      border: 0.5pt solid #e0e0e0;
+      padding: 8pt 10pt;
+      margin: 3mm 0;
+      white-space: pre;
+      line-height: 1.4;
+    }
+
+    .doc-footer {
+      margin-top: 12mm;
+      padding-top: 4pt;
+      border-top: 0.5pt solid #ccc;
+      font-size: 8pt;
+      color: #aaa;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .page-break { page-break-before: always; }
+
+    @media screen {
+      body { background: #e8e8e8; padding: 10mm; }
+      .page {
+        background: #fff;
+        max-width: 210mm;
+        margin: 0 auto 10mm auto;
+        padding: 20mm 22mm 25mm;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+        min-height: 297mm;
+      }
+    }
+    @media print {
+      body { background: #fff; }
+      .page { padding: 0; }
+      a { text-decoration: none; color: inherit; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="doc-header">
+    <img src="handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">README</div>
+      <div class="doc-subtitle">Übersicht aller Abgabe-Dokumente</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>Über dieses Dokument.</strong> Diese README bündelt alle Abgabe-Dokumente der Dual Job Dating Mobile-App, beschreibt deren Zweck und Zielgruppe und verweist auf die relevanten externen Ressourcen (Quellcode, Ticketverwaltung, Verteilkanäle). Sie ist der Einstiegspunkt zur gesamten Dokumentation.
+  </div>
+
+  <h2>Projekt</h2>
+  <p><strong>Dual Job Dating</strong> ist eine plattformübergreifende Mobile-App (Android &amp; iOS) für das Job-Dating-Event der FH Joanneum. Studierende bewerten Partnerunternehmen per Like / Dislike / Neutral; basierend auf den Voting-Ergebnissen weist das Backend Termin-Slots zu, die die Studierenden in der App einsehen. Die App ist in Kotlin Multiplatform mit Compose Multiplatform umgesetzt; das Backend (nicht Teil dieser Abgabe) läuft als Go-Service gegen Supabase.</p>
+
+  <table>
+    <tr><th>Eckdaten</th><th></th></tr>
+    <tr><td>Lehrveranstaltung</td><td>Mobile Software Solutions (MSD, SS26, 6. Sem.)</td></tr>
+    <tr><td>Hochschule</td><td>FH Joanneum, Studiengang Mobile Software Development</td></tr>
+    <tr><td>Mobile App Team</td><td>Alexander Winkler &amp; Jonas Sieff</td></tr>
+    <tr><td>Zeitraum</td><td>Sommersemester 2026</td></tr>
+    <tr><td>Plattformen</td><td>Android (min. API 24) &amp; iOS (min. 16)</td></tr>
+    <tr><td>Tech-Stack</td><td>Kotlin Multiplatform 2.3 · Compose Multiplatform 1.10 · Ktor 3 · Koin 4 · Supabase</td></tr>
+  </table>
+
+  <h2>Abgabe-Dokumente</h2>
+  <p>Die folgende Tabelle erklärt den Zweck und die Zielgruppe jedes abzugebenden PDFs.</p>
+
+  <table>
+    <tr><th>PDF</th><th>Inhalt</th><th>Zielgruppe</th></tr>
+    <tr>
+      <td class="doc-cell">handover.pdf</td>
+      <td>Technische Übergabe an die Organisation. Beschreibt Verteilkanäle, App-Distribution an Studierende (Android via Google Play Closed Testing, iOS via TestFlight), Voraussetzungen und eine Checkliste für den Event-Tag.</td>
+      <td>Organisation</td>
+    </tr>
+    <tr>
+      <td class="doc-cell">sprint-summary.pdf</td>
+      <td>Sprint-Zusammenfassung über alle drei Sprints. Enthält Ticket-Listen aus YouTrack, gruppiert nach Arbeitsbereich, sowie die Abnahme-Matrix der studierendenseitigen User Stories aus dem Anforderungsdokument.</td>
+      <td>Product Owner</td>
+    </tr>
+    <tr>
+      <td class="doc-cell">architecture.pdf</td>
+      <td>Architektur-Dokument. Component-Diagramm (Feature-Module + Core + Plattform-Shims), ER-Diagramm der Backend-Datenbank, Tech-Stack-Übersicht, Layer-Verantwortlichkeiten und API-Surface.</td>
+      <td>Product Owner, Übernehmende Entwickler</td>
+    </tr>
+    <tr>
+      <td class="doc-cell">test-protocol.pdf</td>
+      <td>Testprotokoll mit 8 manuellen Akzeptanztests (einer pro User Story, inkl. Screenshots) und einer Übersicht der 6 automatisierten ViewModel-Unit-Tests.</td>
+      <td>Product Owner</td>
+    </tr>
+    <tr>
+      <td class="doc-cell">How_to_Get_the_App_Android.pdf</td>
+      <td>Studierenden-Setup-Anleitung Android (Englisch). Beitritt zur Google-Gruppe, Installation aus dem Play Store, erster Login.</td>
+      <td>Studierende</td>
+    </tr>
+    <tr>
+      <td class="doc-cell">So_bekommst_du_die_App_Android.pdf</td>
+      <td>Studierenden-Setup-Anleitung Android (Deutsch). Inhaltlich identisch zu der englischen Version.</td>
+      <td>Studierende</td>
+    </tr>
+    <tr>
+      <td class="doc-cell">How_to_Get_the_App_iOS.pdf</td>
+      <td>Studierenden-Setup-Anleitung iOS (Englisch). TestFlight-Installation, Einladungslink, erster Login.</td>
+      <td>Studierende</td>
+    </tr>
+    <tr>
+      <td class="doc-cell">So_bekommst_du_die_App_iOS.pdf</td>
+      <td>Studierenden-Setup-Anleitung iOS (Deutsch). Inhaltlich identisch zu der englischen Version.</td>
+      <td>Studierende</td>
+    </tr>
+  </table>
+
+</div>
+
+<div class="page-break"></div>
+<div class="page">
+
+  <div class="doc-header">
+    <img src="handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">README</div>
+      <div class="doc-subtitle">Übersicht aller Abgabe-Dokumente</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <h2>Ordnerstruktur</h2>
+  <div class="tree">docs/
+├── src/                              HTML-Quellen, Screenshots, SVGs
+│   ├── README.html                   diese Datei
+│   ├── handoff/
+│   │   ├── handover.html             Technische Übergabe
+│   │   ├── How_to_Get_the_App_iOS.html
+│   │   ├── So_bekommst_du_die_App_iOS.html
+│   │   └── logo.png
+│   ├── sprints/
+│   │   └── sprint-summary.html       Sprint-Zusammenfassung
+│   ├── tech/
+│   │   ├── architecture/
+│   │   │   ├── architecture.html     Architektur-Dokument
+│   │   │   ├── component-diagram.svg
+│   │   │   └── data-model.svg
+│   │   ├── backend_api.yaml          OpenAPI-Spezifikation
+│   │   └── test_backend_api.sh
+│   └── tests/
+│       ├── test-protocol.html        Testprotokoll
+│       └── screenshots/              9 Screenshots der manuellen Tests
+└── pdf/                              druckfertige Abgabe-PDFs
+    ├── README.pdf
+    ├── handover.pdf
+    ├── architecture.pdf
+    ├── sprint-summary.pdf
+    ├── test-protocol.pdf
+    ├── How_to_Get_the_App_Android.pdf
+    ├── So_bekommst_du_die_App_Android.pdf
+    ├── How_to_Get_the_App_iOS.pdf
+    └── So_bekommst_du_die_App_iOS.pdf
+</div>
+
+  <h2>Externe Ressourcen</h2>
+
+  <h3>Quellcode (Git-Repository)</h3>
+  <span class="url-block">https://github.com/FH-JOANNEUM-MSD/msd23-dual-job-date-client</span>
+  <p>Der gesamte App-Quellcode liegt in diesem Repository. Branches: <code>main</code> (Entwicklung), <code>android-testing</code> (Build → Internal Testing), <code>android-production</code> (Build → Closed Testing Alpha). Dokumentation befindet sich unter <code>docs/</code>; der App-Quellcode unter <code>composeApp/src/</code>.</p>
+
+  <h3>Ticketverwaltung (YouTrack)</h3>
+  <span class="url-block">https://sicherheitspasskmp.youtrack.cloud/projects/JOB</span>
+  <p>Projektschlüssel <code>JOB</code>. Enthält alle User Stories, Tasks und Bugs der drei Sprints (100 erledigte Tickets gesamt). Workflow: Waiting → To do → In Progress → Done. Tickets sind mit den Pull Requests im Repository verlinkt.</p>
+
+  <h3>App-Verteilung</h3>
+  <p><strong>Android - Google Play Closed Testing (Alpha):</strong></p>
+  <span class="url-block">https://groups.google.com/g/dualjobdating</span>
+  <p>Studierende treten der Google-Gruppe bei und erhalten anschließend Zugriff auf die App im Play Store. Build wird automatisch bei jedem Push auf <code>android-production</code> aus der GitHub-Actions-Pipeline veröffentlicht.</p>
+
+  <p><strong>iOS - TestFlight (öffentlicher Einladungslink):</strong></p>
+  <span class="url-block">https://testflight.apple.com/join/eJBwfHqd</span>
+  <p>Studierende installieren TestFlight aus dem App Store, öffnen den Einladungslink und installieren die App. TestFlight-Builds laufen nach 90 Tagen ab.</p>
+
+  <h2>Mobile App Team</h2>
+  <table>
+    <tr><th>Name</th><th>Rolle</th></tr>
+    <tr><td>Alexander Winkler</td><td>Entwicklung (Schwerpunkt iOS-Distribution, Detail-Screens, UX-Polish)</td></tr>
+    <tr><td>Jonas Sieff</td><td>Entwicklung (Schwerpunkt Architektur, CI/CD, Security-Härtung, Dokumentation)</td></tr>
+  </table>
+
+  <div class="doc-footer">
+    <span>Dual Job Dating - README</span>
+    <span>Sieff &amp; Winkler - 2026</span>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dual Job Dating - Architecture</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 22mm 25mm 22mm;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.6;
+      color: #1A1A1A;
+      background: #fff;
+    }
+
+    /* ── DOCUMENT HEADER ── */
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 10mm;
+      border-bottom: 2.5pt solid #B71C1C;
+      margin-bottom: 8mm;
+    }
+
+    .doc-header img {
+      height: 36pt;
+      display: block;
+    }
+
+    .doc-header-right {
+      text-align: right;
+    }
+
+    .doc-header-right .doc-title {
+      font-size: 16pt;
+      font-weight: 700;
+      color: #B71C1C;
+      line-height: 1.2;
+    }
+
+    .doc-header-right .doc-subtitle {
+      font-size: 9pt;
+      color: #555;
+      margin-top: 3pt;
+    }
+
+    .doc-header-right .doc-date {
+      font-size: 8.5pt;
+      color: #888;
+      margin-top: 2pt;
+    }
+
+    /* ── NOTICE BOX ── */
+    .notice {
+      border-left: 3pt solid #B71C1C;
+      background: #fdf5f5;
+      padding: 8pt 10pt;
+      margin: 6mm 0;
+      font-size: 9.5pt;
+    }
+
+    .notice strong { color: #B71C1C; }
+
+    /* ── HEADINGS ── */
+    h2 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #B71C1C;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 8mm;
+      margin-bottom: 3mm;
+      padding-bottom: 2pt;
+      border-bottom: 1pt solid #e0e0e0;
+    }
+
+    h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-top: 5mm;
+      margin-bottom: 2mm;
+    }
+
+    p { margin-bottom: 4pt; }
+
+    /* ── TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      margin: 4mm 0;
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #B71C1C;
+      color: #fff;
+      font-weight: 700;
+      padding: 5pt 8pt;
+      text-align: left;
+    }
+
+    td {
+      padding: 5pt 8pt;
+      border-bottom: 0.5pt solid #e0e0e0;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td { background: #fafafa; }
+
+    code {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      background: #f5f5f5;
+      padding: 1pt 4pt;
+      border-radius: 2pt;
+    }
+
+    ul.plain { padding-left: 16pt; margin: 4pt 0; }
+    ul.plain li { margin-bottom: 2pt; font-size: 9.5pt; }
+
+    /* ── FIGURE ── */
+    .figure {
+      margin: 5mm 0 6mm 0;
+      page-break-inside: avoid;
+      text-align: center;
+    }
+
+    .figure img,
+    .figure object {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .figure-caption {
+      font-size: 9pt;
+      color: #555;
+      margin-top: 3pt;
+      font-style: italic;
+    }
+
+    /* ── PAGE BREAK ── */
+    .page-break { page-break-before: always; }
+
+    /* ── FOOTER ── */
+    .doc-footer {
+      margin-top: 12mm;
+      padding-top: 4pt;
+      border-top: 0.5pt solid #ccc;
+      font-size: 8pt;
+      color: #aaa;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Screen-only: comfortable reading width */
+    @media screen {
+      body { background: #e8e8e8; padding: 10mm; }
+      .page {
+        background: #fff;
+        max-width: 210mm;
+        margin: 0 auto 10mm auto;
+        padding: 20mm 22mm 25mm;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+        min-height: 297mm;
+      }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page { padding: 0; }
+      a { text-decoration: none; color: inherit; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- =================== PAGE 1: OVERVIEW + COMPONENT DIAGRAM =================== -->
+<div class="page">
+
+  <div class="doc-header">
+    <img src="../../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Architecture</div>
+      <div class="doc-subtitle">System Design - Component &amp; Data Model</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>Scope.</strong> This document describes the architecture of the Dual Job Dating mobile app: its component layering, technology choices, and the data model of the backend persistence layer. Operational topics (CI/CD, distribution, secrets) are covered in the README and the Technical Handover.
+  </div>
+
+  <h2>Overview</h2>
+  <p>Dual Job Dating is a cross-platform mobile application built with <strong>Kotlin Multiplatform</strong> and <strong>Compose Multiplatform</strong>. All application code lives in <code>commonMain</code>; platform-specific code is limited to the Ktor HTTP engine (OkHttp on Android, Darwin on iOS) and one native dialog on Android. The app talks to two external systems: a custom Go backend exposing the domain API and Supabase for authentication, file storage, and the underlying Postgres database.</p>
+
+  <h2>Tech Stack</h2>
+  <table>
+    <tr><th>Layer</th><th>Technology</th><th>Version</th></tr>
+    <tr><td>Framework</td><td>Kotlin Multiplatform</td><td>2.3.0</td></tr>
+    <tr><td>UI</td><td>Compose Multiplatform</td><td>1.10.0</td></tr>
+    <tr><td>Architecture</td><td>MVVM + Feature Modules</td><td>-</td></tr>
+    <tr><td>Dependency Injection</td><td>Koin</td><td>4.1.0</td></tr>
+    <tr><td>Networking</td><td>Ktor Client (OkHttp / Darwin)</td><td>3.1.3</td></tr>
+    <tr><td>Navigation</td><td>Jetpack Navigation Compose (type-safe routes)</td><td>2.9.1</td></tr>
+    <tr><td>Backend SDK</td><td>Supabase (Auth, PostgREST, Storage, Realtime)</td><td>3.1.4</td></tr>
+    <tr><td>Local storage</td><td>Multiplatform Settings</td><td>1.1.1</td></tr>
+    <tr><td>Image loading</td><td>Coil</td><td>3.2.0</td></tr>
+    <tr><td>Serialization</td><td>Kotlinx Serialization</td><td>-</td></tr>
+    <tr><td>Build-time config</td><td>BuildKonfig</td><td>0.15.2</td></tr>
+    <tr><td>Platforms</td><td>Android (min SDK 24), iOS 16+</td><td>-</td></tr>
+  </table>
+
+  <h2>Component Diagram</h2>
+  <p>The diagram below shows the runtime composition of the app. Each feature is a vertical slice from UI to data layer; cross-cutting concerns (DI, navigation, network, session, theme) live in <code>core</code>. The platform shims at the bottom provide the concrete Ktor engine and any platform dialogs the common code requires.</p>
+
+  <div class="figure">
+    <object data="component-diagram.svg" type="image/svg+xml" width="100%" aria-label="Component diagram"></object>
+    <div class="figure-caption">Figure 1 - Component layering of the Compose Multiplatform app.</div>
+  </div>
+
+  <h3>Layer responsibilities</h3>
+  <table>
+    <tr><th>Layer</th><th>Responsibility</th></tr>
+    <tr><td><strong>feature/*/ui</strong></td><td>Composable screens, ViewModels, immutable <code>State</code> data classes, sealed <code>Event</code> classes. No business logic in screens.</td></tr>
+    <tr><td><strong>feature/*/data</strong></td><td><code>Repository</code> interfaces (the only thing a ViewModel depends on) and <code>Service</code> implementations that do raw API calls. DTOs are mapped to domain models exclusively in <code>RepositoryImpl</code>.</td></tr>
+    <tr><td><strong>core/di</strong></td><td>Koin <code>AppModule.kt</code> binds all interfaces to implementations. Swapping a service requires no changes elsewhere.</td></tr>
+    <tr><td><strong>core/navigation</strong></td><td>Single <code>NavGraph</code> with <code>@Serializable</code> route objects. Navigation side effects are emitted via <code>MutableSharedFlow</code> from ViewModels.</td></tr>
+    <tr><td><strong>core/network</strong></td><td>Ktor <code>HttpClient</code> setup, base URL injection, bearer-token authentication, JSON content negotiation, error mapping.</td></tr>
+    <tr><td><strong>core/session</strong></td><td><code>SessionManager</code> persists the JWT and refresh token through Multiplatform Settings for auto-login on subsequent launches.</td></tr>
+    <tr><td><strong>core/ui</strong></td><td><code>DualJobDatingTheme</code>, typography, color palette, shared composables (bottom navigation, app background, dialogs).</td></tr>
+    <tr><td><strong>androidMain / iosMain</strong></td><td>Activity / ViewController entry points, the platform-specific Ktor engine factory, and one native confirmation dialog on Android.</td></tr>
+  </table>
+
+  <h3>Data flow per user interaction</h3>
+  <p>A user action is dispatched as a sealed <code>Event</code> to the screen's <code>onEvent()</code> handler, which calls the ViewModel. The ViewModel invokes its <code>Repository</code>, which delegates to a <code>Service</code> that performs the actual Supabase SDK call or Ktor HTTP request. The result is mapped from DTO to domain model inside the repository and used to update the ViewModel's <code>MutableStateFlow</code>. The screen renders the new state via <code>collectAsState()</code>. One-time side effects (navigation, snackbar) are emitted on a separate <code>MutableSharedFlow</code> consumed inside a <code>LaunchedEffect</code>.</p>
+
+</div>
+
+
+<!-- =================== PAGE 2: DATA MODEL =================== -->
+<div class="page-break"></div>
+<div class="page">
+
+  <div class="doc-header">
+    <img src="../../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Architecture</div>
+      <div class="doc-subtitle">System Design - Component &amp; Data Model</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <h2>Data Model</h2>
+  <p>Persistence lives in the Supabase-hosted Postgres database. The schema below is reconstructed from the OpenAPI specification (<code>docs/tech/backend_api.yaml</code>) and the DTO classes in the Kotlin codebase. Authentication identities are managed by Supabase Auth; <code>users.id</code> is the same UUID Supabase issues for the authenticated principal.</p>
+
+  <div class="figure">
+    <object data="data-model.svg" type="image/svg+xml" width="100%" aria-label="Entity Relationship Diagram"></object>
+    <div class="figure-caption">Figure 2 - Entity Relationship Diagram (crow's foot notation).</div>
+  </div>
+
+  <h3>Entities</h3>
+  <table>
+    <tr><th>Entity</th><th>Purpose</th></tr>
+    <tr><td><strong>users</strong></td><td>Authentication identity (Supabase Auth). Distinguishes role (student / company / admin). One <code>users</code> row corresponds to exactly one <code>students</code> or <code>companies</code> profile.</td></tr>
+    <tr><td><strong>students</strong></td><td>Profile of a participating student. Holds name, study program, and semester. The <code>user_id</code> links to the authenticated identity.</td></tr>
+    <tr><td><strong>companies</strong></td><td>Profile of a participating company. Holds public description, website, logo, and a semicolon-separated list of additional image URLs. <code>active</code> controls whether the company appears in the swipe stack.</td></tr>
+    <tr><td><strong>preferences</strong></td><td>A single vote of one student on one company. <code>preference_type</code> is one of <em>like</em>, <em>dislike</em>, or <em>neutral</em>. Produced by the swipe screen; consumed by the matching algorithm.</td></tr>
+    <tr><td><strong>events</strong></td><td>A Job Dating event (date, location, activation flag). Owns the time slots for that day.</td></tr>
+    <tr><td><strong>slots</strong></td><td>A single time slot within an event (start / end timestamp). Many slots per event.</td></tr>
+    <tr><td><strong>meetings</strong></td><td>The output of the matching process. Assigns one student and one company to one slot. Read-only from the app's perspective and displayed on the Appointments screen.</td></tr>
+  </table>
+
+  <h3>Cardinalities at a glance</h3>
+  <ul class="plain">
+    <li><code>users</code> 1 — 1 <code>students</code> &nbsp;(role = student)</li>
+    <li><code>users</code> 1 — 1 <code>companies</code> &nbsp;(role = company)</li>
+    <li><code>students</code> 1 — M <code>preferences</code> M — 1 <code>companies</code></li>
+    <li><code>events</code> 1 — M <code>slots</code></li>
+    <li><code>slots</code> 1 — M <code>meetings</code></li>
+    <li><code>students</code> 1 — M <code>meetings</code> M — 1 <code>companies</code></li>
+  </ul>
+
+  <h3>API surface</h3>
+  <p>The DTOs the app consumes correspond directly to the entities above. The most important endpoints are:</p>
+  <table>
+    <tr><th>Endpoint</th><th>Used by</th></tr>
+    <tr><td><code>POST /auth/v1/token</code> &nbsp;(Supabase)</td><td>AuthService - login, refresh</td></tr>
+    <tr><td><code>GET /api/companies</code></td><td>CompanyService - swipe stack &amp; list view</td></tr>
+    <tr><td><code>GET /api/students/{id}/preferences</code> · <code>POST /api/preferences</code></td><td>CompanyRepository - vote submission</td></tr>
+    <tr><td><code>GET /api/students/{id}/meetings</code></td><td>AppointmentService - schedule on Appointments screen</td></tr>
+    <tr><td><code>PATCH /api/users/{id}</code></td><td>ProfileViewModel - profile updates</td></tr>
+  </table>
+
+  <div class="doc-footer">
+    <span>Dual Job Dating - Architecture</span>
+    <span>Page 2 of 2</span>
+  </div>
+
+</div>
+
+</body>
+</html>

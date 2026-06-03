@@ -1,4 +1,4 @@
-name: Build, Test & Deploy to Play Console
+name: Build & Deploy to Closed Testing
 
 on:
   push:
@@ -40,9 +40,9 @@ jobs:
 
       - name: Update version code
         run: |
-          echo "VERSION_CODE=$((2000 + $GITHUB_RUN_NUMBER))" >> $GITHUB_ENV
+          echo "VERSION_CODE=$((3000 + $GITHUB_RUN_NUMBER))" >> $GITHUB_ENV
 
-      - name: Build Release Bundle
+      - name: Build Release Bundle (Production)
         run: |
           echo "Building with VERSION_CODE: ${{ env.VERSION_CODE }}"
           ./gradlew --no-daemon bundleRelease \
@@ -50,16 +50,20 @@ jobs:
             -Pandroid.injected.signing.store.password='${{ secrets.KEYSTORE_PASSWORD }}' \
             -Pandroid.injected.signing.key.alias='${{ secrets.KEY_ALIAS }}' \
             -Pandroid.injected.signing.key.password='${{ secrets.KEY_PASSWORD }}' \
-            -PversionCode=${{ env.VERSION_CODE }}
+            -PversionCode=${{ env.VERSION_CODE }} \
+            -PisProduction=true \
+            -PBACKEND_BASE_URL='${{ secrets.BACKEND_BASE_URL }}' \
+            -PSUPABASE_URL='${{ secrets.SUPABASE_URL }}' \
+            -PSUPABASE_ANON_KEY='${{ secrets.SUPABASE_ANON_KEY }}'
 
-      - name: Upload to Play Store Internal Testing
+      - name: Upload to Play Store Closed Testing
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
           packageName: fh.msd
           releaseFiles: composeApp/build/outputs/bundle/release/composeApp-release.aab
-          track: internal
-          status: draft
+          track: alpha
+          status: completed
 
       - name: Clean up
         if: always()

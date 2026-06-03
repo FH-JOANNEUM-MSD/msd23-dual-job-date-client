@@ -25,10 +25,14 @@ import fh.msd.jobdating.feature.companies.ui.components.CompanyDetailDialog
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.cd_vote_dislike
+import dualjobdating.composeapp.generated.resources.cd_vote_like
+import dualjobdating.composeapp.generated.resources.cd_vote_neutral
+import dualjobdating.composeapp.generated.resources.cd_vote_none
 import dualjobdating.composeapp.generated.resources.companies_no_available
 import dualjobdating.composeapp.generated.resources.companies_not_voted
 import dualjobdating.composeapp.generated.resources.companies_voted
-import dualjobdating.composeapp.generated.resources.error_prefix
+import dualjobdating.composeapp.generated.resources.error_generic
 
 
 @Composable
@@ -50,7 +54,7 @@ fun CompanyListScreen(
         when {
             state.isLoading -> CircularProgressIndicator()
 
-            state.error != null -> Text(stringResource(Res.string.error_prefix, state.error ?: ""))
+            state.hasError -> Text(stringResource(Res.string.error_generic))
 
             state.companies.isEmpty() -> Text(
                 text = stringResource(Res.string.companies_no_available),
@@ -174,7 +178,12 @@ private fun CompanyCard(
                             VoteType.NEUTRAL -> Icons.Outlined.RemoveCircleOutline
                             null -> Icons.Outlined.HelpOutline
                         },
-                        contentDescription = null,
+                        contentDescription = when (company.vote) {
+                            VoteType.LIKE -> stringResource(Res.string.cd_vote_like)
+                            VoteType.DISLIKE -> stringResource(Res.string.cd_vote_dislike)
+                            VoteType.NEUTRAL -> stringResource(Res.string.cd_vote_neutral)
+                            null -> stringResource(Res.string.cd_vote_none)
+                        },
                         tint = when (company.vote) {
                             VoteType.LIKE -> LikeGreen
                             VoteType.DISLIKE -> DislikeRed

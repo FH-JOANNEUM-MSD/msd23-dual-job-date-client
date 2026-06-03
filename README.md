@@ -1,40 +1,58 @@
-# Dual Job Dating - Architecture Documentation
+# Dual Job Dating - Technical Documentation
+
+> **For organizers:** The `docs/` folder is split into `docs/src/` (HTML sources, SVG diagrams, screenshots) and `docs/pdf/` (printable PDF deliverables). The student-facing setup guides (`How_to_Get_the_App.pdf`, `So_bekommst_du_die_App.pdf`, and the iOS HTML guides in `docs/src/handoff/`) are to be distributed to students.
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Kotlin Multiplatform (KMP) |
-| UI | Compose Multiplatform |
-| Architecture | MVVM |
-| Dependency Injection | Koin |
-| Networking | Ktor |
-| Navigation | Jetpack Navigation Compose |
-| Backend | Supabase (postgrest, auth, storage, realtime) |
-| Platforms | Android, iOS |
+| Layer | Technology | Version |
+|---|---|---|
+| Framework | Kotlin Multiplatform (KMP) | 2.3.0 |
+| UI | Compose Multiplatform | 1.10.0 |
+| Architecture | MVVM + Feature Modules | - |
+| Dependency Injection | Koin | 4.1.0 |
+| Networking | Ktor Client | 3.1.3 |
+| Navigation | Jetpack Navigation Compose | 2.9.1 |
+| Backend | Supabase (PostgREST, Auth, Storage, Realtime) | - |
+| Image Loading | Coil | 3.2.0 |
+| Serialization | Kotlinx Serialization | - |
+| Local Storage | Multiplatform Settings | 1.1.1 |
+| UI Components | Material Design 3 | - |
+| Config Management | BuildKonfig | - |
+| Platforms | Android (min SDK 24), iOS | - |
 
 ---
 
 ## Project Structure
 
-All application code lives in `commonMain`. There is no platform-specific code except for the Ktor engine (OkHttp on Android, Darwin on iOS).
+All application code lives in `commonMain`. Platform-specific code is limited to the Ktor engine (OkHttp on Android, Darwin on iOS) and a native dialog on Android.
 
 ```
-composeApp/src/commonMain/kotlin/fh/msd/jobdating/
-├── core/
-│   ├── di/
-│   └── navigation/
-└── feature/
-    ├── auth/
-    ├── companies/
-    └── appointments/
+composeApp/src/
+├── commonMain/kotlin/fh/msd/
+│   ├── core/
+│   │   ├── di/             # Koin module definitions (AppModule.kt)
+│   │   ├── domain/         # Shared domain models and DTOs
+│   │   ├── navigation/     # NavGraph and typed route definitions
+│   │   ├── network/        # Ktor client setup, API base URL, error handling
+│   │   ├── session/        # Authenticated user session state
+│   │   └── ui/             # Theme, colors, typography, shared composables
+│   └── feature/
+│       ├── auth/           # Login / logout
+│       ├── companies/      # Company card swiping and voting
+│       ├── appointments/   # Appointment schedule display
+│       └── profile/        # Student profile and settings
+├── commonMain/composeResources/
+│   ├── drawable/           # Shared SVG/vector assets
+│   └── values/             # Localized strings (EN + DE)
+├── androidMain/            # MainActivity, Android-specific dialogs
+└── iosMain/                # iOS entry point (minimal)
 ```
 
 ---
 
 ## Architecture: MVVM + Feature Modules
 
-The app is structured around self-contained feature modules. Each feature owns its full vertical slice from data to UI.
+Each feature is a self-contained vertical slice from data to UI. Features do not depend on each other.
 
 ### Layer Breakdown per Feature
 
@@ -42,16 +60,16 @@ The app is structured around self-contained feature modules. Each feature owns i
 feature/
 └── <feature>/
     ├── data/
-    │   ├── service/        # API calls (Ktor / Supabase)
-    │   └── repository/     # Abstracts data source from ViewModel
+    │   ├── service/        # Raw API calls via Ktor or Supabase SDK - returns DTOs
+    │   └── repository/     # Maps DTOs to domain models - the only thing ViewModel touches
     ├── domain/
-    │   ├── model/          # Domain models used across UI and repo
-    │   └── dto/            # Serializable data transfer objects (API shape)
+    │   ├── model/          # Clean domain models (no serialization annotations)
+    │   └── dto/            # @Serializable classes matching the exact API response shape
     └── ui/
-        ├── Screen.kt       # Composable screen
-        ├── ViewModel.kt    # Holds state, handles events, emits navigation
+        ├── Screen.kt       # Composable screen - no logic, only renders state
+        ├── ViewModel.kt    # Holds state, processes events, emits navigation side effects
         ├── State.kt        # Immutable UI state data class
-        └── Event.kt        # Sealed class of user-triggered events
+        └── Event.kt        # Sealed class of user-triggered actions
 ```
 
 ### Data Flow
@@ -61,8 +79,8 @@ UI (Screen)
   --> onEvent() --> ViewModel
                       --> Repository (interface)
                             --> Service (interface)
-                                  --> API / Supabase
-                      <-- Result
+                                  --> Ktor / Supabase SDK
+                      <-- Result<T>
                     _state.update { }
   <-- collectAsState()
 ```
@@ -72,7 +90,8 @@ UI (Screen)
 ## Key Conventions
 
 ### State
-Each screen has a single immutable `State` data class held in a `MutableStateFlow` inside the ViewModel.
+
+Each screen has a single immutable `State` data class held in a `MutableStateFlow` in the ViewModel. The UI only reads from this flow - it never holds local state for business logic.
 
 ```kotlin
 data class CompanyListState(
@@ -85,7 +104,8 @@ data class CompanyListState(
 ```
 
 ### Events
-User interactions are modelled as a sealed class and passed to `onEvent()` on the ViewModel. The screen never contains logic.
+
+User interactions are modelled as a sealed class passed to `onEvent()` on the ViewModel. The screen contains no business logic.
 
 ```kotlin
 sealed class CompanyListEvent {
@@ -94,118 +114,163 @@ sealed class CompanyListEvent {
 ```
 
 ### Navigation
-One-time navigation side effects are emitted via `MutableSharedFlow` from the ViewModel and collected in the screen with `LaunchedEffect`.
+
+One-time navigation side effects are emitted via `MutableSharedFlow` from the ViewModel and collected in the screen via `LaunchedEffect`. Routes are type-safe serializable objects, not strings.
 
 ```kotlin
-// ViewModel
+// Route definition
+@Serializable object LoginRoute
+@Serializable object CompaniesRoute
+@Serializable object AppointmentsRoute
+@Serializable object ProfileRoute
+
+// ViewModel emits navigation events
 private val _navigation = MutableSharedFlow<CompanyNavigation>()
 val navigation = _navigation.asSharedFlow()
 
-// Screen
+// Screen collects and reacts
 LaunchedEffect(Unit) {
     viewModel.navigation.collect { nav ->
         when (nav) {
-            is CompanyNavigation.ToAppointments -> onDone()
+            CompanyNavigation.ToAppointments -> navController.navigate(AppointmentsRoute)
         }
     }
 }
 ```
 
-This keeps navigation logic out of the screen and fully testable in the ViewModel.
-
 ### Service vs Repository
-- **Service** — responsible only for making the raw API call and returning a DTO.
-- **Repository** — maps DTOs to domain models and is the only thing the ViewModel talks to.
 
-The ViewModel is injected with the **Repository** interface, never the Service directly.
+- **Service** - makes the raw API call and returns a DTO. No mapping, no business logic.
+- **Repository** - maps DTOs to domain models. The ViewModel only depends on the Repository interface, never on a Service directly.
 
 ### DTOs vs Domain Models
-- **DTOs** (`domain/dto/`) are `@Serializable` data classes that match the API response shape exactly.
-- **Domain Models** (`domain/model/`) are clean Kotlin data classes with no serialization annotations, used throughout the UI and ViewModel.
-- Mapping happens inside `RepositoryImpl`.
+
+- **DTOs** (`domain/dto/`) are `@Serializable` data classes that mirror the exact API response shape.
+- **Domain Models** (`domain/model/`) are plain Kotlin data classes with no serialization annotations, used throughout the ViewModel and UI.
+- Mapping happens exclusively inside `RepositoryImpl`.
 
 ---
 
 ## Dependency Injection (Koin)
 
-All bindings are declared in a single `AppModule.kt`. Interfaces are bound to their implementations here, making it trivial to swap test implementations for real ones.
+All bindings are declared in a single `AppModule.kt`. Interfaces are bound to implementations here, making swapping straightforward without touching any other code.
 
 ```kotlin
 val appModule = module {
-    single<AuthService> { AuthServiceTest() }       // swap to AuthServiceImpl() when ready
-    single<AuthRepository> { AuthRepositoryTest(get()) }
-    viewModel { LoginViewModel(get()) }
-    ...
+    single { createHttpClient() }
+    single<AuthService> { AuthServiceImpl(get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get()) }
+    single<SessionManager> { SessionManagerImpl(get()) }
+    viewModel { LoginViewModel(get(), get()) }
+    // ...
 }
 ```
 
-Koin is initialized in `App.kt` via `KoinApplication`.
+Koin is started in `App.kt` via `KoinApplication { modules(appModule) }`.
 
 ---
 
 ## Navigation
 
-Navigation is handled by a single `NavGraph.kt` in `core/navigation`. All routes are defined as a sealed class.
-
-```kotlin
-sealed class Screen(val route: String) {
-    data object Login : Screen("login")
-    data object Companies : Screen("companies")
-    data object Appointments : Screen("appointments")
-}
-```
+Navigation is handled by a single `NavGraph.kt` in `core/navigation`. All routes are type-safe serializable objects.
 
 ### Flow
+
 ```
 Login --> Companies --> Appointments
+                   --> Profile
 ```
-- After login, the Login screen is popped off the back stack.
-- After voting on all companies, the Companies screen is popped and Appointments is shown.
+
+- After successful login the Login destination is popped from the back stack.
+- After voting on all companies the app navigates to Appointments.
+- Profile is accessible from the Companies screen.
 
 ---
 
-## Test vs Real Implementations
+## Configuration
 
-During development, each Service and Repository has a `Test` implementation with hardcoded data.
+Runtime configuration is injected via BuildKonfig from `local.properties`, which is excluded from version control.
 
-| Class | Purpose |
+**Required `local.properties` entries:**
+
+```properties
+sdk.dir=<path to Android SDK>
+BACKEND_BASE_URL=<backend URL>
+SUPABASE_URL=<Supabase project URL>
+SUPABASE_ANON_KEY=<Supabase anonymous key>
+```
+
+BuildKonfig exposes these as constants available in `commonMain` at compile time. The `-PisProduction=true` Gradle flag switches the app to the production backend.
+
+---
+
+## CI/CD
+
+Two GitHub Actions pipelines build and deploy Android release bundles automatically.
+
+| Pipeline | Branch | Track | Version Code Base |
+|---|---|---|---|
+| `android-testing.yml` | `android-testing` | Internal Testing | 2000 + run number |
+| `android-production.yml` | `android-production` | Closed Testing (alpha) | 3000 + run number |
+
+Both pipelines: set up JDK 17, restore Gradle cache, decode the signing keystore from secrets, build a release AAB, and upload to Google Play Console.
+
+**Required GitHub Secrets:**
+
+| Secret | Purpose |
 |---|---|
-| `CompanyServiceTest` | Returns 3 hardcoded companies, no network call |
-| `CompanyRepositoryTest` | Maps from test service, injected into ViewModel |
-| `CompanyServiceImpl` *(future)* | Real Ktor implementation |
-| `CompanyRepositoryImpl` *(future)* | Wired to real service |
-
-To switch from test to real: update the binding in `AppModule.kt`. Nothing else changes.
+| `KEYSTORE_BASE64` | Base64-encoded Android signing keystore |
+| `KEYSTORE_PASSWORD` | Keystore password |
+| `KEY_ALIAS` | Key alias |
+| `KEY_PASSWORD` | Key password |
+| `PLAY_STORE_SERVICE_ACCOUNT_JSON` | Google Play service account credentials |
 
 ---
 
 ## Features
 
 ### Auth
-- Login with email + password
-- Logout
-- Token stored after login (to be implemented with Supabase Auth)
+
+- Email + password login via Supabase Auth
+- Session token persisted locally with Multiplatform Settings
+- Logout clears session and returns to Login
 
 ### Companies
+
 - Displays active companies as a swipeable card stack (Tinder-style)
-- Student can Like, Dislike, or skip (neutral = no action)
-- After all companies are voted on, navigates to Appointments
+- Student can Like, Dislike, or Neutral-vote each company
+- Votes are submitted to the backend in real time
+- Confetti animation plays when all companies have been voted on
+- Also accessible as a flat list view
 
 ### Appointments
-- Displays the student's assigned appointment schedule
-- Shows company name and time slot per appointment
-- Only available after the matching process has been run by admin
+
+- Displays the student's assigned appointment schedule after the admin runs the matching process
+- Shows company name, time slot, and location per appointment
+
+### Profile
+
+- Displays student profile information
+- Logout
+- Links to Terms of Service and Privacy Policy
 
 ---
 
-## Dependencies (libs.versions.toml)
+## Dependencies
 
-```
-compose, compose-material3, compose-navigation
-ktor-client-core, ktor-client-okhttp (android), ktor-client-darwin (ios)
-ktor-client-content-negotiation, ktor-serialization-kotlinx-json
-koin-core, koin-compose-viewmodel
-supabase: postgrest-kt, auth-kt, storage-kt, realtime-kt
-coil-compose, coil-network-ktor
-androidx-lifecycle-viewmodel, androidx-lifecycle-runtime
+```toml
+# gradle/libs.versions.toml (abbreviated)
+
+compose = "1.10.0"
+compose-material3 = "1.10.0-alpha05"
+compose-navigation = "2.9.1"
+ktor = "3.1.3"                     # OkHttp (Android) / Darwin (iOS)
+koin = "4.1.0"
+supabase = "3.1.4"                 # postgrest-kt, auth-kt, storage-kt, realtime-kt
+coil = "3.2.0"
+multiplatform-settings = "1.1.1"
+kotlinx-serialization-json        # via KMP plugin
+buildkonfig = "0.15.2"
+agp = "8.11.2"
+kotlin = "2.3.0"
 ```

@@ -29,11 +29,15 @@ class AppointmentViewModel(
 
     private fun loadAppointments() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            println("[AppointmentVM] loadAppointments started")
+            _state.update { it.copy(isLoading = true, hasError = false) }
             try {
                 val appointments = repository.getMyAppointments()
+                println("[AppointmentVM] appointments loaded: count=${appointments.size}")
                 val eventInfo = repository.getEventInfo()
+                println("[AppointmentVM] eventInfo loaded: name=${eventInfo.name}, date=${eventInfo.date}")
                 val companies = companyRepository.getActiveCompanies()
+                println("[AppointmentVM] companies loaded: count=${companies.size}")
 
                 _state.update {
                     it.copy(
@@ -46,8 +50,10 @@ class AppointmentViewModel(
                         isLoading = false
                     )
                 }
+                println("[AppointmentVM] state updated successfully")
             } catch (e: Exception) {
-                _state.update { it.copy(error = e.message, isLoading = false) }
+                println("[AppointmentVM] ERROR: ${e::class.simpleName}: ${e.message}")
+                _state.update { it.copy(isLoading = false, hasError = true) }
             }
         }
     }

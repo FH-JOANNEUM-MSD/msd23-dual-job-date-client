@@ -32,14 +32,14 @@ class ProfileViewModel(
 
     fun onEvent(event: ProfileEvent) {
         when (event) {
-            is ProfileEvent.CurrentPasswordChanged -> {
-                _state.update { it.copy(currentPassword = event.value) }
+            is ProfileEvent.CurrentPasswordChanged -> _state.update {
+                it.copy(currentPassword = event.value, passwordError = null, passwordSuccess = false)
             }
-            is ProfileEvent.NewPasswordChanged -> {
-                _state.update { it.copy(newPassword = event.value) }
+            is ProfileEvent.NewPasswordChanged -> _state.update {
+                it.copy(newPassword = event.value, passwordError = null, passwordSuccess = false)
             }
-            is ProfileEvent.ConfirmPasswordChanged -> {
-                _state.update { it.copy(confirmPassword = event.value) }
+            is ProfileEvent.ConfirmPasswordChanged -> _state.update {
+                it.copy(confirmPassword = event.value, passwordError = null, passwordSuccess = false)
             }
             is ProfileEvent.ChangePassword -> changePassword()
             is ProfileEvent.Logout -> logout()
@@ -67,65 +67,35 @@ class ProfileViewModel(
         val currentState = _state.value
 
         if (currentState.newPassword.isBlank() || currentState.confirmPassword.isBlank()) {
-            _state.update {
-                it.copy(
-                    passwordError = "All fields are required",
-                    passwordSuccess = null
-                )
-            }
+            _state.update { it.copy(passwordError = ProfilePasswordError.FieldsRequired, passwordSuccess = false) }
             return
         }
 
         if (currentState.newPassword != currentState.confirmPassword) {
-            _state.update {
-                it.copy(
-                    passwordError = "Passwords do not match",
-                    passwordSuccess = null
-                )
-            }
+            _state.update { it.copy(passwordError = ProfilePasswordError.PasswordMismatch, passwordSuccess = false) }
             return
         }
 
         if (currentState.newPassword.length < 6) {
-            _state.update {
-                it.copy(
-                    passwordError = "Password must be at least 6 characters",
-                    passwordSuccess = null
-                )
-            }
+            _state.update { it.copy(passwordError = ProfilePasswordError.TooShort, passwordSuccess = false) }
             return
         }
 
         viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    isChangingPassword = true,
-                    passwordError = null,
-                    passwordSuccess = null
-                )
-            }
-
+            _state.update { it.copy(isChangingPassword = true, passwordError = null, passwordSuccess = false) }
             try {
                 authRepository.changePassword(currentState.newPassword)
-
                 _state.update {
                     it.copy(
                         isChangingPassword = false,
                         currentPassword = "",
                         newPassword = "",
                         confirmPassword = "",
-                        passwordError = null,
-                        passwordSuccess = "Password changed successfully"
+                        passwordSuccess = true
                     )
                 }
             } catch (e: Exception) {
-                _state.update {
-                    it.copy(
-                        isChangingPassword = false,
-                        passwordError = e.message ?: "Failed to change password",
-                        passwordSuccess = null
-                    )
-                }
+                _state.update { it.copy(isChangingPassword = false, passwordError = ProfilePasswordError.ChangeFailed) }
             }
         }
     }

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dual Job Dating - So bekommst du die App (Android)</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 22mm 25mm 22mm;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.6;
+      color: #1A1A1A;
+      background: #fff;
+    }
+
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 10mm;
+      border-bottom: 2.5pt solid #B71C1C;
+      margin-bottom: 8mm;
+    }
+    .doc-header img { height: 36pt; display: block; }
+    .doc-header-right { text-align: right; }
+    .doc-header-right .doc-title { font-size: 16pt; font-weight: 700; color: #B71C1C; line-height: 1.2; }
+    .doc-header-right .doc-subtitle { font-size: 9pt; color: #555; margin-top: 3pt; }
+    .doc-header-right .doc-date { font-size: 8.5pt; color: #888; margin-top: 2pt; }
+
+    .notice {
+      border-left: 3pt solid #B71C1C;
+      background: #fdf5f5;
+      padding: 8pt 10pt;
+      margin: 6mm 0;
+      font-size: 9.5pt;
+    }
+    .notice strong { color: #B71C1C; }
+
+    h2 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #B71C1C;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 8mm;
+      margin-bottom: 3mm;
+      padding-bottom: 2pt;
+      border-bottom: 1pt solid #e0e0e0;
+    }
+
+    h3 { font-size: 10pt; font-weight: 700; color: #1A1A1A; margin-top: 5mm; margin-bottom: 2mm; }
+    p { margin-bottom: 4pt; }
+
+    .platform-heading {
+      display: flex;
+      align-items: center;
+      gap: 8pt;
+      margin-top: 8mm;
+      margin-bottom: 4mm;
+      padding-bottom: 3pt;
+      border-bottom: 1.5pt solid #1A1A1A;
+      page-break-after: avoid;
+    }
+    .platform-heading h2 { margin: 0; border: none; padding: 0; font-size: 12pt; letter-spacing: 0.04em; }
+    .platform-tag {
+      font-size: 7.5pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2pt 7pt;
+      border-radius: 3pt;
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 0.5pt solid #a5d6a7;
+    }
+
+    .steps { margin: 0 0 4mm 0; }
+    .step {
+      display: flex;
+      gap: 10pt;
+      margin-bottom: 4mm;
+      page-break-inside: avoid;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 20pt;
+      height: 20pt;
+      border-radius: 50%;
+      background: #B71C1C;
+      color: #fff;
+      font-weight: 700;
+      font-size: 9pt;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1pt;
+    }
+    .step-body h3 { margin-top: 0; margin-bottom: 2pt; }
+
+    .step-img {
+      max-width: 100%;
+      border: 0.5pt solid #ddd;
+      border-radius: 3pt;
+      margin: 4pt 0;
+      display: block;
+    }
+
+    .url-block {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      color: #B71C1C;
+      background: #fdf5f5;
+      border: 0.5pt solid #e0b0b0;
+      padding: 5pt 8pt;
+      margin: 4pt 0;
+      word-break: break-all;
+      display: block;
+    }
+
+    .note {
+      font-size: 9pt;
+      color: #555;
+      background: #f9f9f9;
+      border-left: 2pt solid #ccc;
+      padding: 5pt 8pt;
+      margin: 4pt 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      margin: 4mm 0;
+      page-break-inside: avoid;
+    }
+    th { background: #B71C1C; color: #fff; font-weight: 700; padding: 5pt 8pt; text-align: left; }
+    td { padding: 5pt 8pt; border-bottom: 0.5pt solid #e0e0e0; }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    .doc-footer {
+      margin-top: 12mm;
+      padding-top: 4pt;
+      border-top: 0.5pt solid #ccc;
+      font-size: 8pt;
+      color: #aaa;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media screen {
+      body { background: #e8e8e8; padding: 10mm; }
+      .page {
+        background: #fff;
+        max-width: 210mm;
+        margin: 0 auto;
+        padding: 20mm 22mm 25mm;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+        min-height: 297mm;
+      }
+    }
+    @media print {
+      body { background: #fff; }
+      .page { padding: 0; }
+      a { text-decoration: none; color: inherit; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="doc-header">
+    <img src="logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">So bekommst du die App</div>
+      <div class="doc-subtitle">Installationsanleitung für Android-Studierende</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>Das brauchst du.</strong> Ein Android-Gerät mit Android 7.0 oder höher, ein Google-Konto, deine Zugangsdaten (E-Mail-Adresse und Passwort) von der Organisation und eine funktionierende Internetverbindung. Verwende <strong>dasselbe</strong> Google-Konto für die Gruppe und den Play Store - sonst bekommst du im Store keinen Zugriff.
+  </div>
+
+  <h2>Überblick</h2>
+  <p>Die Dual Job Dating App für Android wird über Google Play als <strong>geschlossener Test</strong> verteilt. Du trittst zuerst mit deinem Google-Konto einer Google-Gruppe bei, wodurch du Zugriff auf die App im Play Store erhältst. Nach der Installation loggst du dich mit den Zugangsdaten ein, die du von der Organisation erhalten hast, und kannst die Unternehmen bewerten.</p>
+
+  <div class="platform-heading">
+    <h2>Installation</h2>
+    <span class="platform-tag">Android - Google Play</span>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Google-Gruppe beitreten</h3>
+        <p>Öffne den folgenden Google-Group-Link. Stelle sicher, dass du mit deinem Google-Konto eingeloggt bist, und tippe auf <strong>Gruppe beitreten</strong>:</p>
+        <span class="url-block">https://groups.google.com/g/dualjobdating</span>
+        <img class="step-img" src="join_group.png" alt="Gruppe beitreten" />
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Bestätigen</h3>
+        <p>Es erscheint ein Dialog mit deinem Anzeigenamen und Abo-Einstellungen. Tippe auf <strong>Gruppe beitreten</strong>, um zu bestätigen.</p>
+        <img class="step-img" src="join.png" alt="Bestätigungsdialog" />
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Den "App Download"-Beitrag öffnen</h3>
+        <p>Sobald du Mitglied bist, öffne den <strong>App Download</strong>-Beitrag in der Gruppe und tippe auf den Play-Store-Link.</p>
+        <img class="step-img" src="link.png" alt="App-Download-Link in der Gruppe" />
+        <p class="note">Es kann nach dem Beitritt einige Minuten dauern, bis der Play Store den Zugriff freischaltet. Öffnet sich die App-Seite nicht sofort, warte kurz und versuche es erneut.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>App installieren</h3>
+        <p>Falls auf der Play-Store-Seite <strong>Am Testprogramm teilnehmen</strong> erscheint, tippe darauf. Tippe anschließend auf <strong>Installieren</strong>. Die App wird wie jede andere Play-Store-App auf deinem Gerät installiert.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>App öffnen und einloggen</h3>
+        <p>Tippe auf das Dual-Job-Dating-Symbol auf deinem Home-Bildschirm. Gib im Login-Screen die E-Mail-Adresse und das Passwort ein, die du von der Organisation erhalten hast, und tippe auf <strong>Anmelden</strong>. Nach erfolgreichem Login erscheint der Voting-Screen.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h3>Unternehmen bewerten</h3>
+        <p>Wische die Unternehmenskarten nach rechts für Like, nach links für Dislike oder nach oben für Neutral. Du kannst stattdessen auch die Buttons unter der Karte verwenden. Sobald alle Unternehmen bewertet sind, erscheint ein Abschluss-Screen.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>Nach dem Voting - deine Termine</h2>
+  <p>Sobald die Organisation das Matching durchgeführt hat, erscheinen deine zugewiesenen Termine automatisch im Tab <strong>Termine</strong> in der App. Du siehst, welches Unternehmen du wann und wo besuchst. Auf deiner Seite ist nichts weiter zu tun - öffne die App einfach am Veranstaltungstag.</p>
+
+  <h2>Kurz-Übersicht</h2>
+  <table>
+    <tr><th>Was</th><th>Link / Info</th></tr>
+    <tr><td>Google-Gruppe</td><td>groups.google.com/g/dualjobdating</td></tr>
+    <tr><td>Mindest-Android-Version</td><td>Android 7.0 (API 24)</td></tr>
+    <tr><td>Zugangsdaten</td><td>Von der Organisation erhalten (E-Mail + Passwort)</td></tr>
+  </table>
+
+  <h2>Problemlösung</h2>
+  <p><strong>Der Play Store sagt, du hast keinen Zugriff.</strong> Stelle sicher, dass du im Play Store mit <em>demselben</em> Google-Konto angemeldet bist, mit dem du der Gruppe beigetreten bist. Die beiden Konten müssen übereinstimmen.</p>
+  <p><strong>Die App erscheint nicht sofort im Play Store.</strong> Die Freischaltung kann einige Minuten dauern. Warte kurz und aktualisiere den Play Store.</p>
+  <p><strong>Login funktioniert nicht.</strong> Prüfe E-Mail und Passwort, die du erhalten hast, sorgfältig. Passwörter unterscheiden zwischen Groß- und Kleinschreibung. Funktioniert es weiterhin nicht, wende dich an die Organisation.</p>
+
+  <div class="doc-footer">
+    <span>Dual Job Dating - Android Installationsanleitung</span>
+    <span>Sieff &amp; Winkler - 2026</span>
+  </div>
+
+</div>
+</body>
+</html>

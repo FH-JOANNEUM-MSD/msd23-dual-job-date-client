@@ -6,6 +6,6 @@ data class CompanyListState(
     val companies: List<Company> = emptyList(),
     val currentIndex: Int = 0,
     val isLoading: Boolean = false,
-    val error: String? = null,
+    val hasError: Boolean = false,
     val isDone: Boolean = false
 )
