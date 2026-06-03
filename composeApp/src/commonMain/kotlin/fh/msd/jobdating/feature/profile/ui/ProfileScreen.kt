@@ -13,23 +13,33 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.error_generic
 import dualjobdating.composeapp.generated.resources.profile_change_password_button
 import dualjobdating.composeapp.generated.resources.profile_confirm_password
 import dualjobdating.composeapp.generated.resources.profile_current_password
 import dualjobdating.composeapp.generated.resources.profile_data_privacy
 import dualjobdating.composeapp.generated.resources.profile_email
-import dualjobdating.composeapp.generated.resources.profile_impressum
 import dualjobdating.composeapp.generated.resources.profile_logout
+import dualjobdating.composeapp.generated.resources.profile_open_source
 import dualjobdating.composeapp.generated.resources.profile_new_password
 import dualjobdating.composeapp.generated.resources.profile_role
 import dualjobdating.composeapp.generated.resources.profile_section_legal
 import dualjobdating.composeapp.generated.resources.profile_section_password
+import dualjobdating.composeapp.generated.resources.profile_password_change_success
+import dualjobdating.composeapp.generated.resources.profile_password_fields_required
+import dualjobdating.composeapp.generated.resources.profile_password_mismatch
+import dualjobdating.composeapp.generated.resources.profile_password_too_short
+import dualjobdating.composeapp.generated.resources.profile_password_change_failed
+import dualjobdating.composeapp.generated.resources.cd_section_collapsed
+import dualjobdating.composeapp.generated.resources.cd_section_expanded
 import dualjobdating.composeapp.generated.resources.profile_section_personal
 import dualjobdating.composeapp.generated.resources.profile_student_id
 
@@ -43,6 +53,8 @@ fun ProfileScreen(
     var personalExpanded by remember { mutableStateOf(true) }
     var passwordExpanded by remember { mutableStateOf(false) }
     var legalExpanded by remember { mutableStateOf(false) }
+    var showPrivacyDialog by remember { mutableStateOf(false) }
+    var showLibrariesDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.navigation.collect { nav ->
@@ -125,16 +137,22 @@ fun ProfileScreen(
                                 visualTransformation = PasswordVisualTransformation(),
                                 modifier = Modifier.fillMaxWidth()
                             )
-                            state.passwordError?.let {
+                            state.passwordError?.let { error ->
+                                val msg = when (error) {
+                                    ProfilePasswordError.FieldsRequired -> stringResource(Res.string.profile_password_fields_required)
+                                    ProfilePasswordError.PasswordMismatch -> stringResource(Res.string.profile_password_mismatch)
+                                    ProfilePasswordError.TooShort -> stringResource(Res.string.profile_password_too_short)
+                                    ProfilePasswordError.ChangeFailed -> stringResource(Res.string.profile_password_change_failed)
+                                }
                                 Text(
-                                    text = it,
+                                    text = msg,
                                     color = MaterialTheme.colorScheme.error,
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
-                            state.passwordSuccess?.let {
+                            if (state.passwordSuccess) {
                                 Text(
-                                    text = it,
+                                    text = stringResource(Res.string.profile_password_change_success),
                                     color = MaterialTheme.colorScheme.primary,
                                     style = MaterialTheme.typography.bodySmall
                                 )
@@ -169,16 +187,16 @@ fun ProfileScreen(
                             modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 8.dp)
                         ) {
                             TextButton(
-                                onClick = { },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(stringResource(Res.string.profile_impressum))
-                            }
-                            TextButton(
-                                onClick = { },
+                                onClick = { showPrivacyDialog = true },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(stringResource(Res.string.profile_data_privacy))
+                            }
+                            TextButton(
+                                onClick = { showLibrariesDialog = true },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(stringResource(Res.string.profile_open_source))
                             }
                         }
                     }
@@ -210,6 +228,13 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(80.dp))
         }
     }
+
+    if (showPrivacyDialog) {
+        DataPrivacyDialog(onDismiss = { showPrivacyDialog = false })
+    }
+    if (showLibrariesDialog) {
+        OpenSourceLibrariesDialog(onDismiss = { showLibrariesDialog = false })
+    }
 }
 
 @Composable
@@ -218,9 +243,15 @@ private fun SectionHeader(
     expanded: Boolean,
     onToggle: () -> Unit
 ) {
+    val sectionDesc = if (expanded) {
+        stringResource(Res.string.cd_section_expanded, title)
+    } else {
+        stringResource(Res.string.cd_section_collapsed, title)
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .semantics { contentDescription = sectionDesc }
             .clickable { onToggle() }
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,

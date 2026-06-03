@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1A1A1A"/>
+    </marker>
+  </defs>
+
+  <text x="500" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#1A1A1A">Component Diagram</text>
+  <text x="500" y="52" text-anchor="middle" font-size="11" fill="#555">Dual Job Dating — Kotlin Multiplatform App</text>
+
+  <!-- composeApp boundary -->
+  <rect x="40" y="80" width="920" height="470" rx="6" fill="#ffffff" stroke="#1A1A1A" stroke-width="1.2"/>
+  <text x="55" y="100" font-size="10" font-weight="700" fill="#1A1A1A" letter-spacing="0.06em">COMPOSEAPP · commonMain</text>
+
+  <!-- UI Layer -->
+  <rect x="60" y="115" width="880" height="100" rx="4" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="75" y="133" font-size="10" font-weight="700" fill="#1A1A1A" letter-spacing="0.05em">UI · COMPOSE MULTIPLATFORM</text>
+
+  <rect x="75" y="145" width="200" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="175" y="163" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1A1A1A">feature/auth</text>
+  <text x="175" y="178" text-anchor="middle" font-size="9" fill="#333">LoginScreen · LoginViewModel</text>
+  <text x="175" y="192" text-anchor="middle" font-size="9" fill="#333">LoginState · LoginEvent</text>
+
+  <rect x="285" y="145" width="210" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="390" y="163" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1A1A1A">feature/companies</text>
+  <text x="390" y="178" text-anchor="middle" font-size="9" fill="#333">SwipeScreen · ListScreen</text>
+  <text x="390" y="192" text-anchor="middle" font-size="9" fill="#333">CompanyCard · DetailDialog</text>
+
+  <rect x="505" y="145" width="210" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="610" y="163" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1A1A1A">feature/appointments</text>
+  <text x="610" y="178" text-anchor="middle" font-size="9" fill="#333">AppointmentScreen</text>
+  <text x="610" y="192" text-anchor="middle" font-size="9" fill="#333">AppointmentViewModel</text>
+
+  <rect x="725" y="145" width="200" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="825" y="163" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1A1A1A">feature/profile</text>
+  <text x="825" y="178" text-anchor="middle" font-size="9" fill="#333">ProfileScreen · ViewModel</text>
+  <text x="825" y="192" text-anchor="middle" font-size="9" fill="#333">LegalDialogs · State</text>
+
+  <!-- Data Layer -->
+  <rect x="60" y="235" width="880" height="100" rx="4" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="75" y="253" font-size="10" font-weight="700" fill="#1A1A1A" letter-spacing="0.05em">DATA &amp; DOMAIN</text>
+
+  <rect x="75" y="265" width="200" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="175" y="283" text-anchor="middle" font-size="10" font-weight="700" fill="#1A1A1A">auth/data</text>
+  <text x="175" y="298" text-anchor="middle" font-size="9" fill="#333">AuthRepository · AuthService</text>
+  <text x="175" y="312" text-anchor="middle" font-size="9" fill="#333">LoginDto · AuthToken</text>
+
+  <rect x="285" y="265" width="210" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="390" y="283" text-anchor="middle" font-size="10" font-weight="700" fill="#1A1A1A">companies/data</text>
+  <text x="390" y="298" text-anchor="middle" font-size="9" fill="#333">CompanyRepository · Service</text>
+  <text x="390" y="312" text-anchor="middle" font-size="9" fill="#333">CompanyDto · Company · VoteType</text>
+
+  <rect x="505" y="265" width="210" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="610" y="283" text-anchor="middle" font-size="10" font-weight="700" fill="#1A1A1A">appointments/data</text>
+  <text x="610" y="298" text-anchor="middle" font-size="9" fill="#333">AppointmentRepository · Service</text>
+  <text x="610" y="312" text-anchor="middle" font-size="9" fill="#333">AppointmentDto · Appointment</text>
+
+  <rect x="725" y="265" width="200" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="825" y="283" text-anchor="middle" font-size="10" font-weight="700" fill="#1A1A1A">core/domain</text>
+  <text x="825" y="298" text-anchor="middle" font-size="9" fill="#333">Student · User · shared DTOs</text>
+  <text x="825" y="312" text-anchor="middle" font-size="9" fill="#333">UserSession state</text>
+
+  <!-- Core layer -->
+  <rect x="60" y="355" width="880" height="100" rx="4" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="75" y="373" font-size="10" font-weight="700" fill="#1A1A1A" letter-spacing="0.05em">CORE · CROSS-CUTTING</text>
+
+  <rect x="75" y="385" width="165" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="157" y="403" text-anchor="middle" font-size="10" font-weight="700" fill="#1A1A1A">core/di</text>
+  <text x="157" y="418" text-anchor="middle" font-size="9" fill="#333">AppModule.kt</text>
+  <text x="157" y="432" text-anchor="middle" font-size="9" fill="#333">Koin bindings</text>
+
+  <rect x="250" y="385" width="165" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="332" y="403" text-anchor="middle" font-size="10" font-weight="700" fill="#1A1A1A">core/navigation</text>
+  <text x="332" y="418" text-anchor="middle" font-size="9" fill="#333">NavGraph · routes</text>
+  <text x="332" y="432" text-anchor="middle" font-size="9" fill="#333">@Serializable</text>
+
+  <rect x="425" y="385" width="165" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="507" y="403" text-anchor="middle" font-size="10" font-weight="700" fill="#1A1A1A">core/network</text>
+  <text x="507" y="418" text-anchor="middle" font-size="9" fill="#333">Ktor HttpClient</text>
+  <text x="507" y="432" text-anchor="middle" font-size="9" fill="#333">Bearer auth · JSON</text>
+
+  <rect x="600" y="385" width="165" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="682" y="403" text-anchor="middle" font-size="10" font-weight="700" fill="#1A1A1A">core/session</text>
+  <text x="682" y="418" text-anchor="middle" font-size="9" fill="#333">SessionManager</text>
+  <text x="682" y="432" text-anchor="middle" font-size="9" fill="#333">Multiplatform Settings</text>
+
+  <rect x="775" y="385" width="150" height="60" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="850" y="403" text-anchor="middle" font-size="10" font-weight="700" fill="#1A1A1A">core/ui</text>
+  <text x="850" y="418" text-anchor="middle" font-size="9" fill="#333">Theme · Typography</text>
+  <text x="850" y="432" text-anchor="middle" font-size="9" fill="#333">Shared components</text>
+
+  <!-- Platform shims -->
+  <rect x="60" y="475" width="880" height="65" rx="4" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="75" y="493" font-size="10" font-weight="700" fill="#1A1A1A" letter-spacing="0.05em">PLATFORM</text>
+
+  <rect x="75" y="503" width="425" height="30" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="287" y="522" text-anchor="middle" font-size="10" fill="#1A1A1A"><tspan font-weight="700">androidMain</tspan> · MainActivity · OkHttp engine · NativeDialog</text>
+
+  <rect x="510" y="503" width="415" height="30" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="717" y="522" text-anchor="middle" font-size="10" fill="#1A1A1A"><tspan font-weight="700">iosMain</tspan> · MainViewController · Darwin engine</text>
+
+  <!-- External systems -->
+  <rect x="180" y="585" width="280" height="60" rx="4" fill="#ffffff" stroke="#1A1A1A" stroke-width="1"/>
+  <text x="320" y="603" text-anchor="middle" font-size="11" font-weight="700" fill="#1A1A1A">Supabase</text>
+  <text x="320" y="620" text-anchor="middle" font-size="9.5" fill="#333">Auth (JWT) · PostgREST · Storage</text>
+  <text x="320" y="635" text-anchor="middle" font-size="9" fill="#555">SUPABASE_URL · ANON_KEY</text>
+
+  <rect x="540" y="585" width="280" height="60" rx="4" fill="#ffffff" stroke="#1A1A1A" stroke-width="1"/>
+  <text x="680" y="603" text-anchor="middle" font-size="11" font-weight="700" fill="#1A1A1A">Backend API (Go)</text>
+  <text x="680" y="620" text-anchor="middle" font-size="9.5" fill="#333">/api/companies · /api/votes · /api/meetings</text>
+  <text x="680" y="635" text-anchor="middle" font-size="9" fill="#555">BACKEND_BASE_URL · Bearer JWT</text>
+
+  <!-- Vertical connectors UI -> Data (centered on each column) -->
+  <line x1="175" y1="205" x2="175" y2="265" stroke="#1A1A1A" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="390" y1="205" x2="390" y2="265" stroke="#1A1A1A" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="610" y1="205" x2="610" y2="265" stroke="#1A1A1A" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="825" y1="205" x2="825" y2="265" stroke="#1A1A1A" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Data -> external (two clean lines only) -->
+  <line x1="175" y1="325" x2="290" y2="585" stroke="#1A1A1A" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="500" y1="335" x2="680" y2="585" stroke="#1A1A1A" stroke-width="1" marker-end="url(#arrow)"/>
+</svg>

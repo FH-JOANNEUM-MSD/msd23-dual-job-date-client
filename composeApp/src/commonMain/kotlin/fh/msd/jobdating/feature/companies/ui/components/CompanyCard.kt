@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Business
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
@@ -46,7 +47,9 @@ import coil3.size.Scale
 import fh.msd.jobdating.feature.companies.domain.model.Company
 import fh.msd.jobdating.feature.companies.ui.SwipeHint
 import androidx.compose.foundation.background
-import org.jetbrains.compose.resources.painterResource
+import dualjobdating.composeapp.generated.resources.Res
+import dualjobdating.composeapp.generated.resources.cd_company_logo
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CompanyCard(
@@ -54,7 +57,8 @@ fun CompanyCard(
     modifier: Modifier = Modifier,
     swipeHint: SwipeHint = SwipeHint.NONE,
     dragProgress: Float = 0f,
-    isBackground: Boolean = false
+    isBackground: Boolean = false,
+    applyAspectRatio: Boolean = true
 ) {
     val borderColor = when (swipeHint) {
         SwipeHint.LIKE -> Color(0xFF639922)
@@ -73,15 +77,17 @@ fun CompanyCard(
         animationSpec = tween(150)
     )
 
+    val cardModifier = modifier
+        .fillMaxWidth()
+        .then(if (applyAspectRatio) Modifier.aspectRatio(0.75f) else Modifier)
+        .border(
+            width = animatedBorderWidth.dp,
+            color = animatedBorderColor,
+            shape = RoundedCornerShape(16.dp)
+        )
+
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(0.75f)
-            .border(
-                width = animatedBorderWidth.dp,
-                color = animatedBorderColor,
-                shape = RoundedCornerShape(16.dp)
-            ),
+        modifier = cardModifier,
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(0.dp),
         colors = CardDefaults.cardColors(
@@ -101,13 +107,19 @@ fun CompanyCard(
                     }
             ) {
                 if (company.logoUrl.isBlank()) {
-                    val fallbackImage = CompanyImageProvider.getFallbackImages(company.id)[0]
-                    androidx.compose.foundation.Image(
-                        painter = painterResource(fallbackImage),
-                        contentDescription = "Company Image",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Business,
+                            contentDescription = null,
+                            modifier = Modifier.size(80.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 } else {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalPlatformContext.current)
@@ -117,20 +129,24 @@ fun CompanyCard(
                             .scale(Scale.FIT)
                             .crossfade(if (isBackground) false else true)
                             .build(),
-                        contentDescription = "Company Logo",
+                        contentDescription = stringResource(Res.string.cd_company_logo, company.name),
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
-                        success = {
-                            SubcomposeAsyncImageContent()
-                        },
+                        success = { SubcomposeAsyncImageContent() },
                         error = {
-                            val fallbackImage = CompanyImageProvider.getFallbackImages(company.id)[0]
-                            androidx.compose.foundation.Image(
-                                painter = painterResource(fallbackImage),
-                                contentDescription = "Company Image",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Business,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(80.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     )
                 }

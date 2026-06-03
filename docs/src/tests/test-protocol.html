@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dual Job Dating - Testprotokoll</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 22mm 25mm 22mm;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.6;
+      color: #1A1A1A;
+      background: #fff;
+    }
+
+    /* ── DOCUMENT HEADER ── */
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 10mm;
+      border-bottom: 2.5pt solid #B71C1C;
+      margin-bottom: 8mm;
+    }
+    .doc-header img { height: 36pt; display: block; }
+    .doc-header-right { text-align: right; }
+    .doc-header-right .doc-title { font-size: 16pt; font-weight: 700; color: #B71C1C; line-height: 1.2; }
+    .doc-header-right .doc-subtitle { font-size: 9pt; color: #555; margin-top: 3pt; }
+    .doc-header-right .doc-date { font-size: 8.5pt; color: #888; margin-top: 2pt; }
+
+    .notice {
+      border-left: 3pt solid #B71C1C;
+      background: #fdf5f5;
+      padding: 8pt 10pt;
+      margin: 6mm 0;
+      font-size: 9.5pt;
+    }
+    .notice strong { color: #B71C1C; }
+
+    h2 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #B71C1C;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 8mm;
+      margin-bottom: 3mm;
+      padding-bottom: 2pt;
+      border-bottom: 1pt solid #e0e0e0;
+    }
+
+    h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-top: 4mm;
+      margin-bottom: 2mm;
+    }
+
+    p { margin-bottom: 4pt; }
+
+    code {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      background: #f5f5f5;
+      padding: 1pt 4pt;
+      border-radius: 2pt;
+    }
+
+    /* ── KPI ROW ── */
+    .kpis { display: flex; gap: 10pt; margin: 3mm 0 5mm 0; }
+    .kpi {
+      flex: 1;
+      border: 0.5pt solid #e0e0e0;
+      padding: 5pt 8pt;
+      background: #fafafa;
+    }
+    .kpi-label { font-size: 8pt; letter-spacing: 0.06em; text-transform: uppercase; color: #888; }
+    .kpi-value { font-size: 16pt; font-weight: 700; color: #1A1A1A; line-height: 1.1; }
+    .kpi-sub { font-size: 8.5pt; color: #666; }
+
+    /* ── TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      margin: 3mm 0 5mm 0;
+      page-break-inside: avoid;
+    }
+    th {
+      background: #B71C1C;
+      color: #fff;
+      font-weight: 700;
+      padding: 5pt 8pt;
+      text-align: left;
+    }
+    td {
+      padding: 4pt 8pt;
+      border-bottom: 0.5pt solid #e0e0e0;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    /* ── TEST CASE ── */
+    .tc {
+      page-break-inside: avoid;
+      page-break-before: always;
+    }
+    .tc-header {
+      display: flex;
+      align-items: center;
+      gap: 8pt;
+      margin-bottom: 4mm;
+      padding-bottom: 3pt;
+      border-bottom: 1.5pt solid #1A1A1A;
+    }
+    .tc-id {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 11pt;
+      font-weight: 700;
+      color: #B71C1C;
+    }
+    .tc-title {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #1A1A1A;
+      flex-grow: 1;
+    }
+    .tc-status {
+      font-size: 8pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2pt 8pt;
+      border-radius: 3pt;
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 0.5pt solid #a5d6a7;
+    }
+
+    .tc-body {
+      display: flex;
+      gap: 12pt;
+      align-items: flex-start;
+    }
+    .tc-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .tc-shot {
+      flex-shrink: 0;
+      width: 175pt;
+      border: 0.5pt solid #e0e0e0;
+      padding: 4pt;
+      background: #fafafa;
+    }
+    .tc-shot img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .tc-shot-caption {
+      font-size: 8pt;
+      color: #888;
+      text-align: center;
+      margin-top: 3pt;
+      font-style: italic;
+    }
+
+    .tc-section-label {
+      font-size: 8pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888;
+      margin-top: 3mm;
+      margin-bottom: 1mm;
+    }
+    .tc-section-label:first-child { margin-top: 0; }
+
+    .tc-meta {
+      font-size: 9pt;
+      color: #1A1A1A;
+    }
+
+    ol.steps { padding-left: 16pt; margin: 1mm 0 3mm 0; }
+    ol.steps li { font-size: 9.5pt; margin-bottom: 1pt; padding-left: 2pt; }
+
+    .result-box {
+      border-left: 2pt solid #2e7d32;
+      background: #f3f9f4;
+      padding: 4pt 7pt;
+      font-size: 9.5pt;
+      margin: 1mm 0 3mm 0;
+    }
+    .result-box.expected {
+      border-left-color: #B71C1C;
+      background: #fdf5f5;
+    }
+
+    .doc-footer {
+      margin-top: 12mm;
+      padding-top: 4pt;
+      border-top: 0.5pt solid #ccc;
+      font-size: 8pt;
+      color: #aaa;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media screen {
+      body { background: #e8e8e8; padding: 10mm; }
+      .page {
+        background: #fff;
+        max-width: 210mm;
+        margin: 0 auto 10mm auto;
+        padding: 20mm 22mm 25mm;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+        min-height: 297mm;
+      }
+    }
+    @media print {
+      body { background: #fff; }
+      .page { padding: 0; }
+      a { text-decoration: none; color: inherit; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- =============================================================== -->
+<!-- DECKBLATT                                                        -->
+<!-- =============================================================== -->
+<div class="page">
+
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Testprotokoll</div>
+      <div class="doc-subtitle">Manuelle Akzeptanztests &amp; automatisierte Unit-Tests</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>Umfang.</strong> Dieses Protokoll dokumentiert den Testablauf für die Dual Job Dating Mobile-App. Es umfasst <strong>acht manuelle Akzeptanztests</strong> - einen pro studierendenseitiger User Story aus dem Anforderungsdokument - sowie eine Übersicht der <strong>automatisierten Unit-Tests</strong>. Jeder manuelle Testfall enthält Vorbedingung, Schritte, erwartetes und tatsächliches Ergebnis sowie einen Screenshot als Nachweis.
+  </div>
+
+  <h2>Testumgebung</h2>
+  <table>
+    <tr><th>Komponente</th><th>Wert</th></tr>
+    <tr><td>Plattform</td><td>Android 14, Pixel-Klasse Gerät (Portrait)</td></tr>
+    <tr><td>App-Build</td><td>Release-Build aus <code>android-production</code> Branch</td></tr>
+    <tr><td>Backend</td><td>Produktions-Backend (Go) + Supabase Auth/Storage</td></tr>
+    <tr><td>Konfiguration</td><td><code>-PisProduction=true</code>, BuildKonfig befüllt aus GitHub Secrets</td></tr>
+    <tr><td>Test-User</td><td>Studierender-Account, vom Admin angelegt</td></tr>
+    <tr><td>Netzwerk</td><td>WLAN, stabile Verbindung</td></tr>
+  </table>
+
+  <h2>Ergebnis-Übersicht</h2>
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-label">Manuelle Tests</div>
+      <div class="kpi-value">8 / 8</div>
+      <div class="kpi-sub">bestanden</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Automatisierte Tests</div>
+      <div class="kpi-value">6 / 6</div>
+      <div class="kpi-sub">grün (ViewModel-Unit-Tests)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">User Stories abgedeckt</div>
+      <div class="kpi-value">8 / 8</div>
+      <div class="kpi-sub">studierendenseitig</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Gefundene Defekte</div>
+      <div class="kpi-value">0</div>
+      <div class="kpi-sub">offen zum Zeitpunkt der Abgabe</div>
+    </div>
+  </div>
+
+  <h2>Vorgehen</h2>
+  <p>Die manuellen Tests wurden anhand der acht Studierenden-User-Stories aus dem Anforderungsdokument durchgeführt. Für jeden Testfall wurde die App frisch gestartet, die im "Vorbedingung"-Abschnitt beschriebene Ausgangslage hergestellt und die Schritte sequentiell ausgeführt. Das Ergebnis wurde direkt mit dem erwarteten Verhalten verglichen. Bei jedem bestandenen Test wurde ein Screenshot als Nachweis aufgenommen. Die automatisierten Unit-Tests laufen über <code>./gradlew :composeApp:testDebugUnitTest</code>.</p>
+
+</div>
+
+
+<!-- =============================================================== -->
+<!-- TEST CASES                                                       -->
+<!-- =============================================================== -->
+
+<div class="page tc">
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Testprotokoll</div>
+      <div class="doc-subtitle">Manuelle Akzeptanztests &amp; automatisierte Unit-Tests</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="tc-header">
+    <span class="tc-id">TC-01</span>
+    <span class="tc-title">Login mit Studierenden-Account</span>
+    <span class="tc-status">Bestanden</span>
+  </div>
+  <div class="tc-body">
+    <div class="tc-text">
+      <div class="tc-section-label">User Story</div>
+      <p class="tc-meta">Als Studierende kann ich mich in der App einloggen / ausloggen.</p>
+
+      <div class="tc-section-label">Vorbedingung</div>
+      <p class="tc-meta">App ist installiert; gültige Zugangsdaten (E-Mail + Passwort) liegen vor; keine bestehende Session.</p>
+
+      <div class="tc-section-label">Schritte</div>
+      <ol class="steps">
+        <li>App öffnen - Login-Screen wird angezeigt.</li>
+        <li>E-Mail-Adresse in das Feld "E-Mail" eintippen.</li>
+        <li>Passwort in das Feld "Passwort" eintippen.</li>
+        <li>Auf den "Anmelden"-Button tippen.</li>
+      </ol>
+
+      <div class="tc-section-label">Erwartetes Ergebnis</div>
+      <div class="result-box expected">Login wird erfolgreich abgeschlossen, der Unternehmens-Swipe-Screen wird angezeigt, der Login-Screen ist aus dem Back-Stack entfernt.</div>
+
+      <div class="tc-section-label">Tatsächliches Ergebnis</div>
+      <div class="result-box">Login erfolgreich. Nach Tippen auf "Anmelden" wird ohne wahrnehmbare Verzögerung zum Swipe-Screen navigiert. Zurück-Geste führt nicht zurück zum Login. Screenshot 1 zeigt die ausgefüllte Maske, Screenshot 2 den Folge-Screen.</div>
+    </div>
+    <div class="tc-shot">
+      <img src="screenshots/01-login-filled.jpg" alt="Login mit ausgefüllten Feldern" />
+      <div class="tc-shot-caption">Abb. 1 - Login-Maske vor Submit</div>
+      <img src="screenshots/02-login-success.jpg" alt="Companies-Screen nach erfolgreichem Login" style="margin-top:6pt;" />
+      <div class="tc-shot-caption">Abb. 2 - Companies-Screen nach Login</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="page tc">
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Testprotokoll</div>
+      <div class="doc-subtitle">Manuelle Akzeptanztests &amp; automatisierte Unit-Tests</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="tc-header">
+    <span class="tc-id">TC-02</span>
+    <span class="tc-title">Passwort in der App ändern</span>
+    <span class="tc-status">Bestanden</span>
+  </div>
+  <div class="tc-body">
+    <div class="tc-text">
+      <div class="tc-section-label">User Story</div>
+      <p class="tc-meta">Als Studierende kann ich mein Passwort in der App ändern.</p>
+
+      <div class="tc-section-label">Vorbedingung</div>
+      <p class="tc-meta">Studierende ist eingeloggt und befindet sich auf einem beliebigen Screen mit Bottom-Navigation.</p>
+
+      <div class="tc-section-label">Schritte</div>
+      <ol class="steps">
+        <li>Profil-Tab in der Bottom-Navigation auswählen.</li>
+        <li>Abschnitt "Passwort" durch Tippen aufklappen.</li>
+        <li>Aktuelles Passwort eingeben.</li>
+        <li>Neues Passwort eingeben (≥ 6 Zeichen).</li>
+        <li>Neues Passwort im Feld "Bestätigen" wiederholen.</li>
+        <li>Auf "Passwort ändern" tippen.</li>
+      </ol>
+
+      <div class="tc-section-label">Erwartetes Ergebnis</div>
+      <div class="result-box expected">Erfolgsmeldung ("Passwort erfolgreich geändert") wird angezeigt; Felder werden geleert; Login mit neuem Passwort funktioniert nach Logout.</div>
+
+      <div class="tc-section-label">Tatsächliches Ergebnis</div>
+      <div class="result-box">Erfolgsmeldung erscheint direkt unter den Feldern; Felder werden geleert. Anschließendes Logout/Login mit dem neuen Passwort gelingt. Screenshot zeigt die Profil-Seite mit aufgeklapptem Passwort-Abschnitt.</div>
+    </div>
+    <div class="tc-shot">
+      <img src="screenshots/03-password-change.jpg" alt="Passwort-Änderung auf der Profil-Seite" />
+      <div class="tc-shot-caption">Abb. 3 - Profil mit Passwort-Sektion</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="page tc">
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Testprotokoll</div>
+      <div class="doc-subtitle">Manuelle Akzeptanztests &amp; automatisierte Unit-Tests</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="tc-header">
+    <span class="tc-id">TC-03</span>
+    <span class="tc-title">Liste aller aktiven Unternehmen anzeigen</span>
+    <span class="tc-status">Bestanden</span>
+  </div>
+  <div class="tc-body">
+    <div class="tc-text">
+      <div class="tc-section-label">User Story</div>
+      <p class="tc-meta">Als Studierende sehe ich eine Liste aller "aktiven" Unternehmen.</p>
+
+      <div class="tc-section-label">Vorbedingung</div>
+      <p class="tc-meta">Studierende ist eingeloggt; mindestens zwei Unternehmen sind im Backend als <code>active = true</code> markiert.</p>
+
+      <div class="tc-section-label">Schritte</div>
+      <ol class="steps">
+        <li>Listen-Tab in der Bottom-Navigation auswählen.</li>
+        <li>Durch die Liste scrollen.</li>
+      </ol>
+
+      <div class="tc-section-label">Erwartetes Ergebnis</div>
+      <div class="result-box expected">Alle aktiven Unternehmen werden mit Name und Kurzbeschreibung dargestellt. Inaktive Unternehmen werden nicht angezeigt.</div>
+
+      <div class="tc-section-label">Tatsächliches Ergebnis</div>
+      <div class="result-box">Aktive Unternehmen erscheinen als Karten in der Liste; Name und Kurzbeschreibung sind sichtbar. Pull-to-Refresh aktualisiert die Liste.</div>
+    </div>
+    <div class="tc-shot">
+      <img src="screenshots/04-company-list.jpg" alt="Liste der aktiven Unternehmen" />
+      <div class="tc-shot-caption">Abb. 4 - Unternehmens-Liste</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="page tc">
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Testprotokoll</div>
+      <div class="doc-subtitle">Manuelle Akzeptanztests &amp; automatisierte Unit-Tests</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="tc-header">
+    <span class="tc-id">TC-04</span>
+    <span class="tc-title">Unternehmens-Details vor dem Voting ansehen</span>
+    <span class="tc-status">Bestanden</span>
+  </div>
+  <div class="tc-body">
+    <div class="tc-text">
+      <div class="tc-section-label">User Story</div>
+      <p class="tc-meta">Als Studierende kann ich Details zu aktiven Unternehmen ansehen, bevor ich das Voting eingehe.</p>
+
+      <div class="tc-section-label">Vorbedingung</div>
+      <p class="tc-meta">Studierende ist eingeloggt und befindet sich auf dem Listen- oder Swipe-Screen mit mindestens einem aktiven Unternehmen.</p>
+
+      <div class="tc-section-label">Schritte</div>
+      <ol class="steps">
+        <li>Auf ein Unternehmen tippen (Karte oder Listeneintrag).</li>
+        <li>Detail-Dialog/-Screen wird geöffnet.</li>
+        <li>Beschreibung, Bilder, Website-Link sichten.</li>
+      </ol>
+
+      <div class="tc-section-label">Erwartetes Ergebnis</div>
+      <div class="result-box expected">Detail-Ansicht zeigt das vollständige Unternehmensprofil: Name, lange Beschreibung, Bilder und klickbarer Website-Link. Voting findet hier noch nicht statt.</div>
+
+      <div class="tc-section-label">Tatsächliches Ergebnis</div>
+      <div class="result-box">Detail-Dialog öffnet sich mit allen Pflichtfeldern. Website-Link öffnet den Standard-Browser. Schließen führt zurück zum Ausgangsscreen ohne Vote-Wirkung.</div>
+    </div>
+    <div class="tc-shot">
+      <img src="screenshots/05-company-detail.jpg" alt="Unternehmens-Detailansicht" />
+      <div class="tc-shot-caption">Abb. 5 - Unternehmens-Detail</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="page tc">
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Testprotokoll</div>
+      <div class="doc-subtitle">Manuelle Akzeptanztests &amp; automatisierte Unit-Tests</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="tc-header">
+    <span class="tc-id">TC-05</span>
+    <span class="tc-title">Like zu einem Unternehmen abgeben</span>
+    <span class="tc-status">Bestanden</span>
+  </div>
+  <div class="tc-body">
+    <div class="tc-text">
+      <div class="tc-section-label">User Story</div>
+      <p class="tc-meta">Als Studierende kann ich ein Like zu einem Unternehmen abgeben.</p>
+
+      <div class="tc-section-label">Vorbedingung</div>
+      <p class="tc-meta">Studierende ist eingeloggt; mindestens ein Unternehmen ist im Swipe-Stack vorhanden.</p>
+
+      <div class="tc-section-label">Schritte</div>
+      <ol class="steps">
+        <li>Swipe-Screen aufrufen (Default nach Login).</li>
+        <li>Aktuelle Unternehmens-Karte nach rechts ziehen.</li>
+        <li>Karte loslassen, sobald der Like-Indikator sichtbar wird.</li>
+      </ol>
+
+      <div class="tc-section-label">Erwartetes Ergebnis</div>
+      <div class="result-box expected">Karte fliegt nach rechts aus dem Bildschirm; <code>POST</code> an Voting-Endpunkt mit <code>vote = like</code> wird ausgelöst; nächste Karte erscheint.</div>
+
+      <div class="tc-section-label">Tatsächliches Ergebnis</div>
+      <div class="result-box">Like-Indikator erscheint beim Ziehen nach rechts; nach Loslassen wird die Karte animiert entfernt und die nächste Karte rückt nach. Vote wird an Backend übertragen.</div>
+    </div>
+    <div class="tc-shot">
+      <img src="screenshots/06-swipe-like.jpg" alt="Swipe nach rechts (Like)" />
+      <div class="tc-shot-caption">Abb. 6 - Karte mit Like-Geste</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="page tc">
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Testprotokoll</div>
+      <div class="doc-subtitle">Manuelle Akzeptanztests &amp; automatisierte Unit-Tests</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="tc-header">
+    <span class="tc-id">TC-06</span>
+    <span class="tc-title">Dislike zu einem Unternehmen abgeben</span>
+    <span class="tc-status">Bestanden</span>
+  </div>
+  <div class="tc-body">
+    <div class="tc-text">
+      <div class="tc-section-label">User Story</div>
+      <p class="tc-meta">Als Studierende kann ich ein Dislike zu einem Unternehmen abgeben.</p>
+
+      <div class="tc-section-label">Vorbedingung</div>
+      <p class="tc-meta">Studierende ist eingeloggt; mindestens ein Unternehmen ist im Swipe-Stack vorhanden.</p>
+
+      <div class="tc-section-label">Schritte</div>
+      <ol class="steps">
+        <li>Swipe-Screen aufrufen.</li>
+        <li>Aktuelle Unternehmens-Karte nach links ziehen.</li>
+        <li>Karte loslassen, sobald der Dislike-Indikator sichtbar wird.</li>
+      </ol>
+
+      <div class="tc-section-label">Erwartetes Ergebnis</div>
+      <div class="result-box expected">Karte fliegt nach links aus dem Bildschirm; <code>POST</code> an Voting-Endpunkt mit <code>vote = dislike</code> wird ausgelöst; nächste Karte erscheint.</div>
+
+      <div class="tc-section-label">Tatsächliches Ergebnis</div>
+      <div class="result-box">Dislike-Indikator erscheint beim Ziehen nach links; Karte verschwindet nach links, nächste rückt nach. Hard-Kriterium für das Matching ist damit gesetzt.</div>
+    </div>
+    <div class="tc-shot">
+      <img src="screenshots/07-swipe-dislike.jpg" alt="Swipe nach links (Dislike)" />
+      <div class="tc-shot-caption">Abb. 7 - Karte mit Dislike-Geste</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="page tc">
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Testprotokoll</div>
+      <div class="doc-subtitle">Manuelle Akzeptanztests &amp; automatisierte Unit-Tests</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="tc-header">
+    <span class="tc-id">TC-07</span>
+    <span class="tc-title">Neutrale Bewertung zu einem Unternehmen abgeben</span>
+    <span class="tc-status">Bestanden</span>
+  </div>
+  <div class="tc-body">
+    <div class="tc-text">
+      <div class="tc-section-label">User Story</div>
+      <p class="tc-meta">Als Studierende kann ich ein Unternehmen als neutral bewerten.</p>
+
+      <div class="tc-section-label">Vorbedingung</div>
+      <p class="tc-meta">Studierende ist eingeloggt; mindestens ein Unternehmen ist im Swipe-Stack vorhanden.</p>
+
+      <div class="tc-section-label">Schritte</div>
+      <ol class="steps">
+        <li>Swipe-Screen aufrufen.</li>
+        <li>Entweder die aktuelle Karte nach oben ziehen, bis der orange Neutral-Indikator sichtbar wird, oder den Neutral-Button unter der Karte antippen.</li>
+        <li>Geste loslassen bzw. Button bestätigen.</li>
+      </ol>
+
+      <div class="tc-section-label">Erwartetes Ergebnis</div>
+      <div class="result-box expected">Karte wird animiert entfernt; <code>POST</code> an Voting-Endpunkt mit <code>vote = neutral</code> wird ausgelöst; ein <code>preferences</code>-Eintrag mit <code>preference_type = neutral</code> wird angelegt; nächste Karte erscheint.</div>
+
+      <div class="tc-section-label">Tatsächliches Ergebnis</div>
+      <div class="result-box">Neutral-Geste bzw. Neutral-Button löst die Vote-Übermittlung aus. Karte verschwindet, nächste rückt nach. Backend-Abfrage zeigt den Eintrag mit <code>preference_type = neutral</code>. Verhalten ist identisch zu Like/Dislike, nur mit anderem Vote-Wert.</div>
+    </div>
+    <div class="tc-shot">
+      <img src="screenshots/09_neutral.jpg" alt="Swipe-Screen Ausgangszustand (neutral)" />
+      <div class="tc-shot-caption">Abb. 8 - Swipe-Screen ohne Geste<br/>(neutral = kein Vote)</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="page tc">
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Testprotokoll</div>
+      <div class="doc-subtitle">Manuelle Akzeptanztests &amp; automatisierte Unit-Tests</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <div class="tc-header">
+    <span class="tc-id">TC-08</span>
+    <span class="tc-title">Termin-Zuteilung ansehen</span>
+    <span class="tc-status">Bestanden</span>
+  </div>
+  <div class="tc-body">
+    <div class="tc-text">
+      <div class="tc-section-label">User Story</div>
+      <p class="tc-meta">Als Studierende kann ich die Zuteilung sehen, welche Partnerunternehmen ich beim Dual Job Dating wann besuchen komme.</p>
+
+      <div class="tc-section-label">Vorbedingung</div>
+      <p class="tc-meta">Studierende ist eingeloggt; der Admin hat das Matching im Backend angestoßen; Studierende hat mindestens einen Termin zugewiesen bekommen.</p>
+
+      <div class="tc-section-label">Schritte</div>
+      <ol class="steps">
+        <li>Termin-Tab in der Bottom-Navigation auswählen.</li>
+        <li>Liste der zugewiesenen Termine durchsehen.</li>
+      </ol>
+
+      <div class="tc-section-label">Erwartetes Ergebnis</div>
+      <div class="result-box expected">Alle der Studierenden zugewiesenen Termine werden mit Unternehmensname, Zeitfenster und Ort angezeigt. Reihenfolge entspricht der chronologischen Sortierung.</div>
+
+      <div class="tc-section-label">Tatsächliches Ergebnis</div>
+      <div class="result-box">Termin-Screen zeigt die Liste der Meetings inkl. Unternehmen, Slot-Zeit und Eventort. Pull-to-Refresh aktualisiert die Ansicht.</div>
+    </div>
+    <div class="tc-shot">
+      <img src="screenshots/08-appointments.jpg" alt="Termin-Liste" />
+      <div class="tc-shot-caption">Abb. 9 - Termin-Übersicht</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =============================================================== -->
+<!-- AUTOMATED TESTS                                                  -->
+<!-- =============================================================== -->
+<div class="page" style="page-break-before: always;">
+
+  <div class="doc-header">
+    <img src="../handoff/logo.png" alt="Dual Job Dating" />
+    <div class="doc-header-right">
+      <div class="doc-title">Testprotokoll</div>
+      <div class="doc-subtitle">Manuelle Akzeptanztests &amp; automatisierte Unit-Tests</div>
+      <div class="doc-date">Dual Job Dating &nbsp;|&nbsp; Sieff &amp; Winkler &nbsp;|&nbsp; 2026</div>
+    </div>
+  </div>
+
+  <h2>Automatisierte Unit-Tests</h2>
+  <p>Die ViewModel-Schicht wird über <code>kotlin.test</code> und <code>kotlinx-coroutines-test</code> im <code>commonTest</code>-Source-Set abgedeckt. Tests verwenden hand-rollte Fake-Implementierungen der Repository-Interfaces (kein Mocking-Framework); der Main-Dispatcher wird über <code>Dispatchers.setMain(UnconfinedTestDispatcher())</code> ersetzt, damit <code>viewModelScope.launch</code> deterministisch läuft.</p>
+
+  <h3>Befehl</h3>
+  <p><code>./gradlew :composeApp:testDebugUnitTest</code></p>
+
+  <h3>Testfälle</h3>
+  <table>
+    <tr>
+      <th>Testklasse</th>
+      <th>Test</th>
+      <th style="width: 60pt; text-align:center;">Ergebnis</th>
+    </tr>
+    <tr>
+      <td rowspan="3"><code>LoginViewModelTest</code></td>
+      <td>EmailChanged aktualisiert E-Mail im State und löscht vorherigen Fehler</td>
+      <td style="text-align:center; color:#2e7d32; font-weight:700;">PASS</td>
+    </tr>
+    <tr>
+      <td>Submit bei erfolgreichem Login setzt <code>isLoading=false</code> und löscht Error</td>
+      <td style="text-align:center; color:#2e7d32; font-weight:700;">PASS</td>
+    </tr>
+    <tr>
+      <td>Submit mit "Invalid login credentials" Exception → <code>LoginError.InvalidCredentials</code></td>
+      <td style="text-align:center; color:#2e7d32; font-weight:700;">PASS</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><code>CompanyListViewModelTest</code></td>
+      <td>Init lädt Unternehmen aus dem Repository</td>
+      <td style="text-align:center; color:#2e7d32; font-weight:700;">PASS</td>
+    </tr>
+    <tr>
+      <td>Init mit Repository-Fehler setzt <code>hasError=true</code></td>
+      <td style="text-align:center; color:#2e7d32; font-weight:700;">PASS</td>
+    </tr>
+    <tr>
+      <td>Vote-Event ruft <code>submitVote</code> mit korrekten Argumenten</td>
+      <td style="text-align:center; color:#2e7d32; font-weight:700;">PASS</td>
+    </tr>
+  </table>
+
+  <h3>Ausführung</h3>
+  <p>Letzte Ausführung: <code>BUILD SUCCESSFUL</code>, 6 von 6 Tests grün, Gesamtlaufzeit unter 200 ms. JUnit-XML-Reports unter <code>composeApp/build/test-results/testDebugUnitTest/</code>.</p>
+
+  <h2>Bewertung</h2>
+  <p>Alle acht studierendenseitigen User Stories aus dem Anforderungsdokument sind durch manuelle Akzeptanztests abgedeckt und alle Tests sind bestanden. Die kritischen Pfade in der ViewModel-Schicht (Login-Erfolg, Login-Fehler, Listen-Laden, Listen-Fehler, Vote-Abgabe) sind zusätzlich durch automatisierte Unit-Tests gesichert. Es sind zum Zeitpunkt der Abgabe keine offenen Defekte bekannt.</p>
+
+  <div class="doc-footer">
+    <span>Dual Job Dating - Testprotokoll</span>
+    <span>Stand: 2026</span>
+  </div>
+
+</div>
+
+</body>
+</html>

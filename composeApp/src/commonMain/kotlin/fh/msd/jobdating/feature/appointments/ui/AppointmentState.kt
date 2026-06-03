@@ -11,5 +11,5 @@ data class AppointmentState(
     val eventLocation: String? = null,
     val eventDescription: String? = null,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val hasError: Boolean = false
 )

@@ -1,3 +1,4 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -76,6 +77,7 @@ kotlin {
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
     }
 }
@@ -90,9 +92,10 @@ buildkonfig {
     packageName = "fh.msd.jobdating"
 
     defaultConfigs {
-        buildConfigField(STRING, "BACKEND_BASE_URL", localProperties["BACKEND_BASE_URL"] as String)
-        buildConfigField(STRING, "SUPABASE_URL", localProperties["SUPABASE_URL"] as String)
-        buildConfigField(STRING, "SUPABASE_ANON_KEY", localProperties["SUPABASE_ANON_KEY"] as String)
+        buildConfigField(BOOLEAN, "IS_PRODUCTION", (findProperty("isProduction") as? String ?: "false"))
+        buildConfigField(STRING, "BACKEND_BASE_URL", localProperties["BACKEND_BASE_URL"] as? String ?: findProperty("BACKEND_BASE_URL") as? String ?: "")
+        buildConfigField(STRING, "SUPABASE_URL", localProperties["SUPABASE_URL"] as? String ?: findProperty("SUPABASE_URL") as? String ?: "")
+        buildConfigField(STRING, "SUPABASE_ANON_KEY", localProperties["SUPABASE_ANON_KEY"] as? String ?: findProperty("SUPABASE_ANON_KEY") as? String ?: "")
     }
 }
 
@@ -104,7 +107,7 @@ android {
         applicationId = "fh.msd"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 14
+        versionCode = 18
         versionName = "1.0"
     }
     packaging {
@@ -114,7 +117,12 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {

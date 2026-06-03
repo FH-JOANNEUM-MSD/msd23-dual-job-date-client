@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <!-- Crow's foot (many) -->
+    <marker id="many" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 7 L 13 7 M 13 7 L 4 1 M 13 7 L 4 13" fill="none" stroke="#1A1A1A" stroke-width="1"/>
+    </marker>
+    <!-- One -->
+    <marker id="one" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 7 L 13 7 M 9 2 L 9 12" fill="none" stroke="#1A1A1A" stroke-width="1"/>
+    </marker>
+  </defs>
+
+  <text x="500" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#1A1A1A">Data Model (ERD)</text>
+  <text x="500" y="52" text-anchor="middle" font-size="11" fill="#555">Backend persistence — Supabase (Postgres)</text>
+
+  <!-- users -->
+  <rect x="400" y="80" width="200" height="120" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="1"/>
+  <rect x="400" y="80" width="200" height="22" fill="#1A1A1A"/>
+  <text x="500" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.05em">USERS</text>
+  <text x="410" y="118" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">PK</tspan>  id : UUID</text>
+  <text x="410" y="134" font-size="9.5" fill="#1A1A1A">     email : text</text>
+  <text x="410" y="150" font-size="9.5" fill="#1A1A1A">     role : enum</text>
+  <text x="410" y="166" font-size="9" fill="#666">     (student / company / admin)</text>
+  <text x="410" y="182" font-size="9.5" fill="#1A1A1A">     created_at : timestamp</text>
+
+  <!-- students -->
+  <rect x="60" y="240" width="220" height="150" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="1"/>
+  <rect x="60" y="240" width="220" height="22" fill="#1A1A1A"/>
+  <text x="170" y="256" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.05em">STUDENTS</text>
+  <text x="70" y="278" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">PK</tspan>  id : int</text>
+  <text x="70" y="294" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">FK</tspan>  user_id : UUID</text>
+  <text x="70" y="310" font-size="9.5" fill="#1A1A1A">     first_name : text</text>
+  <text x="70" y="326" font-size="9.5" fill="#1A1A1A">     last_name : text</text>
+  <text x="70" y="342" font-size="9.5" fill="#1A1A1A">     study_program : text</text>
+  <text x="70" y="358" font-size="9.5" fill="#1A1A1A">     semester : int</text>
+
+  <!-- companies -->
+  <rect x="720" y="240" width="220" height="190" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="1"/>
+  <rect x="720" y="240" width="220" height="22" fill="#1A1A1A"/>
+  <text x="830" y="256" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.05em">COMPANIES</text>
+  <text x="730" y="278" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">PK</tspan>  id : int</text>
+  <text x="730" y="294" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">FK</tspan>  user_id : UUID</text>
+  <text x="730" y="310" font-size="9.5" fill="#1A1A1A">     name : text</text>
+  <text x="730" y="326" font-size="9.5" fill="#1A1A1A">     short_description : text</text>
+  <text x="730" y="342" font-size="9.5" fill="#1A1A1A">     description : text</text>
+  <text x="730" y="358" font-size="9.5" fill="#1A1A1A">     website : text</text>
+  <text x="730" y="374" font-size="9.5" fill="#1A1A1A">     logo_url : text</text>
+  <text x="730" y="390" font-size="9.5" fill="#1A1A1A">     image_urls : text</text>
+  <text x="730" y="406" font-size="9.5" fill="#1A1A1A">     active : bool</text>
+  <text x="730" y="422" font-size="9.5" fill="#1A1A1A">     last_updated : timestamp</text>
+
+  <!-- preferences -->
+  <rect x="385" y="270" width="230" height="120" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="1"/>
+  <rect x="385" y="270" width="230" height="22" fill="#1A1A1A"/>
+  <text x="500" y="286" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.05em">PREFERENCES</text>
+  <text x="395" y="308" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">PK</tspan>  id : int</text>
+  <text x="395" y="324" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">FK</tspan>  student_id : int</text>
+  <text x="395" y="340" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">FK</tspan>  company_id : int</text>
+  <text x="395" y="356" font-size="9.5" fill="#1A1A1A">     preference_type : enum</text>
+  <text x="395" y="370" font-size="9" fill="#666">     (like / dislike / neutral)</text>
+
+  <!-- meetings -->
+  <rect x="385" y="450" width="230" height="140" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="1"/>
+  <rect x="385" y="450" width="230" height="22" fill="#1A1A1A"/>
+  <text x="500" y="466" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.05em">MEETINGS</text>
+  <text x="395" y="488" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">PK</tspan>  id : int</text>
+  <text x="395" y="504" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">FK</tspan>  slot_id : int</text>
+  <text x="395" y="520" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">FK</tspan>  student_id : int</text>
+  <text x="395" y="536" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">FK</tspan>  company_id : int</text>
+  <text x="395" y="552" font-size="9.5" fill="#1A1A1A">     created_at : timestamp</text>
+  <text x="395" y="572" font-size="9" fill="#666">     (matching result)</text>
+
+  <!-- slots -->
+  <rect x="60" y="490" width="220" height="120" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="1"/>
+  <rect x="60" y="490" width="220" height="22" fill="#1A1A1A"/>
+  <text x="170" y="506" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.05em">SLOTS</text>
+  <text x="70" y="528" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">PK</tspan>  id : int</text>
+  <text x="70" y="544" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">FK</tspan>  event_id : int</text>
+  <text x="70" y="560" font-size="9.5" fill="#1A1A1A">     start_time : timestamp</text>
+  <text x="70" y="576" font-size="9.5" fill="#1A1A1A">     end_time : timestamp</text>
+
+  <!-- events -->
+  <rect x="720" y="490" width="220" height="150" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="1"/>
+  <rect x="720" y="490" width="220" height="22" fill="#1A1A1A"/>
+  <text x="830" y="506" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.05em">EVENTS</text>
+  <text x="730" y="528" font-size="9.5" fill="#1A1A1A"><tspan font-weight="700">PK</tspan>  id : int</text>
+  <text x="730" y="544" font-size="9.5" fill="#1A1A1A">     name : text</text>
+  <text x="730" y="560" font-size="9.5" fill="#1A1A1A">     location : text</text>
+  <text x="730" y="576" font-size="9.5" fill="#1A1A1A">     description : text</text>
+  <text x="730" y="592" font-size="9.5" fill="#1A1A1A">     event_date : date</text>
+  <text x="730" y="608" font-size="9.5" fill="#1A1A1A">     is_active : bool</text>
+
+  <!-- Relationships -->
+  <!-- users 1 — 1 students -->
+  <path d="M 400 175 L 280 280" fill="none" stroke="#1A1A1A" stroke-width="1" marker-start="url(#one)" marker-end="url(#one)"/>
+  <text x="320" y="225" font-size="9" fill="#444">has profile</text>
+
+  <!-- users 1 — 1 companies -->
+  <path d="M 600 175 L 720 280" fill="none" stroke="#1A1A1A" stroke-width="1" marker-start="url(#one)" marker-end="url(#one)"/>
+  <text x="640" y="225" font-size="9" fill="#444">has profile</text>
+
+  <!-- students 1 — M preferences -->
+  <path d="M 280 320 L 385 320" fill="none" stroke="#1A1A1A" stroke-width="1" marker-start="url(#one)" marker-end="url(#many)"/>
+
+  <!-- companies M — 1 preferences -->
+  <path d="M 720 330 L 615 330" fill="none" stroke="#1A1A1A" stroke-width="1" marker-start="url(#one)" marker-end="url(#many)"/>
+
+  <!-- students 1 — M meetings -->
+  <path d="M 220 390 L 220 530 L 385 530" fill="none" stroke="#1A1A1A" stroke-width="1" marker-start="url(#one)" marker-end="url(#many)"/>
+
+  <!-- companies 1 — M meetings -->
+  <path d="M 780 430 L 780 540 L 615 540" fill="none" stroke="#1A1A1A" stroke-width="1" marker-start="url(#one)" marker-end="url(#many)"/>
+
+  <!-- slots 1 — M meetings -->
+  <path d="M 280 530 L 385 510" fill="none" stroke="#1A1A1A" stroke-width="1" marker-start="url(#one)" marker-end="url(#many)"/>
+
+  <!-- events 1 — M slots -->
+  <path d="M 720 550 L 280 550" fill="none" stroke="#1A1A1A" stroke-width="1" marker-start="url(#one)" marker-end="url(#many)"/>
+
+  <!-- Legend -->
+  <rect x="40" y="660" width="920" height="45" rx="3" fill="#ffffff" stroke="#1A1A1A" stroke-width="0.6"/>
+  <text x="55" y="678" font-size="10" font-weight="700" fill="#1A1A1A">Notation</text>
+  <g transform="translate(55,688)">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#1A1A1A" stroke-width="1" marker-end="url(#one)"/>
+    <text x="50" y="3" font-size="9" fill="#333">exactly one</text>
+    <line x1="160" y1="0" x2="200" y2="0" stroke="#1A1A1A" stroke-width="1" marker-end="url(#many)"/>
+    <text x="210" y="3" font-size="9" fill="#333">many (crow's foot)</text>
+    <text x="350" y="3" font-size="9" fill="#333"><tspan font-weight="700">PK</tspan> primary key</text>
+    <text x="470" y="3" font-size="9" fill="#333"><tspan font-weight="700">FK</tspan> foreign key</text>
+    <text x="600" y="3" font-size="9" fill="#666">Schema reconstructed from OpenAPI examples + DTOs</text>
+  </g>
+</svg>

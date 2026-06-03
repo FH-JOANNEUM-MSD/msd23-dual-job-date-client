@@ -22,12 +22,12 @@ class CompanyListViewModel(
 
     private fun loadCompanies() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isLoading = true, hasError = false) }
             try {
                 val companies = repository.getActiveCompanies()
                 _state.update { it.copy(companies = companies, isLoading = false) }
             } catch (e: Exception) {
-                _state.update { it.copy(error = e.message, isLoading = false) }
+                _state.update { it.copy(isLoading = false, hasError = true) }
             }
         }
     }
@@ -44,7 +44,7 @@ class CompanyListViewModel(
                 repository.submitVote(companyId, vote)
                 loadCompanies()
             } catch (e: Exception) {
-                _state.update { it.copy(error = e.message) }
+                _state.update { it.copy(hasError = true) }
             }
         }
     }
