@@ -3,7 +3,6 @@ package fh.msd.jobdating.core.di
 import fh.msd.jobdating.BuildKonfig
 import fh.msd.jobdating.core.network.HttpClientFactory
 import fh.msd.jobdating.core.session.UserSession
-import fh.msd.jobdating.core.startup.StartupViewModel
 import fh.msd.jobdating.feature.appointments.data.repository.AppointmentRepository
 import fh.msd.jobdating.feature.appointments.data.repository.AppointmentRepositoryImpl
 import fh.msd.jobdating.feature.appointments.data.service.AppointmentService
@@ -45,9 +44,6 @@ val appModule = module {
 
     // --- session ---
     single { UserSession() }
-
-    // --- startup ---
-    viewModel { StartupViewModel(get()) }
 
     // Auth
     single<AuthService> { AuthServiceImpl(get(), get()) }
