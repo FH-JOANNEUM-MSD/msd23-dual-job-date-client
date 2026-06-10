@@ -47,13 +47,27 @@ class CompanySwipeViewModel(
     }
 
     private fun vote(companyId: Int, vote: VoteType) {
+        // Optimistically advance through the already-loaded list for snappy UX —
+        // no per-swipe refetch. When the last card is voted, switch to the done
+        // state instead of moving the index past the list (SwipeContent reads
+        // companies[currentIndex] directly, so the index must stay in bounds).
+        _state.update {
+            val nextIndex = it.currentIndex + 1
+            if (nextIndex >= it.companies.size) {
+                it.copy(isDone = true)
+            } else {
+                it.copy(currentIndex = nextIndex)
+            }
+        }
+
+        // Submit the vote in the background, fire-and-forget. A failed submission
+        // must not wipe the user's place with a full-screen error, so the swipe
+        // stands and we only swallow/log the failure here.
         viewModelScope.launch {
             try {
                 repository.submitVote(companyId, vote)
-                kotlinx.coroutines.delay(500)
-                loadCompanies()
             } catch (e: Exception) {
-                _state.update { it.copy(hasError = true) }
+                // Non-blocking: keep the user's place; nothing to surface here.
             }
         }
     }
