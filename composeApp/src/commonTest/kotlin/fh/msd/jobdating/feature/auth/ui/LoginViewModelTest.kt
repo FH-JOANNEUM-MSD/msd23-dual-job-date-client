@@ -69,7 +69,6 @@ class LoginViewModelTest {
         override suspend fun login(email: String, password: String) {
             if (shouldFail) throw RuntimeException(errorMessage)
         }
-        override suspend fun restoreSession(): Boolean = false
         override suspend fun logout() = Unit
         override suspend fun changePassword(newPassword: String) = Unit
         override fun getCurrentUserEmail(): String? = null
