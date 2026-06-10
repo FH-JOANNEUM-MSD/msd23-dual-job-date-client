@@ -40,12 +40,8 @@ class AuthServiceImpl(
     }
 
     override suspend fun tryRestoreSession(): String? {
-        // Supabase loads the persisted session from storage asynchronously when
-        // the client is created (autoLoadFromStorage). Wait for that to finish
-        // (and any auto-refresh of an expired token) before reading it, otherwise
-        // we'd race the load and see a null session on a cold start.
-        supabaseClient.auth.awaitInitialization()
-        return supabaseClient.auth.currentSessionOrNull()?.accessToken
+        val token = supabaseClient.auth.currentSessionOrNull()?.accessToken
+        return token
     }
 
     override suspend fun changePassword(newPassword: String) {
