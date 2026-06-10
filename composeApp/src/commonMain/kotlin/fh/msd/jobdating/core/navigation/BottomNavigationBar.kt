@@ -79,6 +79,7 @@ fun BottomNavigationBar(navController: NavController) {
                         restoreState = false
                     }
                 }
+
             )
         }
     }
